@@ -1,0 +1,239 @@
+{
+  "subject": "history",
+  "ageGroups": {
+    "explorer": {
+      "lessons": [
+        {
+          "id": "hist-exp-001",
+          "title": "Cave People",
+          "concept": {
+            "text": "A long, long time ago, people lived in caves! They made fire to stay warm and drew pictures on the walls.",
+            "emoji": "🪨",
+            "funFact": "The oldest cave paintings are over 40,000 years old!"
+          },
+          "questions": [
+            { "type": "yes-no", "prompt": "Did cave people live in tall buildings?", "answer": "no" },
+            { "type": "choice", "prompt": "What did cave people use to stay warm?", "options": ["Fire", "TV", "Sweater"], "answer": "Fire" },
+            { "type": "choice", "prompt": "What did cave people draw on?", "options": ["Cave walls", "Paper", "Screens"], "answer": "Cave walls" }
+          ]
+        },
+        {
+          "id": "hist-exp-002",
+          "title": "Big Pyramids",
+          "concept": {
+            "text": "In Egypt, people built giant triangle buildings called pyramids. They are huge!",
+            "emoji": "🔺",
+            "funFact": "Pyramids took many, many years to build!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What shape is a pyramid?", "options": ["Triangle", "Circle", "Square"], "answer": "Triangle" },
+            { "type": "yes-no", "prompt": "Are pyramids tiny?", "answer": "no" },
+            { "type": "choice", "prompt": "Where are the famous pyramids?", "options": ["Egypt", "Moon", "Ocean"], "answer": "Egypt" }
+          ]
+        },
+        {
+          "id": "hist-exp-003",
+          "title": "Knights and Castles",
+          "concept": {
+            "text": "Knights wore shiny metal armor and lived in big stone castles with tall towers.",
+            "emoji": "🏰",
+            "funFact": "Some castles had a moat — a ring of water around them!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What did knights wear?", "options": ["Armor", "Pajamas", "T-shirts"], "answer": "Armor" },
+            { "type": "choice", "prompt": "Where did knights live?", "options": ["Castles", "Caves", "Boats"], "answer": "Castles" },
+            { "type": "yes-no", "prompt": "Did castles have tall towers?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "hist-exp-004",
+          "title": "Big Ships",
+          "concept": {
+            "text": "Long ago, people sailed across the seas in big wooden ships to find new lands.",
+            "emoji": "⛵",
+            "funFact": "Sailors used the stars to find their way!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What did old ships use to move?", "options": ["Sails", "Wheels", "Engines"], "answer": "Sails" },
+            { "type": "yes-no", "prompt": "Were old ships made of wood?", "answer": "yes" },
+            { "type": "choice", "prompt": "What helped sailors at night?", "options": ["Stars", "Lamps", "Phones"], "answer": "Stars" }
+          ]
+        },
+        {
+          "id": "hist-exp-005",
+          "title": "First Wheel",
+          "concept": {
+            "text": "A very long time ago, people invented the wheel! It helped them move heavy things and travel far.",
+            "emoji": "🛞",
+            "funFact": "Without the wheel, we wouldn't have cars or bikes today!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What helps things roll?", "options": ["Wheels", "Boxes", "Sticks"], "answer": "Wheels" },
+            { "type": "yes-no", "prompt": "Do cars need wheels?", "answer": "yes" },
+            { "type": "choice", "prompt": "Wheels help us...", "options": ["Move things", "Eat food", "Sleep"], "answer": "Move things" }
+          ]
+        }
+      ]
+    },
+    "adventurer": {
+      "lessons": [
+        {
+          "id": "hist-adv-001",
+          "title": "Ancient Egypt",
+          "concept": {
+            "text": "Ancient Egyptians lived along the Nile River over 5,000 years ago. They built pyramids as tombs for their pharaohs and wrote with picture symbols called hieroglyphs.",
+            "emoji": "🐫",
+            "funFact": "The Great Pyramid of Giza weighs about 6 million tons!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What river did Egyptians live by?", "options": ["Nile", "Amazon", "Thames", "Yangtze"], "answer": "Nile" },
+            { "type": "choice", "prompt": "Pyramids were built as...", "options": ["Tombs", "Homes", "Schools", "Markets"], "answer": "Tombs" },
+            { "type": "fill", "prompt": "Egyptian picture writing is called ____.", "answer": "hieroglyphs" },
+            { "type": "choice", "prompt": "Who ruled ancient Egypt?", "options": ["Pharaohs", "Presidents", "Kings of England", "Generals"], "answer": "Pharaohs" }
+          ]
+        },
+        {
+          "id": "hist-adv-002",
+          "title": "The Roman Empire",
+          "concept": {
+            "text": "Rome started as a small city in Italy and grew into a giant empire. The Romans built straight roads, huge arenas like the Colosseum, and aqueducts to carry water.",
+            "emoji": "🏛️",
+            "funFact": "Many Roman roads are still used today, 2,000 years later!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Where did Rome begin?", "options": ["Italy", "France", "Greece", "Spain"], "answer": "Italy" },
+            { "type": "choice", "prompt": "The Colosseum was a giant...", "options": ["Arena", "Church", "Castle", "Library"], "answer": "Arena" },
+            { "type": "fill", "prompt": "Romans built ____ to carry water across long distances.", "answer": "aqueducts" },
+            { "type": "choice", "prompt": "Romans were famous for building...", "options": ["Roads", "Rockets", "Trains", "Cars"], "answer": "Roads" }
+          ]
+        },
+        {
+          "id": "hist-adv-003",
+          "title": "Medieval Times",
+          "concept": {
+            "text": "In medieval times, kings and queens ruled lands from stone castles. Brave knights served them, and people lived in villages and worked the land.",
+            "emoji": "⚔️",
+            "funFact": "A knight's armor could weigh over 60 pounds!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who ruled medieval lands?", "options": ["Kings and queens", "Presidents", "Generals", "Mayors"], "answer": "Kings and queens" },
+            { "type": "fill", "prompt": "Soldiers who served lords were called ____.", "answer": "knights" },
+            { "type": "choice", "prompt": "Castles were built from...", "options": ["Stone", "Glass", "Paper", "Bricks of gold"], "answer": "Stone" },
+            { "type": "choice", "prompt": "Most people in the Middle Ages lived in...", "options": ["Villages", "Big cities", "Castles", "Ships"], "answer": "Villages" }
+          ]
+        },
+        {
+          "id": "hist-adv-004",
+          "title": "Great Inventors",
+          "concept": {
+            "text": "Thomas Edison created the light bulb. The Wright brothers built the first airplane. Inventors change the world by solving problems with new ideas.",
+            "emoji": "💡",
+            "funFact": "Edison tried thousands of materials before finding one that worked for the light bulb!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who invented the light bulb?", "options": ["Thomas Edison", "Isaac Newton", "Albert Einstein", "Marie Curie"], "answer": "Thomas Edison" },
+            { "type": "choice", "prompt": "The Wright brothers built the first...", "options": ["Airplane", "Car", "Phone", "Computer"], "answer": "Airplane" },
+            { "type": "fill", "prompt": "Inventors create new ____ to solve problems.", "answer": "things" },
+            { "type": "choice", "prompt": "Why did Edison try so many materials?", "options": ["To find what worked", "He was bored", "He needed money", "By accident"], "answer": "To find what worked" }
+          ]
+        },
+        {
+          "id": "hist-adv-005",
+          "title": "Explorers of the Seas",
+          "concept": {
+            "text": "Hundreds of years ago, explorers like Christopher Columbus and Ferdinand Magellan sailed across oceans in wooden ships to discover new lands and routes.",
+            "emoji": "🧭",
+            "funFact": "Magellan's crew was the first to sail all the way around the world!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who sailed around the world first?", "options": ["Magellan's crew", "Columbus", "Edison", "Caesar"], "answer": "Magellan's crew" },
+            { "type": "choice", "prompt": "Explorers traveled by...", "options": ["Ship", "Train", "Plane", "Car"], "answer": "Ship" },
+            { "type": "fill", "prompt": "Sailors used a ____ to find direction.", "answer": "compass" },
+            { "type": "choice", "prompt": "Columbus sailed across the...", "options": ["Atlantic Ocean", "Sahara Desert", "Amazon River", "Pacific Ocean"], "answer": "Atlantic Ocean" }
+          ]
+        }
+      ]
+    },
+    "champion": {
+      "lessons": [
+        {
+          "id": "hist-cha-001",
+          "title": "Cradles of Civilization",
+          "concept": {
+            "text": "The earliest civilizations rose in fertile river valleys: Mesopotamia (Tigris & Euphrates), Egypt (Nile), the Indus Valley, and ancient China (Yellow River). They invented writing, agriculture, and cities.",
+            "emoji": "🌾",
+            "funFact": "Cuneiform, from Mesopotamia, is one of the world's oldest writing systems."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which rivers bordered Mesopotamia?", "options": ["Tigris & Euphrates", "Nile & Amazon", "Ganges & Indus", "Yangtze & Mekong"], "answer": "Tigris & Euphrates" },
+            { "type": "choice", "prompt": "Cuneiform writing was developed in...", "options": ["Mesopotamia", "Egypt", "China", "Greece"], "answer": "Mesopotamia" },
+            { "type": "fill", "prompt": "Ancient China's first major civilization grew along the ____ River.", "answer": "yellow" },
+            { "type": "tf", "prompt": "Civilizations needed fertile land to grow.", "answer": "true" },
+            { "type": "order", "prompt": "Order from earliest to latest: Roman Empire, Sumerians, Industrial Revolution.", "options": ["Sumerians", "Roman Empire", "Industrial Revolution"], "answer": ["Sumerians", "Roman Empire", "Industrial Revolution"] }
+          ]
+        },
+        {
+          "id": "hist-cha-002",
+          "title": "World Wars",
+          "concept": {
+            "text": "World War I (1914–1918) and World War II (1939–1945) reshaped the modern world. They led to new technology, the United Nations, and major changes in global politics.",
+            "emoji": "🌍",
+            "funFact": "The United Nations was formed in 1945 to help prevent future world wars."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "When did World War II end?", "options": ["1945", "1939", "1918", "1950"], "answer": "1945" },
+            { "type": "tf", "prompt": "The United Nations was created after WWII.", "answer": "true" },
+            { "type": "choice", "prompt": "WWI began in...", "options": ["1914", "1918", "1939", "1900"], "answer": "1914" },
+            { "type": "fill", "prompt": "The military alliance opposed to the Axis powers was called the ____.", "answer": "allies" },
+            { "type": "order", "prompt": "Order the events from earliest to latest.", "options": ["Start of WWI", "End of WWI", "Start of WWII", "End of WWII"], "answer": ["Start of WWI", "End of WWI", "Start of WWII", "End of WWII"] }
+          ]
+        },
+        {
+          "id": "hist-cha-003",
+          "title": "Renaissance Thinkers",
+          "concept": {
+            "text": "The Renaissance (14th–17th century) was a rebirth of art, science, and ideas in Europe. Leonardo da Vinci painted the Mona Lisa and designed flying machines. Galileo studied the stars.",
+            "emoji": "🎨",
+            "funFact": "Leonardo da Vinci kept thousands of pages of notes, often writing in mirror script."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who painted the Mona Lisa?", "options": ["Leonardo da Vinci", "Michelangelo", "Galileo", "Newton"], "answer": "Leonardo da Vinci" },
+            { "type": "tf", "prompt": "Galileo studied the stars and planets.", "answer": "true" },
+            { "type": "fill", "prompt": "The Renaissance began in ____.", "answer": "italy" },
+            { "type": "choice", "prompt": "Renaissance means...", "options": ["Rebirth", "Revolution", "Reform", "Recovery"], "answer": "Rebirth" }
+          ]
+        },
+        {
+          "id": "hist-cha-004",
+          "title": "Industrial Revolution",
+          "concept": {
+            "text": "Beginning in the late 1700s in Britain, the Industrial Revolution introduced steam engines, factories, and railways. It transformed how people worked, lived, and traveled.",
+            "emoji": "🚂",
+            "funFact": "James Watt's improved steam engine in 1769 powered the new industrial age."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Where did the Industrial Revolution begin?", "options": ["Britain", "France", "Germany", "USA"], "answer": "Britain" },
+            { "type": "fill", "prompt": "The ____ engine powered factories and trains.", "answer": "steam" },
+            { "type": "tf", "prompt": "The Industrial Revolution moved many people from farms to cities.", "answer": "true" },
+            { "type": "choice", "prompt": "Which is NOT a product of the Industrial Revolution?", "options": ["Smartphones", "Steam trains", "Mass-produced cloth", "Factory work"], "answer": "Smartphones" }
+          ]
+        },
+        {
+          "id": "hist-cha-005",
+          "title": "Civil Rights Movement",
+          "concept": {
+            "text": "In the mid-20th century, leaders like Martin Luther King Jr. and Rosa Parks fought peacefully for equal rights for Black Americans. Their work changed laws and lives.",
+            "emoji": "✊",
+            "funFact": "Dr. King's 'I Have a Dream' speech was delivered in 1963 in Washington, D.C."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who gave the 'I Have a Dream' speech?", "options": ["Martin Luther King Jr.", "Rosa Parks", "Abraham Lincoln", "John F. Kennedy"], "answer": "Martin Luther King Jr." },
+            { "type": "tf", "prompt": "The Civil Rights Movement used peaceful protest.", "answer": "true" },
+            { "type": "fill", "prompt": "Rosa Parks refused to give up her ____ on a bus.", "answer": "seat" },
+            { "type": "choice", "prompt": "The movement worked for...", "options": ["Equal rights", "More taxes", "Bigger armies", "New holidays"], "answer": "Equal rights" }
+          ]
+        }
+      ]
+    }
+  }
+}

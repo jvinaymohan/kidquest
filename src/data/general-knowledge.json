@@ -1,0 +1,237 @@
+{
+  "subject": "general-knowledge",
+  "ageGroups": {
+    "explorer": {
+      "lessons": [
+        {
+          "id": "gk-exp-001",
+          "title": "Animal Friends",
+          "concept": {
+            "text": "Dogs go woof! Cats go meow! Cows go moo! Animals make different sounds.",
+            "emoji": "🐶",
+            "funFact": "Bees buzz! Ducks quack!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What sound does a cow make?", "options": ["Moo", "Woof", "Meow"], "answer": "Moo" },
+            { "type": "choice", "prompt": "A dog says...", "options": ["Woof", "Quack", "Buzz"], "answer": "Woof" },
+            { "type": "choice", "prompt": "A bee says...", "options": ["Buzz", "Moo", "Roar"], "answer": "Buzz" }
+          ]
+        },
+        {
+          "id": "gk-exp-002",
+          "title": "Colors of the Rainbow",
+          "concept": {
+            "text": "A rainbow has red, orange, yellow, green, blue, and purple! It shows up after rain.",
+            "emoji": "🌈",
+            "funFact": "Rainbows are made of sunlight and water!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What appears after rain?", "options": ["Rainbow", "Star", "Snow"], "answer": "Rainbow" },
+            { "type": "choice", "prompt": "Which is a color?", "options": ["Blue", "Cat", "Tree"], "answer": "Blue" },
+            { "type": "yes-no", "prompt": "Is the sky sometimes blue?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "gk-exp-003",
+          "title": "My Body",
+          "concept": {
+            "text": "We have 2 eyes to see, 2 ears to hear, 1 nose to smell, and 1 mouth to talk and eat!",
+            "emoji": "👃",
+            "funFact": "Your ears help you keep your balance too!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many eyes do you have?", "options": ["2", "1", "3"], "answer": "2" },
+            { "type": "choice", "prompt": "What do you hear with?", "options": ["Ears", "Nose", "Hands"], "answer": "Ears" },
+            { "type": "choice", "prompt": "What do you smell with?", "options": ["Nose", "Mouth", "Feet"], "answer": "Nose" }
+          ]
+        },
+        {
+          "id": "gk-exp-004",
+          "title": "Day and Night",
+          "concept": {
+            "text": "In the day the sun is up and it's bright. At night the moon is out and it's dark!",
+            "emoji": "☀️",
+            "funFact": "We sleep at night so our bodies can rest!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What is in the sky during the day?", "options": ["Sun", "Moon", "Stars"], "answer": "Sun" },
+            { "type": "yes-no", "prompt": "Do we usually sleep at night?", "answer": "yes" },
+            { "type": "choice", "prompt": "Is it bright or dark at night?", "options": ["Dark", "Bright", "Cold"], "answer": "Dark" }
+          ]
+        },
+        {
+          "id": "gk-exp-005",
+          "title": "Healthy Habits",
+          "concept": {
+            "text": "Wash your hands! Eat fruits and veggies! Drink water! These help you grow strong.",
+            "emoji": "🥦",
+            "funFact": "Apples and carrots help keep you healthy!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which is healthy?", "options": ["Apple", "Candy", "Soda"], "answer": "Apple" },
+            { "type": "yes-no", "prompt": "Should we wash our hands?", "answer": "yes" },
+            { "type": "choice", "prompt": "What helps you grow strong?", "options": ["Veggies", "Toys", "TV"], "answer": "Veggies" }
+          ]
+        }
+      ]
+    },
+    "adventurer": {
+      "lessons": [
+        {
+          "id": "gk-adv-001",
+          "title": "Solar System",
+          "concept": {
+            "text": "Our solar system has 8 planets: Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune. The Sun is a star at the center, and they all orbit around it.",
+            "emoji": "🪐",
+            "funFact": "Jupiter is so big that all other planets could fit inside it!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many planets are in our solar system?", "options": ["8", "9", "7", "10"], "answer": "8" },
+            { "type": "choice", "prompt": "Which is the largest planet?", "options": ["Jupiter", "Saturn", "Earth", "Mars"], "answer": "Jupiter" },
+            { "type": "fill", "prompt": "The closest planet to the Sun is ____.", "answer": "mercury" },
+            { "type": "choice", "prompt": "Earth is the ___ planet from the sun.", "options": ["3rd", "1st", "5th", "8th"], "answer": "3rd" }
+          ]
+        },
+        {
+          "id": "gk-adv-002",
+          "title": "States of Matter",
+          "concept": {
+            "text": "Matter exists in three main states: solid (like ice), liquid (like water), and gas (like steam). Heating ice melts it into water; heating water turns it to steam!",
+            "emoji": "🧊",
+            "funFact": "Water is the only substance found naturally in all three states on Earth!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Ice is a...", "options": ["Solid", "Liquid", "Gas", "Plasma"], "answer": "Solid" },
+            { "type": "fill", "prompt": "Water turns to ____ when boiled.", "answer": "steam" },
+            { "type": "choice", "prompt": "What state is air?", "options": ["Gas", "Liquid", "Solid", "Crystal"], "answer": "Gas" },
+            { "type": "choice", "prompt": "Heating a solid usually makes it...", "options": ["Melt", "Freeze", "Disappear", "Sing"], "answer": "Melt" }
+          ]
+        },
+        {
+          "id": "gk-adv-003",
+          "title": "Human Body Systems",
+          "concept": {
+            "text": "Your body has systems: the heart pumps blood (circulatory), lungs help you breathe (respiratory), and bones give you shape (skeletal). They all work together!",
+            "emoji": "🫀",
+            "funFact": "An adult human has 206 bones — but babies are born with around 270!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What pumps blood?", "options": ["Heart", "Lungs", "Brain", "Stomach"], "answer": "Heart" },
+            { "type": "fill", "prompt": "We breathe with our ____.", "answer": "lungs" },
+            { "type": "choice", "prompt": "How many bones in an adult body?", "options": ["206", "100", "300", "50"], "answer": "206" },
+            { "type": "choice", "prompt": "Which system helps you move?", "options": ["Skeletal & muscular", "Digestive", "Nervous", "Respiratory"], "answer": "Skeletal & muscular" }
+          ]
+        },
+        {
+          "id": "gk-adv-004",
+          "title": "Cool Animals",
+          "concept": {
+            "text": "Mammals (like dogs) have fur and feed milk to babies. Reptiles (snakes, lizards) are cold-blooded. Amphibians (frogs) live in water and on land. Birds have feathers and lay eggs.",
+            "emoji": "🦎",
+            "funFact": "A hummingbird's heart beats over 1,200 times per minute!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which is a mammal?", "options": ["Dog", "Lizard", "Frog", "Eagle"], "answer": "Dog" },
+            { "type": "choice", "prompt": "A frog is a...", "options": ["Amphibian", "Mammal", "Bird", "Fish"], "answer": "Amphibian" },
+            { "type": "fill", "prompt": "Reptiles are ____-blooded.", "answer": "cold" },
+            { "type": "choice", "prompt": "Birds have...", "options": ["Feathers", "Fur", "Scales", "Slime"], "answer": "Feathers" }
+          ]
+        },
+        {
+          "id": "gk-adv-005",
+          "title": "Safety First",
+          "concept": {
+            "text": "Cross at crosswalks, look both ways. Wear a helmet on a bike. Know the emergency number (911 in USA). Never share personal info with strangers online.",
+            "emoji": "🚦",
+            "funFact": "Bike helmets reduce the risk of serious head injury by about 70%!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What do you wear riding a bike?", "options": ["Helmet", "Hat", "Earmuffs", "Sunglasses"], "answer": "Helmet" },
+            { "type": "fill", "prompt": "Cross the street at a ____.", "answer": "crosswalk" },
+            { "type": "choice", "prompt": "What's the US emergency number?", "options": ["911", "411", "111", "999"], "answer": "911" },
+            { "type": "choice", "prompt": "Online, never share your...", "options": ["Address", "Favorite color", "Pet's name", "Hobby"], "answer": "Address" }
+          ]
+        }
+      ]
+    },
+    "champion": {
+      "lessons": [
+        {
+          "id": "gk-cha-001",
+          "title": "The Periodic Table",
+          "concept": {
+            "text": "Everything is made of atoms. The Periodic Table organizes elements (like Hydrogen, Oxygen, Carbon, Gold). Each has a symbol and atomic number based on its protons.",
+            "emoji": "⚗️",
+            "funFact": "Gold's symbol is Au, from the Latin word 'aurum' meaning 'shining dawn'."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Symbol for Oxygen?", "options": ["O", "Ox", "Og", "Om"], "answer": "O" },
+            { "type": "fill", "prompt": "Gold's symbol is ____.", "answer": "au" },
+            { "type": "tf", "prompt": "Atomic number is based on the number of protons.", "answer": "true" },
+            { "type": "choice", "prompt": "Hydrogen's atomic number is...", "options": ["1", "2", "8", "11"], "answer": "1" }
+          ]
+        },
+        {
+          "id": "gk-cha-002",
+          "title": "Ecosystems",
+          "concept": {
+            "text": "An ecosystem is a community of living things and their environment. Food chains show energy flow: sun → plants → herbivores → carnivores. Decomposers (fungi, bacteria) recycle nutrients.",
+            "emoji": "🌳",
+            "funFact": "Coral reefs cover less than 1% of the ocean but house 25% of marine species!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What's at the start of most food chains?", "options": ["Sun", "Herbivores", "Decomposers", "Predators"], "answer": "Sun" },
+            { "type": "fill", "prompt": "Animals that eat only plants are called ____.", "answer": "herbivores" },
+            { "type": "tf", "prompt": "Fungi and bacteria are decomposers.", "answer": "true" },
+            { "type": "choice", "prompt": "A coral reef is an example of a...", "options": ["Ecosystem", "Country", "Planet", "Mineral"], "answer": "Ecosystem" }
+          ]
+        },
+        {
+          "id": "gk-cha-003",
+          "title": "Famous Scientists",
+          "concept": {
+            "text": "Isaac Newton discovered gravity. Marie Curie pioneered research on radioactivity (and won 2 Nobel Prizes). Albert Einstein revolutionized physics with relativity. Charles Darwin explained evolution.",
+            "emoji": "🔬",
+            "funFact": "Marie Curie is the only person to win Nobel Prizes in two different sciences."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who discovered gravity?", "options": ["Newton", "Einstein", "Curie", "Darwin"], "answer": "Newton" },
+            { "type": "choice", "prompt": "Theory of evolution was proposed by...", "options": ["Darwin", "Einstein", "Galileo", "Newton"], "answer": "Darwin" },
+            { "type": "fill", "prompt": "Marie ____ studied radioactivity.", "answer": "curie" },
+            { "type": "tf", "prompt": "Einstein is famous for the theory of relativity.", "answer": "true" }
+          ]
+        },
+        {
+          "id": "gk-cha-004",
+          "title": "Forms of Energy",
+          "concept": {
+            "text": "Energy comes in many forms: kinetic (motion), potential (stored), thermal (heat), electrical, chemical, and nuclear. Energy can change form but is never created or destroyed.",
+            "emoji": "⚡",
+            "funFact": "The 'Law of Conservation of Energy' says energy can only be transformed — not lost!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Energy of motion is called...", "options": ["Kinetic", "Potential", "Thermal", "Nuclear"], "answer": "Kinetic" },
+            { "type": "fill", "prompt": "Stored energy is called ____ energy.", "answer": "potential" },
+            { "type": "tf", "prompt": "Energy can be created from nothing.", "answer": "false" },
+            { "type": "choice", "prompt": "Energy in batteries is...", "options": ["Chemical", "Nuclear", "Thermal", "Kinetic"], "answer": "Chemical" }
+          ]
+        },
+        {
+          "id": "gk-cha-005",
+          "title": "Government Basics",
+          "concept": {
+            "text": "Democracy lets citizens vote for leaders. The US has three branches: Executive (President), Legislative (Congress), Judicial (Supreme Court). Each checks the others.",
+            "emoji": "🏛️",
+            "funFact": "The US Constitution was signed in 1787 — over 230 years ago!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many branches in US government?", "options": ["3", "2", "4", "5"], "answer": "3" },
+            { "type": "fill", "prompt": "The President is in the ____ branch.", "answer": "executive" },
+            { "type": "tf", "prompt": "In a democracy, citizens vote for leaders.", "answer": "true" },
+            { "type": "choice", "prompt": "Which branch makes laws?", "options": ["Legislative", "Executive", "Judicial", "Military"], "answer": "Legislative" }
+          ]
+        }
+      ]
+    }
+  }
+}

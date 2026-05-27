@@ -1,0 +1,238 @@
+{
+  "subject": "music",
+  "ageGroups": {
+    "explorer": {
+      "lessons": [
+        {
+          "id": "mus-exp-001",
+          "title": "Loud and Soft",
+          "concept": {
+            "text": "Some sounds are loud, like a drum! Some sounds are soft, like a whisper.",
+            "emoji": "🥁",
+            "funFact": "Music is made of loud and soft sounds together!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which is LOUD?", "options": ["Drum", "Whisper", "Pillow"], "answer": "Drum" },
+            { "type": "yes-no", "prompt": "Is a whisper soft?", "answer": "yes" },
+            { "type": "choice", "prompt": "Music has...", "options": ["Loud and soft", "Only loud", "No sound"], "answer": "Loud and soft" }
+          ]
+        },
+        {
+          "id": "mus-exp-002",
+          "title": "Drums and Beats",
+          "concept": {
+            "text": "Drums make a beat! Tap-tap-tap. You can clap with the beat too!",
+            "emoji": "🪘",
+            "funFact": "Some drums are so big you have to stand to play them!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How do you play a drum?", "options": ["Tap", "Eat", "Drink"], "answer": "Tap" },
+            { "type": "yes-no", "prompt": "Can you clap to a beat?", "answer": "yes" },
+            { "type": "choice", "prompt": "Drums make a...", "options": ["Beat", "Smell", "Light"], "answer": "Beat" }
+          ]
+        },
+        {
+          "id": "mus-exp-003",
+          "title": "Singing Voices",
+          "concept": {
+            "text": "When we sing, we use our voice to make music. Singing can be happy or sad!",
+            "emoji": "🎤",
+            "funFact": "Babies start to sing before they learn to talk!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "We sing with our...", "options": ["Voice", "Feet", "Eyes"], "answer": "Voice" },
+            { "type": "yes-no", "prompt": "Can singing be happy?", "answer": "yes" },
+            { "type": "choice", "prompt": "Singing is making...", "options": ["Music", "Lunch", "Drawings"], "answer": "Music" }
+          ]
+        },
+        {
+          "id": "mus-exp-004",
+          "title": "High and Low",
+          "concept": {
+            "text": "Some sounds are HIGH like a tweeting bird. Some sounds are LOW like a big bear's growl!",
+            "emoji": "🐻",
+            "funFact": "A piano can play both very high and very low sounds!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "A bird sound is...", "options": ["High", "Low", "Silent"], "answer": "High" },
+            { "type": "choice", "prompt": "A big bear sound is...", "options": ["Low", "High", "Squeaky"], "answer": "Low" },
+            { "type": "yes-no", "prompt": "Can a piano play high and low?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "mus-exp-005",
+          "title": "Dancing to Music",
+          "concept": {
+            "text": "When music plays, our bodies want to move! That's called dancing. It's fun!",
+            "emoji": "💃",
+            "funFact": "People all over the world dance to music!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "When we move to music we are...", "options": ["Dancing", "Sleeping", "Reading"], "answer": "Dancing" },
+            { "type": "yes-no", "prompt": "Is dancing fun?", "answer": "yes" },
+            { "type": "choice", "prompt": "We dance to...", "options": ["Music", "Nothing", "Cold air"], "answer": "Music" }
+          ]
+        }
+      ]
+    },
+    "adventurer": {
+      "lessons": [
+        {
+          "id": "mus-adv-001",
+          "title": "Families of Instruments",
+          "concept": {
+            "text": "Instruments come in families: strings (guitar, violin), woodwinds (flute, clarinet), brass (trumpet, trombone), and percussion (drums, xylophone).",
+            "emoji": "🎺",
+            "funFact": "The violin has only 4 strings but can play hundreds of different notes!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which is a string instrument?", "options": ["Guitar", "Trumpet", "Flute", "Drum"], "answer": "Guitar" },
+            { "type": "choice", "prompt": "Which is a brass instrument?", "options": ["Trumpet", "Violin", "Flute", "Piano"], "answer": "Trumpet" },
+            { "type": "fill", "prompt": "Drums belong to the ____ family.", "answer": "percussion" },
+            { "type": "choice", "prompt": "Which is a woodwind?", "options": ["Flute", "Trumpet", "Guitar", "Drum"], "answer": "Flute" }
+          ]
+        },
+        {
+          "id": "mus-adv-002",
+          "title": "Beat and Rhythm",
+          "concept": {
+            "text": "The beat is the steady pulse in music — like a heartbeat. Rhythm is the pattern of long and short sounds played over the beat.",
+            "emoji": "🎶",
+            "funFact": "Marching bands all walk to the beat so they stay together!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "The beat is like a...", "options": ["Heartbeat", "Whistle", "Painting", "Sneeze"], "answer": "Heartbeat" },
+            { "type": "fill", "prompt": "The pattern of long and short sounds is called ____.", "answer": "rhythm" },
+            { "type": "choice", "prompt": "Marching bands stay together by following the...", "options": ["Beat", "Wind", "Flag", "Crowd"], "answer": "Beat" },
+            { "type": "choice", "prompt": "Which has a steady beat?", "options": ["A song", "A photo", "A book cover", "A drawing"], "answer": "A song" }
+          ]
+        },
+        {
+          "id": "mus-adv-003",
+          "title": "Famous Composers",
+          "concept": {
+            "text": "Composers write music. Mozart was a child genius who composed his first piece at age 5. Beethoven kept composing even after he became deaf. Bach wrote beautiful, complex music.",
+            "emoji": "🎼",
+            "funFact": "Beethoven wrote his famous 9th Symphony when he could no longer hear!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who composed music while deaf?", "options": ["Beethoven", "Mozart", "Bach", "Vivaldi"], "answer": "Beethoven" },
+            { "type": "fill", "prompt": "Mozart wrote his first piece at age ____.", "answer": "5" },
+            { "type": "choice", "prompt": "What do composers do?", "options": ["Write music", "Build houses", "Bake cakes", "Sail boats"], "answer": "Write music" },
+            { "type": "choice", "prompt": "Bach was famous for...", "options": ["Complex beautiful music", "Pop songs", "Drum solos", "Rap"], "answer": "Complex beautiful music" }
+          ]
+        },
+        {
+          "id": "mus-adv-004",
+          "title": "Music Genres",
+          "concept": {
+            "text": "Music has many styles called genres: rock, jazz, classical, hip-hop, country, pop, and reggae. Each has its own sound and history.",
+            "emoji": "🎷",
+            "funFact": "Jazz was born in New Orleans, USA over 100 years ago!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Where was jazz born?", "options": ["New Orleans", "Tokyo", "London", "Berlin"], "answer": "New Orleans" },
+            { "type": "fill", "prompt": "A style of music is called a ____.", "answer": "genre" },
+            { "type": "choice", "prompt": "Which genre uses orchestras?", "options": ["Classical", "Hip-hop", "Country", "Rap"], "answer": "Classical" },
+            { "type": "choice", "prompt": "Which is NOT a music genre?", "options": ["Pancake", "Rock", "Pop", "Jazz"], "answer": "Pancake" }
+          ]
+        },
+        {
+          "id": "mus-adv-005",
+          "title": "Reading Notes",
+          "concept": {
+            "text": "Music is written on lines and spaces called a staff. Notes have names: A, B, C, D, E, F, G. They repeat over and over!",
+            "emoji": "🎵",
+            "funFact": "Music uses just 7 letters to make endless songs!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many letters are music notes?", "options": ["7", "5", "10", "26"], "answer": "7" },
+            { "type": "fill", "prompt": "Music is written on a ____.", "answer": "staff" },
+            { "type": "choice", "prompt": "Which is a note?", "options": ["C", "Z", "T", "M"], "answer": "C" },
+            { "type": "choice", "prompt": "Notes are written on...", "options": ["Lines and spaces", "Triangles", "Stars", "Circles"], "answer": "Lines and spaces" }
+          ]
+        }
+      ]
+    },
+    "champion": {
+      "lessons": [
+        {
+          "id": "mus-cha-001",
+          "title": "Music Theory Basics",
+          "concept": {
+            "text": "A scale is a series of notes that sound good together. The major scale (do-re-mi-fa-sol-la-ti-do) has a happy sound. The minor scale sounds more sad or mysterious.",
+            "emoji": "🎹",
+            "funFact": "The 'Happy Birthday' song uses the major scale!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which scale sounds happy?", "options": ["Major", "Minor", "Chromatic", "Pentatonic"], "answer": "Major" },
+            { "type": "tf", "prompt": "A minor scale often sounds sad.", "answer": "true" },
+            { "type": "fill", "prompt": "A series of notes that sound good together is called a ____.", "answer": "scale" },
+            { "type": "choice", "prompt": "The syllable that starts the major scale is...", "options": ["Do", "Mi", "Sol", "Ti"], "answer": "Do" },
+            { "type": "order", "prompt": "Order the syllables of the major scale.", "options": ["Do", "Re", "Mi", "Fa", "Sol", "La", "Ti"], "answer": ["Do", "Re", "Mi", "Fa", "Sol", "La", "Ti"] }
+          ]
+        },
+        {
+          "id": "mus-cha-002",
+          "title": "Symphony Orchestra",
+          "concept": {
+            "text": "An orchestra has 4 sections: strings (most numerous), woodwinds, brass, and percussion. A conductor leads them. Famous orchestral works include Beethoven's 5th Symphony and Vivaldi's Four Seasons.",
+            "emoji": "🎻",
+            "funFact": "A modern orchestra can have over 100 musicians!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who leads the orchestra?", "options": ["Conductor", "Composer", "Soloist", "Manager"], "answer": "Conductor" },
+            { "type": "fill", "prompt": "The most numerous section is the ____ section.", "answer": "strings" },
+            { "type": "tf", "prompt": "Vivaldi wrote 'The Four Seasons'.", "answer": "true" },
+            { "type": "choice", "prompt": "Which is NOT a section?", "options": ["Vocals", "Strings", "Brass", "Percussion"], "answer": "Vocals" }
+          ]
+        },
+        {
+          "id": "mus-cha-003",
+          "title": "Music Around the World",
+          "concept": {
+            "text": "Different cultures have unique music: Brazilian samba, Indian classical raga, Japanese taiko drumming, Caribbean reggae, and African djembe drumming. Each tells a cultural story.",
+            "emoji": "🌐",
+            "funFact": "The djembe drum is over 800 years old and originated in West Africa!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Samba music is from...", "options": ["Brazil", "Japan", "India", "Ireland"], "answer": "Brazil" },
+            { "type": "fill", "prompt": "Taiko drumming is from ____.", "answer": "japan" },
+            { "type": "tf", "prompt": "Reggae music originated in the Caribbean.", "answer": "true" },
+            { "type": "choice", "prompt": "Indian classical music includes...", "options": ["Raga", "Salsa", "Polka", "Tango"], "answer": "Raga" }
+          ]
+        },
+        {
+          "id": "mus-cha-004",
+          "title": "Sound Waves & Pitch",
+          "concept": {
+            "text": "Sound travels in waves. High notes have fast (high-frequency) vibrations; low notes have slow ones. Loudness (amplitude) is how big the waves are.",
+            "emoji": "📡",
+            "funFact": "The human ear can hear sounds from about 20 Hz to 20,000 Hz!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "High-pitched sounds have...", "options": ["High frequency", "Low frequency", "No frequency", "Slow waves"], "answer": "High frequency" },
+            { "type": "fill", "prompt": "How loud a sound is is called ____.", "answer": "amplitude" },
+            { "type": "tf", "prompt": "Sound travels in waves.", "answer": "true" },
+            { "type": "choice", "prompt": "Humans can hear up to about...", "options": ["20,000 Hz", "200 Hz", "2 Hz", "200,000 Hz"], "answer": "20,000 Hz" }
+          ]
+        },
+        {
+          "id": "mus-cha-005",
+          "title": "Music History Eras",
+          "concept": {
+            "text": "Western music has eras: Baroque (Bach, Vivaldi), Classical (Mozart, Haydn), Romantic (Beethoven, Chopin), and Modern. Each era has unique style and instruments.",
+            "emoji": "📜",
+            "funFact": "The Baroque era ended around 1750 — the year Bach died."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which composer is from the Baroque era?", "options": ["Bach", "Beethoven", "Chopin", "Stravinsky"], "answer": "Bach" },
+            { "type": "fill", "prompt": "Mozart belongs to the ____ era.", "answer": "classical" },
+            { "type": "order", "prompt": "Order the eras from earliest to latest.", "options": ["Baroque", "Classical", "Romantic", "Modern"], "answer": ["Baroque", "Classical", "Romantic", "Modern"] },
+            { "type": "tf", "prompt": "Beethoven is considered a Romantic-era composer.", "answer": "true" }
+          ]
+        }
+      ]
+    }
+  }
+}

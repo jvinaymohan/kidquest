@@ -1,0 +1,97 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-bg: #fff9f0;
+  --color-primary: #ff6b35;
+  --color-secondary: #4ecdc4;
+  --color-accent: #ffe66d;
+  --color-success: #6bcb77;
+  --color-error: #ff6b6b;
+  --color-text: #2d3047;
+
+  --history: #d4a017;
+  --geography: #2a9d8f;
+  --music: #9b5de5;
+  --math: #3a86ff;
+  --general-knowledge: #fb8500;
+  --trivia: #e63946;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Nunito", system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: "Baloo 2", system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+button {
+  font-family: inherit;
+}
+
+@layer components {
+  .chunky-card {
+    @apply bg-white rounded-chunky border-[3px] border-ink/10 shadow-chunky;
+  }
+
+  .chunky-btn {
+    @apply inline-flex items-center justify-center gap-2
+           rounded-pill px-6 py-3 font-display font-bold text-lg
+           border-[3px] border-ink/20 shadow-chunky
+           transition-transform select-none cursor-pointer;
+  }
+  .chunky-btn:active {
+    transform: translateY(2px);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+  }
+
+  .focus-ring {
+    @apply outline-none focus-visible:ring-4 focus-visible:ring-primary/40;
+  }
+}
+
+/* Confetti particle */
+.confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 14px;
+  top: -20px;
+  border-radius: 2px;
+  will-change: transform, opacity;
+}
+
+/* Hide scrollbar but keep functionality (mobile feel) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.safe-top {
+  padding-top: max(env(safe-area-inset-top, 0px), 0.5rem);
+}
+.safe-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 0.5rem);
+}

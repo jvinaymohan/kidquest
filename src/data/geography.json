@@ -1,0 +1,238 @@
+{
+  "subject": "geography",
+  "ageGroups": {
+    "explorer": {
+      "lessons": [
+        {
+          "id": "geo-exp-001",
+          "title": "Land and Water",
+          "concept": {
+            "text": "Our Earth has big pieces of land called continents and huge water called oceans.",
+            "emoji": "🌍",
+            "funFact": "Most of Earth is covered in water!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Big land is called a...", "options": ["Continent", "Cookie", "Cloud"], "answer": "Continent" },
+            { "type": "yes-no", "prompt": "Is the ocean made of water?", "answer": "yes" },
+            { "type": "choice", "prompt": "What covers most of Earth?", "options": ["Water", "Sand", "Ice cream"], "answer": "Water" }
+          ]
+        },
+        {
+          "id": "geo-exp-002",
+          "title": "Mountains and Hills",
+          "concept": {
+            "text": "Mountains are very, very tall! Hills are smaller. Some mountains have snow on top.",
+            "emoji": "⛰️",
+            "funFact": "The tallest mountain is called Mount Everest!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which is taller?", "options": ["Mountain", "Hill", "Anthill"], "answer": "Mountain" },
+            { "type": "yes-no", "prompt": "Do mountains sometimes have snow?", "answer": "yes" },
+            { "type": "choice", "prompt": "The tallest mountain is...", "options": ["Mount Everest", "My house", "The tree"], "answer": "Mount Everest" }
+          ]
+        },
+        {
+          "id": "geo-exp-003",
+          "title": "Rivers and Lakes",
+          "concept": {
+            "text": "A river is water that flows. A lake is water that stays in one place.",
+            "emoji": "🏞️",
+            "funFact": "The Nile is one of the longest rivers in the world!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which one flows?", "options": ["River", "Lake", "Pond"], "answer": "River" },
+            { "type": "yes-no", "prompt": "Do lakes flow far away?", "answer": "no" },
+            { "type": "choice", "prompt": "Fish live in...", "options": ["Water", "Sky", "Sand"], "answer": "Water" }
+          ]
+        },
+        {
+          "id": "geo-exp-004",
+          "title": "Hot and Cold Places",
+          "concept": {
+            "text": "Deserts are very hot and sandy. The North and South Poles are very cold and icy!",
+            "emoji": "🏜️",
+            "funFact": "Penguins live where it's very cold!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Where is it very hot?", "options": ["Desert", "Pole", "Cave"], "answer": "Desert" },
+            { "type": "choice", "prompt": "Where do penguins live?", "options": ["Cold places", "Jungle", "Desert"], "answer": "Cold places" },
+            { "type": "yes-no", "prompt": "Are deserts sandy?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "geo-exp-005",
+          "title": "My Home Earth",
+          "concept": {
+            "text": "Earth is the planet where we live. It is round like a ball and spins in space.",
+            "emoji": "🌎",
+            "funFact": "Earth takes one whole day to spin around!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What shape is Earth?", "options": ["Round", "Square", "Triangle"], "answer": "Round" },
+            { "type": "yes-no", "prompt": "Do we live on Earth?", "answer": "yes" },
+            { "type": "choice", "prompt": "Earth is a...", "options": ["Planet", "Star", "Cloud"], "answer": "Planet" }
+          ]
+        }
+      ]
+    },
+    "adventurer": {
+      "lessons": [
+        {
+          "id": "geo-adv-001",
+          "title": "The 7 Continents",
+          "concept": {
+            "text": "Earth has seven continents: Africa, Antarctica, Asia, Australia, Europe, North America, and South America. Each has unique cultures, animals, and landscapes.",
+            "emoji": "🗺️",
+            "funFact": "Asia is the largest continent, while Australia is the smallest!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many continents are there?", "options": ["7", "5", "6", "8"], "answer": "7" },
+            { "type": "choice", "prompt": "Which is the largest continent?", "options": ["Asia", "Africa", "Europe", "North America"], "answer": "Asia" },
+            { "type": "fill", "prompt": "The continent at the South Pole is ____.", "answer": "antarctica" },
+            { "type": "choice", "prompt": "Which continent is Brazil in?", "options": ["South America", "Africa", "Europe", "Asia"], "answer": "South America" }
+          ]
+        },
+        {
+          "id": "geo-adv-002",
+          "title": "Oceans of the World",
+          "concept": {
+            "text": "There are five oceans: Pacific, Atlantic, Indian, Southern, and Arctic. The Pacific is the largest and deepest of all.",
+            "emoji": "🌊",
+            "funFact": "The Pacific Ocean is so big that all the continents could fit inside it!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which ocean is the largest?", "options": ["Pacific", "Atlantic", "Indian", "Arctic"], "answer": "Pacific" },
+            { "type": "fill", "prompt": "The ocean at the North Pole is the ____ Ocean.", "answer": "arctic" },
+            { "type": "choice", "prompt": "How many oceans are there?", "options": ["5", "4", "6", "3"], "answer": "5" },
+            { "type": "choice", "prompt": "Between Africa and Australia is the ____ Ocean.", "options": ["Indian", "Pacific", "Atlantic", "Arctic"], "answer": "Indian" }
+          ]
+        },
+        {
+          "id": "geo-adv-003",
+          "title": "Famous Landmarks",
+          "concept": {
+            "text": "The Eiffel Tower stands in Paris, France. The Great Wall winds across China. The Statue of Liberty greets visitors in New York. Landmarks tell us about places and history.",
+            "emoji": "🗽",
+            "funFact": "The Great Wall of China is over 13,000 miles long!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "The Eiffel Tower is in...", "options": ["Paris", "London", "Rome", "Berlin"], "answer": "Paris" },
+            { "type": "choice", "prompt": "The Great Wall is in...", "options": ["China", "Japan", "India", "Korea"], "answer": "China" },
+            { "type": "fill", "prompt": "The Statue of Liberty is in ____ City.", "answer": "new york" },
+            { "type": "choice", "prompt": "Which is in Egypt?", "options": ["Pyramids of Giza", "Eiffel Tower", "Big Ben", "Taj Mahal"], "answer": "Pyramids of Giza" }
+          ]
+        },
+        {
+          "id": "geo-adv-004",
+          "title": "Capital Cities",
+          "concept": {
+            "text": "Every country has a capital city — where the government works. Some famous capitals: Washington D.C. (USA), London (UK), Tokyo (Japan), and Canberra (Australia).",
+            "emoji": "🏙️",
+            "funFact": "Many people think Sydney is Australia's capital — but it's actually Canberra!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Capital of Japan?", "options": ["Tokyo", "Kyoto", "Osaka", "Seoul"], "answer": "Tokyo" },
+            { "type": "choice", "prompt": "Capital of the USA?", "options": ["Washington D.C.", "New York", "Los Angeles", "Chicago"], "answer": "Washington D.C." },
+            { "type": "fill", "prompt": "The capital of France is ____.", "answer": "paris" },
+            { "type": "choice", "prompt": "Capital of Australia?", "options": ["Canberra", "Sydney", "Melbourne", "Perth"], "answer": "Canberra" }
+          ]
+        },
+        {
+          "id": "geo-adv-005",
+          "title": "Weather and Climate",
+          "concept": {
+            "text": "Weather is what happens day to day — sunny, rainy, snowy. Climate is the pattern over many years. Tropical places stay warm; polar places stay cold.",
+            "emoji": "☁️",
+            "funFact": "The Sahara Desert can reach over 120°F (50°C) in summer!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Weather changes...", "options": ["Day to day", "Once a year", "Never", "Every century"], "answer": "Day to day" },
+            { "type": "fill", "prompt": "Areas near the equator have a ____ climate.", "answer": "tropical" },
+            { "type": "choice", "prompt": "Which place is coldest year-round?", "options": ["Antarctica", "Brazil", "Egypt", "Spain"], "answer": "Antarctica" },
+            { "type": "choice", "prompt": "Climate is the weather over...", "options": ["Many years", "One week", "One day", "One hour"], "answer": "Many years" }
+          ]
+        }
+      ]
+    },
+    "champion": {
+      "lessons": [
+        {
+          "id": "geo-cha-001",
+          "title": "Plate Tectonics",
+          "concept": {
+            "text": "Earth's crust is broken into giant plates that slowly move. When they collide, mountains form. When they slip past each other, earthquakes shake. Volcanoes erupt where plates pull apart or dive under each other.",
+            "emoji": "🌋",
+            "funFact": "The Pacific 'Ring of Fire' has about 75% of the world's active volcanoes."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What causes most earthquakes?", "options": ["Moving plates", "Strong winds", "Heavy rain", "Ocean tides"], "answer": "Moving plates" },
+            { "type": "tf", "prompt": "Mountains can form where two plates collide.", "answer": "true" },
+            { "type": "fill", "prompt": "The Pacific ____ of Fire has many volcanoes.", "answer": "ring" },
+            { "type": "choice", "prompt": "Volcanoes often form at plate...", "options": ["Boundaries", "Centers", "Tops", "Mirrors"], "answer": "Boundaries" }
+          ]
+        },
+        {
+          "id": "geo-cha-002",
+          "title": "World Capitals Challenge",
+          "concept": {
+            "text": "Capitals you should know: Brazil → Brasília, Canada → Ottawa, India → New Delhi, South Africa has three (Pretoria, Cape Town, Bloemfontein), and Russia → Moscow.",
+            "emoji": "🏛️",
+            "funFact": "Bolivia also has two capitals — Sucre (constitutional) and La Paz (seat of government)."
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Capital of Brazil?", "options": ["Brasília", "Rio de Janeiro", "São Paulo", "Salvador"], "answer": "Brasília" },
+            { "type": "choice", "prompt": "Capital of Canada?", "options": ["Ottawa", "Toronto", "Montreal", "Vancouver"], "answer": "Ottawa" },
+            { "type": "fill", "prompt": "Capital of India is New ____.", "answer": "delhi" },
+            { "type": "tf", "prompt": "South Africa has three capital cities.", "answer": "true" },
+            { "type": "choice", "prompt": "Capital of Russia?", "options": ["Moscow", "St. Petersburg", "Kiev", "Minsk"], "answer": "Moscow" }
+          ]
+        },
+        {
+          "id": "geo-cha-003",
+          "title": "Earth's Climate Zones",
+          "concept": {
+            "text": "Earth has several climate zones: tropical (near the equator), arid (deserts), temperate (mild seasons), polar (frozen), and Mediterranean (warm dry summers, mild wet winters).",
+            "emoji": "🌐",
+            "funFact": "The Atacama Desert in Chile is the driest place on Earth — some areas have never recorded rain!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Which climate is near the equator?", "options": ["Tropical", "Polar", "Temperate", "Arid"], "answer": "Tropical" },
+            { "type": "fill", "prompt": "The driest desert in the world is the ____ Desert.", "answer": "atacama" },
+            { "type": "tf", "prompt": "The Mediterranean climate has hot, wet summers.", "answer": "false" },
+            { "type": "order", "prompt": "Order by average rainfall, lowest to highest.", "options": ["Sahara Desert", "Mediterranean", "Rainforest"], "answer": ["Sahara Desert", "Mediterranean", "Rainforest"] }
+          ]
+        },
+        {
+          "id": "geo-cha-004",
+          "title": "Major Rivers",
+          "concept": {
+            "text": "The Nile (Africa) and Amazon (South America) are the two longest rivers on Earth. The Mississippi drains much of the USA. The Yangtze is Asia's longest river.",
+            "emoji": "🛶",
+            "funFact": "The Amazon River discharges more water than the next seven largest rivers combined!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Longest river in Asia?", "options": ["Yangtze", "Ganges", "Mekong", "Indus"], "answer": "Yangtze" },
+            { "type": "tf", "prompt": "The Amazon River is in Africa.", "answer": "false" },
+            { "type": "fill", "prompt": "The longest river in Africa is the ____.", "answer": "nile" },
+            { "type": "choice", "prompt": "The Mississippi River is mostly in...", "options": ["USA", "Canada", "Mexico", "Brazil"], "answer": "USA" }
+          ]
+        },
+        {
+          "id": "geo-cha-005",
+          "title": "Map Reading & Coordinates",
+          "concept": {
+            "text": "Latitude lines run east-west and measure how far north or south of the equator. Longitude lines run north-south. Together they make a coordinate grid for any place on Earth.",
+            "emoji": "🧭",
+            "funFact": "Greenwich, England is at 0° longitude — the Prime Meridian!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Lines that run east-west are called...", "options": ["Latitude", "Longitude", "Meridians", "Tropics"], "answer": "Latitude" },
+            { "type": "fill", "prompt": "The Prime Meridian runs through ____, England.", "answer": "greenwich" },
+            { "type": "tf", "prompt": "The equator is at 0° latitude.", "answer": "true" },
+            { "type": "choice", "prompt": "Longitude lines run...", "options": ["North-south", "East-west", "Diagonally", "In circles"], "answer": "North-south" }
+          ]
+        }
+      ]
+    }
+  }
+}

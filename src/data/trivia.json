@@ -1,0 +1,238 @@
+{
+  "subject": "trivia",
+  "ageGroups": {
+    "explorer": {
+      "lessons": [
+        {
+          "id": "tri-exp-001",
+          "title": "Fun Animal Facts",
+          "concept": {
+            "text": "Did you know? A baby kangaroo is called a joey! Giraffes have very long necks!",
+            "emoji": "🦒",
+            "funFact": "An octopus has 8 arms!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "A baby kangaroo is called a...", "options": ["Joey", "Puppy", "Kitten"], "answer": "Joey" },
+            { "type": "choice", "prompt": "Which has a long neck?", "options": ["Giraffe", "Mouse", "Cat"], "answer": "Giraffe" },
+            { "type": "choice", "prompt": "How many arms does an octopus have?", "options": ["8", "2", "4"], "answer": "8" }
+          ]
+        },
+        {
+          "id": "tri-exp-002",
+          "title": "Yummy Foods",
+          "concept": {
+            "text": "Bananas are yellow! Strawberries are red! Foods come in lots of fun colors!",
+            "emoji": "🍌",
+            "funFact": "A pumpkin is actually a fruit, not a vegetable!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What color is a banana?", "options": ["Yellow", "Blue", "Pink"], "answer": "Yellow" },
+            { "type": "choice", "prompt": "Which is red?", "options": ["Strawberry", "Banana", "Lemon"], "answer": "Strawberry" },
+            { "type": "yes-no", "prompt": "Is a pumpkin a fruit?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "tri-exp-003",
+          "title": "In the Sky",
+          "concept": {
+            "text": "Clouds float in the sky! Birds fly! Sometimes airplanes too!",
+            "emoji": "✈️",
+            "funFact": "Birds use their wings to fly!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What floats in the sky?", "options": ["Clouds", "Rocks", "Cars"], "answer": "Clouds" },
+            { "type": "yes-no", "prompt": "Can birds fly?", "answer": "yes" },
+            { "type": "choice", "prompt": "Airplanes...", "options": ["Fly", "Swim", "Dig"], "answer": "Fly" }
+          ]
+        },
+        {
+          "id": "tri-exp-004",
+          "title": "Toy Fun",
+          "concept": {
+            "text": "Toys are fun! A ball bounces. Blocks stack up. Crayons make colorful drawings!",
+            "emoji": "🎨",
+            "funFact": "The first crayons were made over 100 years ago!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What bounces?", "options": ["Ball", "Book", "Cup"], "answer": "Ball" },
+            { "type": "choice", "prompt": "Crayons help us...", "options": ["Draw", "Sleep", "Eat"], "answer": "Draw" },
+            { "type": "yes-no", "prompt": "Can blocks stack up?", "answer": "yes" }
+          ]
+        },
+        {
+          "id": "tri-exp-005",
+          "title": "Counting Stars",
+          "concept": {
+            "text": "There are MANY stars in the sky at night! More than we can count!",
+            "emoji": "⭐",
+            "funFact": "The sun is a star too!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "When can we see stars?", "options": ["Night", "Lunch", "Morning"], "answer": "Night" },
+            { "type": "yes-no", "prompt": "Is the sun a star?", "answer": "yes" },
+            { "type": "choice", "prompt": "Stars are...", "options": ["Far away", "On the ground", "In your room"], "answer": "Far away" }
+          ]
+        }
+      ]
+    },
+    "adventurer": {
+      "lessons": [
+        {
+          "id": "tri-adv-001",
+          "title": "Amazing Animal Trivia",
+          "concept": {
+            "text": "An octopus has 3 hearts! Sharks have been around longer than trees! A cat's purr can help heal bones! The natural world is full of incredible surprises.",
+            "emoji": "🐙",
+            "funFact": "Honey never spoils — ancient Egyptian honey is still edible today!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many hearts does an octopus have?", "options": ["3", "1", "2", "5"], "answer": "3" },
+            { "type": "tf", "prompt": "Sharks are older than trees.", "answer": "true" },
+            { "type": "fill", "prompt": "____ never spoils — it lasts forever!", "answer": "honey" },
+            { "type": "choice", "prompt": "A cat's purr can help...", "options": ["Heal bones", "Cure colds", "Stop rain", "Grow plants"], "answer": "Heal bones" }
+          ]
+        },
+        {
+          "id": "tri-adv-002",
+          "title": "World Records",
+          "concept": {
+            "text": "The cheetah is the fastest land animal at 70 mph. Mount Everest is the tallest mountain. The blue whale is the largest animal ever. The Nile is the longest river.",
+            "emoji": "🏆",
+            "funFact": "The blue whale's heart is as big as a small car!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Fastest land animal?", "options": ["Cheetah", "Lion", "Horse", "Tiger"], "answer": "Cheetah" },
+            { "type": "choice", "prompt": "Largest animal ever?", "options": ["Blue whale", "Elephant", "T-Rex", "Giant squid"], "answer": "Blue whale" },
+            { "type": "fill", "prompt": "Tallest mountain on Earth is Mount ____.", "answer": "everest" },
+            { "type": "choice", "prompt": "How fast can a cheetah run?", "options": ["70 mph", "30 mph", "100 mph", "10 mph"], "answer": "70 mph" }
+          ]
+        },
+        {
+          "id": "tri-adv-003",
+          "title": "Sports Trivia",
+          "concept": {
+            "text": "The Olympics happen every 4 years. Soccer (football) is the world's most popular sport. A marathon is 26.2 miles long. Basketball was invented in 1891 in the USA.",
+            "emoji": "⚽",
+            "funFact": "Michael Phelps has won 23 Olympic gold medals — the most ever!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Olympics happen every ___ years.", "options": ["4", "2", "5", "10"], "answer": "4" },
+            { "type": "fill", "prompt": "A marathon is ____ miles long.", "answer": "26.2" },
+            { "type": "choice", "prompt": "Most popular sport globally?", "options": ["Soccer", "Cricket", "Basketball", "Tennis"], "answer": "Soccer" },
+            { "type": "choice", "prompt": "Who has 23 Olympic gold medals?", "options": ["Michael Phelps", "Usain Bolt", "Serena Williams", "LeBron James"], "answer": "Michael Phelps" }
+          ]
+        },
+        {
+          "id": "tri-adv-004",
+          "title": "Movie & Book Trivia",
+          "concept": {
+            "text": "Harry Potter was written by J.K. Rowling. Disney's Mickey Mouse was created in 1928. The Lord of the Rings was written by J.R.R. Tolkien. Stories spark our imagination!",
+            "emoji": "📚",
+            "funFact": "Harry Potter has been translated into over 80 languages!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Who wrote Harry Potter?", "options": ["J.K. Rowling", "Roald Dahl", "Dr. Seuss", "Tolkien"], "answer": "J.K. Rowling" },
+            { "type": "fill", "prompt": "Mickey Mouse was created by ____ Disney.", "answer": "walt" },
+            { "type": "choice", "prompt": "Who wrote Lord of the Rings?", "options": ["Tolkien", "Rowling", "Lewis", "Martin"], "answer": "Tolkien" },
+            { "type": "tf", "prompt": "Mickey Mouse first appeared in 1928.", "answer": "true" }
+          ]
+        },
+        {
+          "id": "tri-adv-005",
+          "title": "Mixed Brain Boosters",
+          "concept": {
+            "text": "Time for a mixed-up round! Quick questions about science, history, geography — let's see what you remember!",
+            "emoji": "🧠",
+            "funFact": "Mixing up topics actually helps your brain learn better!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "How many continents are there?", "options": ["7", "5", "6", "8"], "answer": "7" },
+            { "type": "choice", "prompt": "What's 8 × 7?", "options": ["56", "54", "63", "48"], "answer": "56" },
+            { "type": "fill", "prompt": "The Earth orbits the ____.", "answer": "sun" },
+            { "type": "choice", "prompt": "Capital of France?", "options": ["Paris", "London", "Berlin", "Madrid"], "answer": "Paris" }
+          ]
+        }
+      ]
+    },
+    "champion": {
+      "lessons": [
+        {
+          "id": "tri-cha-001",
+          "title": "Mind-Blowing Science",
+          "concept": {
+            "text": "A teaspoonful of neutron star material would weigh 6 billion tons on Earth. Bananas are slightly radioactive (from potassium). Octopuses have blue blood (due to copper).",
+            "emoji": "🌌",
+            "funFact": "Lightning is about 5x hotter than the surface of the Sun!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Why do octopuses have blue blood?", "options": ["Copper", "Iron", "Cold blood", "Algae"], "answer": "Copper" },
+            { "type": "tf", "prompt": "Lightning is hotter than the Sun's surface.", "answer": "true" },
+            { "type": "fill", "prompt": "Bananas are slightly radioactive because of ____.", "answer": "potassium" },
+            { "type": "choice", "prompt": "Which is densest?", "options": ["Neutron star", "Black hole singularity", "Earth's core", "Lead"], "answer": "Black hole singularity" }
+          ]
+        },
+        {
+          "id": "tri-cha-002",
+          "title": "Tech & Internet Trivia",
+          "concept": {
+            "text": "The first computer mouse was made of wood in 1964 by Douglas Engelbart. The internet's predecessor, ARPANET, sent its first message in 1969. The first email was sent in 1971.",
+            "emoji": "💻",
+            "funFact": "Over 90% of the world's data was created in just the last few years!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "When was the first computer mouse made?", "options": ["1964", "1980", "1950", "1990"], "answer": "1964" },
+            { "type": "fill", "prompt": "The internet's predecessor was called ____.", "answer": "arpanet" },
+            { "type": "tf", "prompt": "The first computer mouse was made of wood.", "answer": "true" },
+            { "type": "choice", "prompt": "The first email was sent in...", "options": ["1971", "1981", "1991", "2001"], "answer": "1971" }
+          ]
+        },
+        {
+          "id": "tri-cha-003",
+          "title": "World Culture",
+          "concept": {
+            "text": "Mandarin Chinese has the most native speakers. The world's smallest country is Vatican City. India has 22 official languages. Bhutan measures national happiness (GNH).",
+            "emoji": "🌐",
+            "funFact": "There are around 7,000 languages spoken in the world today!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Most-spoken native language?", "options": ["Mandarin", "English", "Spanish", "Hindi"], "answer": "Mandarin" },
+            { "type": "fill", "prompt": "The world's smallest country is ____ City.", "answer": "vatican" },
+            { "type": "tf", "prompt": "Bhutan measures Gross National Happiness.", "answer": "true" },
+            { "type": "choice", "prompt": "About how many languages exist worldwide?", "options": ["7,000", "700", "70,000", "100"], "answer": "7,000" }
+          ]
+        },
+        {
+          "id": "tri-cha-004",
+          "title": "History Quick-Fire",
+          "concept": {
+            "text": "The Great Wall of China was built over many dynasties starting around 7th century BCE. The Mona Lisa was painted around 1503–1506. The first moon landing was 1969 (Apollo 11).",
+            "emoji": "🚀",
+            "funFact": "Cleopatra lived closer to the iPhone's invention than to the building of the pyramids!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "Year of the first moon landing?", "options": ["1969", "1959", "1979", "1989"], "answer": "1969" },
+            { "type": "fill", "prompt": "Mission name of the first moon landing: ____ 11.", "answer": "apollo" },
+            { "type": "tf", "prompt": "Cleopatra lived closer in time to today than to the pyramids being built.", "answer": "true" },
+            { "type": "choice", "prompt": "The Mona Lisa was painted in...", "options": ["Early 1500s", "1700s", "1800s", "1900s"], "answer": "Early 1500s" }
+          ]
+        },
+        {
+          "id": "tri-cha-005",
+          "title": "Ultimate Mixed Challenge",
+          "concept": {
+            "text": "The Champion final mix: history, geography, math, music, and more all in one round. Take a breath — and bring it home!",
+            "emoji": "🏅",
+            "funFact": "Reviewing across topics is one of the strongest ways to lock in learning!"
+          },
+          "questions": [
+            { "type": "choice", "prompt": "What's the square root of 144?", "options": ["12", "14", "10", "16"], "answer": "12" },
+            { "type": "fill", "prompt": "The Pacific Ring of ____ has many volcanoes.", "answer": "fire" },
+            { "type": "tf", "prompt": "The major scale has 7 different notes.", "answer": "true" },
+            { "type": "choice", "prompt": "Who painted the Mona Lisa?", "options": ["Da Vinci", "Picasso", "Van Gogh", "Monet"], "answer": "Da Vinci" },
+            { "type": "order", "prompt": "Order events: WWI ends, Moon landing, Internet invented (approx).", "options": ["WWI ends", "Moon landing", "Internet invented"], "answer": ["WWI ends", "Moon landing", "Internet invented"] }
+          ]
+        }
+      ]
+    }
+  }
+}
