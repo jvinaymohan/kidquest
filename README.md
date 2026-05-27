@@ -40,22 +40,41 @@ npm run preview     # serves dist on :4173
 
 ---
 
-## ☁️ Deploying to Vercel (Alpha)
+## ☁️ Deploying to Vercel + Supabase
 
-This app is a 100% static SPA — no backend, no env vars, no secrets. Two ways to ship:
+KidQuest is deployed as a static SPA on Vercel, with Supabase as the shared backend for leaderboard data.
 
-### Option 1 — Vercel Dashboard (easiest)
+### 1) Create Supabase project
+
+1. Create a project at [Supabase](https://supabase.com/).
+2. Open SQL Editor and run `supabase/schema.sql`.
+3. Copy:
+   - Project URL
+   - Anon public key
+
+### 2) Configure Vercel environment variables
+
+Set these in **Vercel Project -> Settings -> Environment Variables**:
+
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+
+### 3) Deploy to Vercel
+
+Two ways:
+
+#### Option 1 — Vercel Dashboard (easiest)
 
 1. Push this repo to GitHub/GitLab/Bitbucket.
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
-3. Vercel auto-detects Vite. Defaults will work but verify:
+3. Vercel auto-detects Vite. Verify:
    - **Framework Preset:** Vite
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
-   - **Install Command:** `npm install`
+   - **Install Command:** `npm install --legacy-peer-deps`
 4. Click **Deploy**. You'll get an alpha URL like `https://kidquest-xyz.vercel.app`.
 
-### Option 2 — Vercel CLI
+#### Option 2 — Vercel CLI
 
 ```bash
 npm i -g vercel
@@ -69,6 +88,34 @@ The included `vercel.json` handles:
 - **SPA rewrites** — every non-asset route falls back to `/index.html` so React Router deep links (e.g. `/lesson/math-adv-001`) work on hard refresh.
 - **Long cache** for hashed `/assets/*` (1 year, immutable) — instant subsequent loads.
 - **Security headers** — `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`.
+
+### 4) Confirm shared leaderboard works
+
+Open `Compete` tab and verify:
+- leaderboard is marked `Supabase live`
+- new speed runs appear when submitted from results screen.
+
+---
+
+## 🐳 Container Deployment
+
+### Local container run
+
+```bash
+docker compose up --build
+```
+
+- App: `http://localhost:8080`
+- Postgres (dev): `localhost:54329`
+
+### Production container image
+
+```bash
+docker build -t kidquest:latest .
+docker run --rm -p 8080:80 kidquest:latest
+```
+
+The Docker image serves optimized `dist/` via Nginx with SPA route fallback.
 
 ### Sharing the alpha
 

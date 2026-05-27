@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ArrowUp, ArrowDown } from "lucide-react";
 import { AnswerOption } from "./AnswerOption";
+import { Flag } from "./Flag";
+import { WorldMap } from "../geography/WorldMap";
+import { getCountry } from "../../data/geography/countries";
 import { Button } from "../ui/Button";
 
 function normalize(s) {
@@ -151,6 +154,101 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
                 }
               />
             ))}
+          </div>
+        );
+      }
+      case "flag-choice": {
+        // Options: array of { code, label }. Answer: the correct code (ISO2).
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {question.options.map((opt, i) => {
+              const code = opt.code ?? opt;
+              const label = opt.label ?? opt.code ?? opt;
+              return (
+                <AnswerOption
+                  key={code + i}
+                  index={i}
+                  label={label}
+                  media={<Flag code={code} size="md" />}
+                  onSelect={() => handleChoice(code)}
+                  disabled={revealed}
+                  state={
+                    !revealed
+                      ? "idle"
+                      : normalize(code) === normalize(question.answer)
+                      ? "correct"
+                      : selected === code
+                      ? "wrong"
+                      : "dim"
+                  }
+                />
+              );
+            })}
+          </div>
+        );
+      }
+      case "map-locate": {
+        const correctCode = String(question.answer).toUpperCase();
+        const country = getCountry(correctCode);
+        return (
+          <div className="flex flex-col gap-3">
+            <WorldMap
+              zoomTo={question.zoomTo ?? "world"}
+              revealCode={revealed ? correctCode : null}
+              highlightedCodes={revealed && !isCorrect ? [correctCode] : []}
+              interactive={!revealed}
+              onCountryClick={(code) => {
+                if (revealed) return;
+                setSelected(code);
+                const ok = String(code).toUpperCase() === correctCode;
+                commit(ok);
+              }}
+            />
+            {revealed && country && (
+              <div className="chunky-card p-3 text-sm font-bold text-ink/80 bg-accent/30">
+                {country.funFact}
+              </div>
+            )}
+          </div>
+        );
+      }
+      case "flag-grid": {
+        // Prompt is country name; options are ISO2 codes; user taps the correct flag.
+        return (
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {question.options.map((code, i) => {
+              const state = !revealed
+                ? "idle"
+                : normalize(code) === normalize(question.answer)
+                ? "correct"
+                : selected === code
+                ? "wrong"
+                : "dim";
+              const stateRing =
+                state === "correct"
+                  ? "ring-4 ring-success border-success"
+                  : state === "wrong"
+                  ? "ring-4 ring-error border-error animate-shake"
+                  : state === "dim"
+                  ? "opacity-50"
+                  : "";
+              return (
+                <motion.button
+                  key={code + i}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                  whileTap={revealed ? {} : { y: 1, boxShadow: "2px 2px 0px rgba(0,0,0,0.15)" }}
+                  whileHover={revealed ? {} : { y: -2 }}
+                  onClick={() => handleChoice(code)}
+                  disabled={revealed}
+                  aria-label={`Flag ${code}`}
+                  className={`bg-white rounded-chunky border-[3px] border-ink/15 shadow-chunky p-3 flex items-center justify-center focus-ring transition-all ${stateRing}`}
+                >
+                  <Flag code={code} size="xl" rounded />
+                </motion.button>
+              );
+            })}
           </div>
         );
       }

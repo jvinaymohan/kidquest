@@ -45,12 +45,25 @@ export function findNextLesson(subjectId, ageGroup, lessonProgress) {
   return null;
 }
 
-export function levelLabelFor(masteryPct) {
-  if (masteryPct >= 1) return "Master";
-  if (masteryPct >= 0.66) return "Expert";
-  if (masteryPct >= 0.33) return "Apprentice";
-  return "Beginner";
+export const SUBJECT_RANKS = [
+  { min: 0,    title: "Seedling", emoji: "🌱", color: "#6BCB77" },
+  { min: 0.17, title: "Seeker",   emoji: "🔍", color: "#4ECDC4" },
+  { min: 0.34, title: "Scholar",  emoji: "📚", color: "#3A86FF" },
+  { min: 0.5,  title: "Expert",   emoji: "🎓", color: "#9B5DE5" },
+  { min: 0.75, title: "Master",   emoji: "🏆", color: "#FF6B35" },
+  { min: 1.0,  title: "Legend",   emoji: "💎", color: "#E63946" },
+];
+
+export function subjectRankFor(masteryPct) {
+  let rank = SUBJECT_RANKS[0];
+  for (const r of SUBJECT_RANKS) {
+    if (masteryPct >= r.min) rank = r;
+  }
+  return rank;
 }
+
+// Legacy alias for older imports
+export const levelLabelFor = (p) => subjectRankFor(p).title;
 
 export function allSubjectIds() {
   return SUBJECTS.map((s) => s.id);

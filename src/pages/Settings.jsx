@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Volume2, VolumeX, Music, Music2, Lock, ShieldCheck } from "lucide-react";
+import { Volume2, VolumeX, Music, Music2, Lock, ShieldCheck, Heart, BookOpen, Download, ClipboardList } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
+import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { Button } from "../components/ui/Button";
 import { SUBJECTS, AGE_GROUPS } from "../data/subjects";
 
@@ -9,13 +11,19 @@ export default function Settings() {
   const {
     parentPin, soundEnabled, musicEnabled, dailyGoal, timerMode,
     ageGroup, setAgeGroup, setSound, setMusic, setDailyGoal, setTimerMode,
-    timePerSubject, resetProgress, setParentPin,
+    timePerSubject, resetProgress, setParentPin, lessonsToday, lessonProgress,
+    teacherAssignments, addTeacherAssignment, toggleTeacherAssignment, removeTeacherAssignment,
+    classTarget, setClassTarget, parentDigestLog, logParentDigest, kidName,
   } = useAppStore();
 
   const [unlocked, setUnlocked] = useState(false);
   const [pinInput, setPinInput] = useState("");
   const [showPinSet, setShowPinSet] = useState(false);
   const [newPin, setNewPin] = useState("");
+  const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [assignmentDue, setAssignmentDue] = useState("");
+  const [assignmentSubject, setAssignmentSubject] = useState("math");
+  const multiplicationTables = useMultiplicationStore((s) => s.tables);
 
   if (!unlocked) {
     return (
@@ -42,6 +50,16 @@ export default function Settings() {
           <p className="text-error font-bold text-sm">Wrong PIN. Default is 1234.</p>
         )}
         <p className="text-xs font-bold text-ink/50">Hint: default PIN is 1234</p>
+
+        <div className="mt-4 grid grid-cols-2 gap-2 w-full max-w-sm">
+          <Link to="/about" className="block">
+            <Button variant="ghost" fullWidth leftIcon={<BookOpen size={18} />}>Our Story</Button>
+          </Link>
+          <Link to="/impact" className="block">
+            <Button variant="ghost" fullWidth leftIcon={<Heart size={18} />}>Mission</Button>
+          </Link>
+        </div>
+        <p className="text-xs text-ink/50 font-bold mt-4">Designed by Vinay. Built with Cursor.</p>
       </div>
     );
   }
@@ -139,6 +157,133 @@ export default function Settings() {
         )}
       </section>
 
+      <section className="chunky-card p-4 border-[3px] border-math/25">
+        <h2 className="font-display font-extrabold text-lg mb-2">Teacher Assignments</h2>
+        <div className="flex flex-wrap gap-2 mb-2">
+          <button
+            type="button"
+            onClick={() => {
+              setAssignmentTitle("Geography: Locate 8 countries");
+              setAssignmentSubject("geography");
+            }}
+            className="text-xs font-bold px-2 py-1 rounded-pill border-2 border-ink/15 bg-white"
+          >
+            + Geography template
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAssignmentTitle("Solar System: Learn 5 planet facts");
+              setAssignmentSubject("solar-system");
+            }}
+            className="text-xs font-bold px-2 py-1 rounded-pill border-2 border-ink/15 bg-white"
+          >
+            + Solar template
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setAssignmentTitle("Math: Table 7 to Boss Battle");
+              setAssignmentSubject("math");
+            }}
+            className="text-xs font-bold px-2 py-1 rounded-pill border-2 border-ink/15 bg-white"
+          >
+            + Math template
+          </button>
+        </div>
+        <input
+          value={classTarget}
+          onChange={(e) => setClassTarget(e.target.value)}
+          placeholder="Class target (e.g. Tables 1-10 to Phase 3 by Friday)"
+          className="w-full px-3 py-2 rounded-chunky border-[3px] border-ink/15 font-bold focus-ring mb-2"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+          <input
+            value={assignmentTitle}
+            onChange={(e) => setAssignmentTitle(e.target.value)}
+            placeholder="Assignment title"
+            className="px-3 py-2 rounded-chunky border-[3px] border-ink/15 font-bold focus-ring"
+          />
+          <select
+            value={assignmentSubject}
+            onChange={(e) => setAssignmentSubject(e.target.value)}
+            className="px-3 py-2 rounded-chunky border-[3px] border-ink/15 font-bold focus-ring"
+          >
+            <option value="math">Math</option>
+            <option value="geography">Geography</option>
+            <option value="solar-system">Solar System</option>
+          </select>
+          <input
+            type="date"
+            value={assignmentDue}
+            onChange={(e) => setAssignmentDue(e.target.value)}
+            className="px-3 py-2 rounded-chunky border-[3px] border-ink/15 font-bold focus-ring"
+          />
+        </div>
+        <Button
+          className="mt-2 w-full"
+          onClick={() => {
+            if (!assignmentTitle || !assignmentDue) return;
+            addTeacherAssignment({ title: assignmentTitle, dueDate: assignmentDue, subjectId: assignmentSubject });
+            setAssignmentTitle("");
+            setAssignmentDue("");
+          }}
+        >
+          Add Assignment
+        </Button>
+        <ul className="mt-3 space-y-2">
+          {teacherAssignments.map((a) => (
+            <li key={a.id} className="rounded-chunky border-[2px] border-ink/10 p-2 flex items-center gap-2">
+              <button type="button" onClick={() => toggleTeacherAssignment(a.id)} className="text-lg">
+                {a.done ? "✅" : "⬜"}
+              </button>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold truncate">{a.title}</p>
+                <p className="text-xs text-ink/60">{a.subjectId} · due {a.dueDate}</p>
+              </div>
+              <button type="button" onClick={() => removeTeacherAssignment(a.id)} className="text-xs font-bold text-error">
+                remove
+              </button>
+            </li>
+          ))}
+          {teacherAssignments.length === 0 && (
+            <p className="text-xs font-bold text-ink/60">No assignments yet.</p>
+          )}
+        </ul>
+      </section>
+
+      <section className="chunky-card p-4 border-[3px] border-geography/25">
+        <h2 className="font-display font-extrabold text-lg mb-2">Parent Digests & Exports</h2>
+        <Button
+          variant="ghost"
+          fullWidth
+          leftIcon={<ClipboardList size={16} />}
+          onClick={() => {
+            const msg = `Today ${kidName || "your child"} completed ${todayLessons(lessonsToday)} lessons and has a ${dailyGoal}-lesson daily goal.`;
+            logParentDigest(msg);
+          }}
+        >
+          Generate Daily Digest
+        </Button>
+        <Button
+          className="mt-2 w-full"
+          leftIcon={<Download size={16} />}
+          onClick={() => exportProgressCsv({ teacherAssignments, lessonProgress, multiplicationTables })}
+        >
+          Export Progress CSV
+        </Button>
+        <ul className="mt-3 space-y-2">
+          {parentDigestLog.slice(0, 5).map((d) => (
+            <li key={d.id} className="text-xs font-bold text-ink/70 rounded-chunky bg-bg px-2 py-2 border border-ink/10">
+              {new Date(d.at).toLocaleDateString()} - {d.message}
+            </li>
+          ))}
+          {parentDigestLog.length === 0 && (
+            <p className="text-xs font-bold text-ink/60">No digest generated yet.</p>
+          )}
+        </ul>
+      </section>
+
       <section className="chunky-card p-4">
         <h2 className="font-display font-extrabold text-lg mb-2">Parent PIN</h2>
         {!showPinSet ? (
@@ -167,6 +312,8 @@ export default function Settings() {
         )}
       </section>
 
+      <MultiplicationParentSection />
+
       <section className="chunky-card p-4 border-error/40">
         <h2 className="font-display font-extrabold text-lg mb-2 text-error">Danger Zone</h2>
         <p className="text-xs font-bold text-ink/60 mb-2">Reset learning progress (keeps profile).</p>
@@ -176,7 +323,52 @@ export default function Settings() {
           Reset Progress
         </Button>
       </section>
+
+      <section className="grid grid-cols-2 gap-3">
+        <Link to="/about" className="block">
+          <Button variant="ghost" fullWidth leftIcon={<BookOpen size={18} />}>Our Story</Button>
+        </Link>
+        <Link to="/impact" className="block">
+          <Button variant="ghost" fullWidth leftIcon={<Heart size={18} />}>Mission</Button>
+        </Link>
+      </section>
+
+      <footer className="text-center text-xs font-bold text-ink/50 py-2">
+        Designed by Vinay. Built with Cursor.
+      </footer>
     </div>
+  );
+}
+
+function MultiplicationParentSection() {
+  const unlockAll = useMultiplicationStore((s) => s.unlockAllTables);
+  const setUnlockAll = useMultiplicationStore((s) => s.setUnlockAll);
+  const resetMul = useMultiplicationStore((s) => s.resetProgress);
+  const legendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const rank = useMultiplicationStore((s) => s.getRank());
+
+  return (
+    <section className="chunky-card p-4 border-mul-electric/30">
+      <h2 className="font-display font-extrabold text-lg mb-2">Multiplication Camp</h2>
+      <p className="text-xs font-bold text-ink/60 mb-2">
+        Rank: {rank.emoji} {rank.title} · {legendary}/20 legendary tables
+      </p>
+      <Toggle
+        label="Unlock all tables (1–20)"
+        icon={<ShieldCheck />}
+        on={unlockAll}
+        onChange={setUnlockAll}
+      />
+      <Button
+        variant="ghost"
+        className="mt-2 w-full"
+        onClick={() => {
+          if (confirm("Reset multiplication camp progress only?")) resetMul();
+        }}
+      >
+        Reset multiplication progress
+      </Button>
+    </section>
   );
 }
 
@@ -205,4 +397,40 @@ function formatMinutes(secs) {
   if (m < 60) return `${m}m`;
   const h = Math.floor(m / 60);
   return `${h}h ${m % 60}m`;
+}
+
+function exportProgressCsv({ teacherAssignments, lessonProgress, multiplicationTables }) {
+  const rows = [
+    ["type", "id", "status", "due_date", "stars", "mastered"],
+    ...teacherAssignments.map((a) => ["assignment", a.title, a.done ? "done" : "open", a.dueDate, "", ""]),
+    ...Object.entries(lessonProgress).map(([id, p]) => [
+      "lesson",
+      id,
+      p.mastered ? "mastered" : "in_progress",
+      "",
+      p.stars ?? 0,
+      p.mastered ? "yes" : "no",
+    ]),
+    ...Object.entries(multiplicationTables ?? {}).map(([n, t]) => [
+      "multiplication_table",
+      `${n}x`,
+      t.legendAt ? "legend" : `phase_${t.currentPhase}`,
+      "",
+      t.bossBest ?? 0,
+      t.legendAt ? "yes" : "no",
+    ]),
+  ];
+  const csv = rows.map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kidquest-progress-report.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function todayLessons(lessonsToday) {
+  const today = new Date().toISOString().slice(0, 10);
+  return lessonsToday.date === today ? lessonsToday.count : 0;
 }

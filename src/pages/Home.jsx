@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Brain, ChevronRight, Zap } from "lucide-react";
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
@@ -6,12 +7,18 @@ import { useAppStore } from "../store/useAppStore";
 import { SUBJECTS } from "../data/subjects";
 import { ProgressRing } from "../components/ui/ProgressRing";
 import { StarRating } from "../components/ui/StarRating";
-import { subjectProgress, levelLabelFor, findNextLesson } from "../utils/content";
+import { subjectProgress, subjectRankFor, findNextLesson } from "../utils/content";
+import { getMonthlyTheme, getThemeBackgroundStyle } from "../utils/theme";
 import { Mascot } from "../components/mascots/Mascot";
+import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { formatMs } from "../utils/multiplicationScoring";
 
 export default function Home() {
   const navigate = useNavigate();
   const { kidName, ageGroup, lessonProgress, dailyGoal, lessonsToday } = useAppStore();
+  const dueReviews = useMultiplicationStore((s) => s.getDueReviews().length);
+  const bestSpeedRun = useMultiplicationStore((s) => s.bestSpeedRun);
+  const theme = getMonthlyTheme();
 
   const today = new Date().toISOString().slice(0, 10);
   const todayCount = lessonsToday.date === today ? lessonsToday.count : 0;
@@ -19,7 +26,32 @@ export default function Home() {
 
   return (
     <div className="flex flex-col gap-5">
-      <section className="relative chunky-card p-5 overflow-hidden bg-gradient-to-br from-accent to-white">
+      <motion.section
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="chunky-card px-4 py-3 flex items-center gap-3"
+        style={getThemeBackgroundStyle(theme)}
+      >
+        <motion.div
+          animate={{ rotate: [-6, 6, -6] }}
+          transition={{ repeat: Infinity, duration: 3.4, ease: "easeInOut" }}
+          className="text-3xl"
+          aria-hidden
+        >
+          {theme.emoji}
+        </motion.div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[10px] uppercase tracking-wide font-display font-extrabold text-ink/60">
+            This month
+          </div>
+          <div className="font-display font-extrabold text-lg leading-tight truncate" style={{ color: theme.accent }}>
+            {theme.name}
+          </div>
+          <div className="text-xs font-bold text-ink/70 truncate">{theme.tagline}</div>
+        </div>
+      </motion.section>
+
+      <section className="relative chunky-card p-5 overflow-hidden" style={getThemeBackgroundStyle(theme)}>
         <div className="absolute -right-4 -bottom-4 opacity-90">
           <Mascot kind="panda" size={120} />
         </div>
@@ -49,6 +81,39 @@ export default function Home() {
         </div>
       </section>
 
+      {dueReviews > 0 && (
+        <Link to="/multiplication/review" className="chunky-card p-4 flex items-center gap-3 bg-[#EEEDFE] border-[3px] border-[#7F77DD]/30 focus-ring">
+          <div className="w-10 h-10 rounded-xl bg-[#7F77DD] text-white grid place-items-center">
+            <Brain size={20} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-display text-base font-extrabold text-[#3C3489]">
+              {dueReviews} items due for review
+            </div>
+            <div className="text-xs font-bold text-[#534AB7]">
+              Quick 5-min session to keep your knowledge sharp
+            </div>
+          </div>
+          <ChevronRight className="text-[#7F77DD]" size={18} />
+        </Link>
+      )}
+
+      <Link
+        to="/multiplication/speed-run"
+        className="chunky-card p-4 flex items-center gap-4 border-[3px] border-mul-electric/50 bg-gradient-to-r from-mul-dark to-math text-white focus-ring"
+      >
+        <Zap className="text-mul-gold shrink-0" size={32} />
+        <div className="min-w-0 flex-1">
+          <div className="font-display text-lg font-extrabold">Speed Run Challenge</div>
+          <div className="text-xs font-bold text-white/75">
+            {bestSpeedRun
+              ? `Your best: ${bestSpeedRun.score}/50 in ${formatMs(bestSpeedRun.totalTimeMs)}`
+              : "Beat 50 random multiplication questions as fast as possible"}
+          </div>
+        </div>
+        <span className="font-display font-extrabold text-mul-gold text-sm px-3 py-1 rounded-pill bg-primary/80">Play</span>
+      </Link>
+
       <h2 className="font-display text-2xl font-extrabold flex items-center gap-2">
         <span>Subjects</span>
         <span className="text-sm font-bold text-ink/60">Pick your adventure</span>
@@ -66,6 +131,15 @@ export default function Home() {
           />
         ))}
       </div>
+
+      <div className="flex items-center justify-center gap-3 text-xs font-bold text-ink/50 pt-1">
+        <Link to="/about" className="hover:text-primary focus-ring rounded px-2 py-1">Our story</Link>
+        <span aria-hidden>·</span>
+        <Link to="/impact" className="hover:text-primary focus-ring rounded px-2 py-1">Mission</Link>
+      </div>
+      <p className="text-center text-[10px] font-bold text-ink/40 -mt-2 pb-1">
+        Designed by Vinay. Built with Cursor.
+      </p>
     </div>
   );
 }
@@ -95,7 +169,14 @@ function SubjectCard({ subject, index, ageGroup, lessonProgress, onClick }) {
           <Icon size={24} strokeWidth={2.5} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-display text-lg font-extrabold leading-tight truncate">{subject.name}</div>
+          <div className="flex items-center gap-2">
+            <div className="font-display text-lg font-extrabold leading-tight truncate">{subject.name}</div>
+            {subject.isBonus && (
+              <span className="shrink-0 text-[9px] uppercase tracking-wide font-display font-extrabold px-2 py-0.5 rounded-pill bg-accent border-[2px] border-ink/15 text-ink">
+                Bonus
+              </span>
+            )}
+          </div>
           <div className="text-[12px] font-bold text-ink/60 truncate">{subject.tagline}</div>
         </div>
         <ProgressRing value={stats.masteryPct} size={48} stroke={6} color={subject.color}>
@@ -106,7 +187,7 @@ function SubjectCard({ subject, index, ageGroup, lessonProgress, onClick }) {
         <div className="flex flex-col">
           <StarRating value={Math.min(3, Math.round((stats.stars / Math.max(1, stats.maxStars)) * 3))} size={18} />
           <span className="text-[11px] font-bold text-ink/60">
-            {levelLabelFor(stats.masteryPct)} · {stats.mastered}/{stats.total}
+            {subjectRankFor(stats.masteryPct).emoji} {subjectRankFor(stats.masteryPct).title} · {stats.mastered}/{stats.total}
           </span>
         </div>
         <span

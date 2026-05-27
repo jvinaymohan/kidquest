@@ -1,9 +1,10 @@
 import history from "./history.json";
-import geography from "./geography.json";
+import geography from "./geography";
 import music from "./music.json";
-import math from "./math.json";
+import math from "./math";
 import generalKnowledge from "./general-knowledge.json";
 import trivia from "./trivia.json";
+import solarSystem from "./solar-system";
 
 export const SUBJECTS = [
   {
@@ -25,6 +26,7 @@ export const SUBJECTS = [
     mascotKey: "compass",
     mascotName: "Captain Compass",
     icon: "Globe2",
+    learnSurface: true,
   },
   {
     id: "music",
@@ -45,6 +47,7 @@ export const SUBJECTS = [
     mascotKey: "robot",
     mascotName: "Robot Rex",
     icon: "Calculator",
+    learnSurface: true,
   },
   {
     id: "general-knowledge",
@@ -66,6 +69,18 @@ export const SUBJECTS = [
     mascotName: "Party Panda",
     icon: "Star",
   },
+  {
+    id: "solar-system",
+    name: "Solar System",
+    tagline: "Blast off into space!",
+    color: "var(--solar-system)",
+    accent: "#D6E6FF",
+    mascotKey: "rocket",
+    mascotName: "Captain Cosmo",
+    icon: "Rocket",
+    isBonus: true,
+    learnSurface: true,
+  },
 ];
 
 export const SUBJECT_DATA = {
@@ -75,6 +90,7 @@ export const SUBJECT_DATA = {
   math,
   "general-knowledge": generalKnowledge,
   trivia,
+  "solar-system": solarSystem,
 };
 
 export const AGE_GROUPS = [

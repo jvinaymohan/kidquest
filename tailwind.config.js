@@ -17,6 +17,10 @@ export default {
         math: "rgb(58 134 255 / <alpha-value>)",
         gk: "rgb(251 133 0 / <alpha-value>)",
         trivia: "rgb(230 57 70 / <alpha-value>)",
+        cream: "rgb(255 252 245 / <alpha-value>)",
+        "mul-dark": "#0D1B2A",
+        "mul-electric": "#00D4FF",
+        "mul-gold": "#FFD700",
       },
       fontFamily: {
         display: ["'Baloo 2'", "system-ui", "sans-serif"],

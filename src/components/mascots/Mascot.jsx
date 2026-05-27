@@ -123,6 +123,24 @@ function Panda({ size }) {
   );
 }
 
+function Rocket({ size }) {
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size}>
+      <ellipse cx="20" cy="30" r="2" fill="#FFE66D" />
+      <ellipse cx="82" cy="20" r="1.5" fill="#FFE66D" />
+      <ellipse cx="78" cy="46" r="2.5" fill="#FFE66D" />
+      <ellipse cx="14" cy="62" r="1.5" fill="#FFE66D" />
+      <path d="M50 14 Q34 36 34 64 L66 64 Q66 36 50 14 Z" fill="#F4F1ED" stroke="#2D3047" strokeWidth="2.5" />
+      <circle cx="50" cy="40" r="8" fill="#7FDBFF" stroke="#2D3047" strokeWidth="2" />
+      <circle cx="50" cy="40" r="3.5" fill="#2D3047" />
+      <path d="M34 56 L24 70 L40 64 Z" fill="#FF6B6B" stroke="#2D3047" strokeWidth="2" />
+      <path d="M66 56 L76 70 L60 64 Z" fill="#FF6B6B" stroke="#2D3047" strokeWidth="2" />
+      <path d="M44 64 L42 78 L50 82 L58 78 L56 64 Z" fill="#FF6B35" stroke="#2D3047" strokeWidth="2" />
+      <path d="M46 82 L50 92 L54 82 Z" fill="#FFE66D" />
+    </svg>
+  );
+}
+
 const MASCOTS = {
   owl: Owl,
   compass: Compass,
@@ -130,6 +148,7 @@ const MASCOTS = {
   robot: Robot,
   cat: CatMascot,
   panda: Panda,
+  rocket: Rocket,
 };
 
 export function Mascot({ kind = "owl", size = 96, animate = true, className }) {

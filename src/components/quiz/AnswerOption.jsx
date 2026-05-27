@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { motion } from "framer-motion";
 import { Check, X } from "lucide-react";
 
-export function AnswerOption({ label, onSelect, state = "idle", disabled, index = 0 }) {
+export function AnswerOption({ label, onSelect, state = "idle", disabled, index = 0, media = null }) {
   const stateClasses =
     state === "correct"
       ? "bg-success text-white border-success/80"
@@ -27,9 +27,12 @@ export function AnswerOption({ label, onSelect, state = "idle", disabled, index 
         state === "wrong" && "animate-shake"
       )}
     >
-      <span className="text-left">{label}</span>
-      {state === "correct" && <Check size={22} />}
-      {state === "wrong" && <X size={22} />}
+      <span className="flex items-center gap-3 text-left min-w-0">
+        {media}
+        <span className="truncate">{label}</span>
+      </span>
+      {state === "correct" && <Check size={22} className="shrink-0" />}
+      {state === "wrong" && <X size={22} className="shrink-0" />}
     </motion.button>
   );
 }

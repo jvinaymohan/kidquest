@@ -43,6 +43,12 @@ const initialState = {
   parentPin: "1234",
 
   pendingCelebration: null,
+
+  learnSecondsBySubject: {},
+  learnXPDaily: { date: todayISO(), xpBySubject: {} },
+  teacherAssignments: [],
+  classTarget: "",
+  parentDigestLog: [],
 };
 
 export const useAppStore = create(
@@ -67,6 +73,44 @@ export const useAppStore = create(
       setDailyGoal: (v) => set({ dailyGoal: v }),
       setTimerMode: (v) => set({ timerMode: v }),
       setParentPin: (v) => set({ parentPin: v }),
+      setClassTarget: (v) => set({ classTarget: v }),
+
+      addTeacherAssignment: ({ title, dueDate, subjectId = "math" }) => {
+        if (!title || !dueDate) return;
+        set((s) => ({
+          teacherAssignments: [
+            ...s.teacherAssignments,
+            {
+              id: crypto.randomUUID(),
+              title,
+              dueDate,
+              subjectId,
+              createdAt: new Date().toISOString(),
+              done: false,
+            },
+          ],
+        }));
+      },
+
+      toggleTeacherAssignment: (id) =>
+        set((s) => ({
+          teacherAssignments: s.teacherAssignments.map((a) =>
+            a.id === id ? { ...a, done: !a.done } : a
+          ),
+        })),
+
+      removeTeacherAssignment: (id) =>
+        set((s) => ({
+          teacherAssignments: s.teacherAssignments.filter((a) => a.id !== id),
+        })),
+
+      logParentDigest: (message) =>
+        set((s) => ({
+          parentDigestLog: [
+            { id: crypto.randomUUID(), at: new Date().toISOString(), message },
+            ...s.parentDigestLog,
+          ].slice(0, 20),
+        })),
 
       _bumpStreak: () => {
         const s = get();
@@ -191,6 +235,68 @@ export const useAppStore = create(
       },
 
       clearCelebration: () => set({ pendingCelebration: null }),
+
+      grantXP: (amount) => {
+        if (!amount || amount <= 0) return;
+        set((s) => {
+          const newXP = s.totalXP + amount;
+          return { totalXP: newXP, level: levelForXP(newXP) };
+        });
+        get()._bumpStreak();
+      },
+
+      grantBadge: (badgeId) => {
+        if (!badgeId) return;
+        set((s) => {
+          if (s.badges.includes(badgeId)) return s;
+          const badges = [...s.badges, badgeId];
+          const merged = { ...s, badges };
+          return { badges: computeUnlockedBadges(merged) };
+        });
+      },
+
+      tickLearnTime: (subjectId, deltaSeconds) => {
+        if (!subjectId || deltaSeconds <= 0) return;
+        const s = get();
+        const today = todayISO();
+        let learnXPDaily = s.learnXPDaily;
+        if (learnXPDaily.date !== today) {
+          learnXPDaily = { date: today, xpBySubject: {} };
+        }
+        const prevSeconds = s.learnSecondsBySubject[subjectId] ?? 0;
+        const newSeconds = prevSeconds + deltaSeconds;
+        const xpEarnedToday = learnXPDaily.xpBySubject[subjectId] ?? 0;
+        const xpBlocks = Math.floor(newSeconds / 30) - Math.floor(prevSeconds / 30);
+        let xpToAdd = 0;
+        if (xpBlocks > 0) {
+          xpToAdd = Math.min(xpBlocks, Math.max(0, 20 - xpEarnedToday));
+        }
+
+        const updated = {
+          learnSecondsBySubject: {
+            ...s.learnSecondsBySubject,
+            [subjectId]: newSeconds,
+          },
+          learnXPDaily: {
+            date: today,
+            xpBySubject: {
+              ...learnXPDaily.xpBySubject,
+              [subjectId]: xpEarnedToday + xpToAdd,
+            },
+          },
+        };
+
+        if (xpToAdd > 0) {
+          const newXP = s.totalXP + xpToAdd;
+          updated.totalXP = newXP;
+          updated.level = levelForXP(newXP);
+        }
+
+        const merged = { ...s, ...updated };
+        updated.badges = computeUnlockedBadges(merged);
+
+        set(updated);
+      },
 
       resetProgress: () =>
         set((s) => ({

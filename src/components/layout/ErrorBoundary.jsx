@@ -21,6 +21,7 @@ export class ErrorBoundary extends Component {
   hardReset = () => {
     try {
       localStorage.removeItem("kidquest-state-v1");
+      localStorage.removeItem("kidquest-multiplication-v1");
     } catch {}
     window.location.href = "/";
   };

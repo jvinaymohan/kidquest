@@ -7,24 +7,49 @@ import { StreakFlame } from "../rewards/StreakFlame";
 export function TopBar() {
   const navigate = useNavigate();
   const { kidName, avatarConfig, totalXP, currentStreak } = useAppStore();
+  const streakDots = 14;
+  const activeDots = Math.min(currentStreak, streakDots);
 
   return (
-    <header className="sticky top-0 z-30 bg-bg/85 backdrop-blur border-b border-ink/10 px-4 py-3 safe-top">
-      <div className="max-w-2xl mx-auto flex items-center gap-3">
-        <button
-          onClick={() => navigate("/profile")}
-          className="shrink-0 w-12 h-12 grid place-items-center rounded-full border-[3px] border-ink/20 bg-white shadow-chunky focus-ring overflow-hidden"
-          aria-label="Open profile"
-        >
-          <Avatar config={avatarConfig} size={48} />
-        </button>
-        <div className="hidden sm:block min-w-0">
-          <div className="font-display text-sm leading-none text-ink/60 font-bold">Hi,</div>
-          <div className="font-display text-xl font-extrabold truncate">{kidName || "Friend"}!</div>
+    <header className="sticky top-0 z-30 safe-top border-b border-ink/10">
+      <div className="bg-mul-dark px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center gap-3">
+          <button
+            onClick={() => navigate("/profile")}
+            className="shrink-0 w-11 h-11 grid place-items-center rounded-full border-[3px] border-white/25 bg-white shadow-chunky focus-ring overflow-hidden"
+            aria-label="Open profile"
+          >
+            <Avatar config={avatarConfig} size={44} />
+          </button>
+          <div className="min-w-0">
+            <div className="font-display text-sm leading-none text-white/75 font-bold">Hey</div>
+            <div className="font-display text-lg font-extrabold truncate text-white">{kidName || "Friend"}!</div>
+          </div>
+          <div className="flex-1" />
+          <div className="hidden sm:block">
+            <XPBar totalXP={totalXP} />
+          </div>
+          <StreakFlame streak={currentStreak} />
         </div>
-        <div className="flex-1" />
-        <XPBar totalXP={totalXP} />
-        <StreakFlame streak={currentStreak} />
+      </div>
+      <div className="bg-mul-dark px-4 pb-3">
+        <div className="max-w-2xl mx-auto">
+          <div className="text-[11px] font-bold text-white/65 mb-1.5">{currentStreak}-day streak - keep it going!</div>
+          <div className="flex gap-1.5">
+            {Array.from({ length: streakDots }, (_, i) => {
+              const done = i < activeDots;
+              const today = i === activeDots && activeDots < streakDots;
+              return (
+                <span
+                  key={i}
+                  className={`h-2.5 flex-1 rounded-pill ${
+                    done ? "bg-primary" : today ? "bg-mul-gold" : "bg-white/15"
+                  }`}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
     </header>
   );

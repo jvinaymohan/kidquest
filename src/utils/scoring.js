@@ -23,27 +23,49 @@ export function xpForLesson(correct, total, ageGroup) {
   return Math.round(pointsForLesson(correct, total) * ageMultiplier(ageGroup));
 }
 
-const LEVEL_TABLE = [
-  0, 50, 120, 220, 360, 540, 760, 1020, 1320, 1660, 2040, 2460, 2920, 3420, 3960,
+export const LEVEL_TITLES = [
+  { level: 1,  xp: 0,    title: "Curious Cub",       emoji: "🐾" },
+  { level: 2,  xp: 100,  title: "Explorer Scout",    emoji: "🧭" },
+  { level: 3,  xp: 250,  title: "Map Maker",         emoji: "🗺️" },
+  { level: 4,  xp: 500,  title: "Star Chaser",       emoji: "⭐" },
+  { level: 5,  xp: 900,  title: "World Wanderer",    emoji: "🌍" },
+  { level: 6,  xp: 1400, title: "Knowledge Knight",  emoji: "⚔️" },
+  { level: 7,  xp: 2000, title: "Quiz Wizard",       emoji: "🧙" },
+  { level: 8,  xp: 2800, title: "Atlas Master",      emoji: "🏛️" },
+  { level: 9,  xp: 3800, title: "Legend of Learning",emoji: "🏆" },
+  { level: 10, xp: 5000, title: "Grand Champion",    emoji: "👑" },
 ];
+
+const LEVEL_XP = LEVEL_TITLES.map((l) => l.xp);
 
 export function levelForXP(xp) {
   let lvl = 1;
-  for (let i = 0; i < LEVEL_TABLE.length; i++) {
-    if (xp >= LEVEL_TABLE[i]) lvl = i + 1;
+  for (let i = 0; i < LEVEL_XP.length; i++) {
+    if (xp >= LEVEL_XP[i]) lvl = i + 1;
     else break;
   }
-  return lvl;
+  return Math.min(lvl, LEVEL_TITLES.length);
+}
+
+export function levelInfo(xp) {
+  const lvl = levelForXP(xp);
+  const idx = Math.min(lvl - 1, LEVEL_TITLES.length - 1);
+  return LEVEL_TITLES[idx];
 }
 
 export function xpToNextLevel(xp) {
   const lvl = levelForXP(xp);
-  const next = LEVEL_TABLE[lvl] ?? xp + 500;
-  const prev = LEVEL_TABLE[lvl - 1] ?? 0;
+  const next = LEVEL_XP[lvl] ?? xp + 1000;
+  const prev = LEVEL_XP[lvl - 1] ?? 0;
+  const info = LEVEL_TITLES[Math.min(lvl - 1, LEVEL_TITLES.length - 1)];
+  const isMax = lvl >= LEVEL_TITLES.length;
   return {
     level: lvl,
+    title: info.title,
+    emoji: info.emoji,
     current: xp - prev,
     needed: next - prev,
-    pct: Math.min(1, (xp - prev) / Math.max(1, next - prev)),
+    pct: isMax ? 1 : Math.min(1, (xp - prev) / Math.max(1, next - prev)),
+    isMax,
   };
 }

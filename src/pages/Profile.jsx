@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAppStore } from "../store/useAppStore";
 import { Avatar, AVATAR_OPTIONS } from "../components/mascots/Avatar";
@@ -9,6 +10,7 @@ import { BadgeChip } from "../components/ui/BadgeChip";
 import { SUBJECTS } from "../data/subjects";
 import { subjectProgress } from "../utils/content";
 import { ProgressRing } from "../components/ui/ProgressRing";
+import { RankBadge } from "../components/multiplication/RankBadge";
 
 export default function Profile() {
   const {
@@ -59,6 +61,16 @@ export default function Profile() {
         <Stat label="Streak" value={`${currentStreak}🔥`} />
       </section>
       <div className="text-center text-xs font-bold text-ink/60 -mt-2">Longest streak: {longestStreak} days</div>
+
+      <RankBadge />
+
+      <Link
+        to="/settings"
+        className="chunky-card p-3 border-[3px] border-ink/15 bg-white flex items-center justify-between focus-ring"
+      >
+        <span className="font-display font-extrabold">Parent Dashboard</span>
+        <span className="text-sm font-bold text-ink/60">PIN protected →</span>
+      </Link>
 
       <section>
         <h3 className="font-display text-xl font-extrabold mb-2">Subject Mastery</h3>

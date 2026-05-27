@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  kidquest-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+
+  kidquest-postgres:
+    image: postgres:16-alpine
+    container_name: kidquest-postgres
+    environment:
+      POSTGRES_DB: kidquest
+      POSTGRES_USER: kidquest
+      POSTGRES_PASSWORD: kidquest_dev_password
+    ports:
+      - "54329:5432"
+    volumes:
+      - kidquest_pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  kidquest_pg_data:

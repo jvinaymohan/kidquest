@@ -36,6 +36,11 @@ export function computeUnlockedBadges(state) {
   }
   if (triedSubjects.size === SUBJECTS.length) unlocked.add("all_subjects");
 
+  const learnSeconds = state.learnSecondsBySubject || {};
+  const totalLearn = Object.values(learnSeconds).reduce((a, b) => a + b, 0);
+  if (totalLearn >= 60) unlocked.add("curious_mind");
+  if (totalLearn >= 600) unlocked.add("armchair_explorer");
+
   return Array.from(unlocked);
 }
 

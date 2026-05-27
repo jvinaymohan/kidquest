@@ -15,6 +15,12 @@ export const BADGES = [
   { id: "trivia_apprentice", name: "Trivia Titan", emoji: "🎉", description: "Master 3 Trivia lessons." },
   { id: "subject_master", name: "Subject Master", emoji: "👑", description: "100% mastery in a subject." },
   { id: "all_subjects", name: "Quest Complete!", emoji: "🏆", description: "Try every subject." },
+  { id: "curious_mind", name: "Curious Mind", emoji: "🧠", description: "Spend 60 seconds exploring in Learn mode." },
+  { id: "armchair_explorer", name: "Armchair Explorer", emoji: "🛋️", description: "Spend 10 minutes learning across all subjects." },
+  { id: "mul_lightning", name: "Lightning Strike", emoji: "⚡", description: "Score 50/50 on a multiplication speed run." },
+  { id: "mul_speed_demon", name: "Speed Demon", emoji: "🚀", description: "Finish a speed run in under 2 minutes." },
+  { id: "mul_flawless", name: "Flawless", emoji: "💯", description: "Perfect 50/50 gold in under 3 minutes." },
+  { id: "mul_grand_multiplier", name: "THE GRAND MULTIPLIER", emoji: "💎", description: "All 20 multiplication tables at Legend status." },
 ];
 
 export const BADGE_BY_ID = Object.fromEntries(BADGES.map((b) => [b.id, b]));
