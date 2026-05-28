@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "learn": "Aprender",
+    "explore": "Explorar",
+    "create": "Crear",
+    "compete": "Competir",
+    "me": "Yo"
+  },
+  "home": {
+    "nextStep": "Tu siguiente paso",
+    "dailyChallenge": "Desafío diario",
+    "teacherAssignments": "De tu maestro"
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "google": "Continuar con Google"
+  },
+  "lifeExplorer": {
+    "title": "Explorador de vida",
+    "map": "Mi mapa del mundo",
+    "reading": "Diario de lectura",
+    "movie": "Diario de películas",
+    "music": "Diario de música",
+    "story": "Estudio de historias"
+  }
+}

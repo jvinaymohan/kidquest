@@ -8,8 +8,11 @@ export const isSupabaseEnabled = Boolean(supabaseUrl && supabaseAnonKey);
 export const supabase = isSupabaseEnabled
   ? createClient(supabaseUrl, supabaseAnonKey, {
       auth: {
-        persistSession: false,
-        autoRefreshToken: false,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        storage: typeof window !== "undefined" ? window.localStorage : undefined,
+        storageKey: "kidquest-auth-v1",
       },
     })
   : null;

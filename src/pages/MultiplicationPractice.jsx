@@ -7,6 +7,8 @@ import { getFactsForTable, MOTIVATIONAL } from "../data/multiplication/tables";
 import { pickWrongOptions, shuffle } from "../utils/multiplicationScoring";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useAppStore } from "../store/useAppStore";
+import { useSound } from "../hooks/useSound";
+import { SessionComplete } from "../components/multiplication/SessionComplete";
 
 export default function MultiplicationPractice() {
   const { tableNumber: tn } = useParams();
@@ -17,6 +19,7 @@ export default function MultiplicationPractice() {
   const touchPracticeDay = useMultiplicationStore((s) => s.touchPracticeDay);
   const grantXP = useAppStore((s) => s.grantXP);
   const navigate = useNavigate();
+  const sound = useSound();
 
   const queue = useMemo(
     () => shuffle(facts.filter((f) => (factProgress[f.id]?.practiceHits ?? 0) < 2)),
@@ -27,21 +30,25 @@ export default function MultiplicationPractice() {
   const [feedback, setFeedback] = useState(null);
   const fact = queue[idx] ?? facts[0];
   const mastered = facts.every((f) => (factProgress[f.id]?.practiceHits ?? 0) >= 2);
-  if (!tableNumber || tableNumber < 1 || tableNumber > 20 || facts.length === 0) {
-    return <p className="p-4">Invalid table.</p>;
-  }
 
   const options = useMemo(() => {
     if (!fact) return [];
     return shuffle([fact.product, ...pickWrongOptions(fact.product)]);
   }, [fact?.id]);
 
+  if (!tableNumber || tableNumber < 1 || tableNumber > 20 || facts.length === 0) {
+    return <p className="p-4">Invalid table.</p>;
+  }
+
   function answer(choice) {
     const correct = choice === fact.product;
     recordPractice(fact.id, correct);
     if (correct) {
+      sound.correct();
       grantXP(5);
       touchPracticeDay();
+    } else {
+      sound.wrong();
     }
     setFeedback({ correct, answer: fact.product });
     setTimeout(() => {
@@ -60,15 +67,17 @@ export default function MultiplicationPractice() {
 
   if (mastered) {
     return (
-      <div className="p-6 text-center">
-        <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="text-5xl mb-2">
-          🎉
-        </motion.div>
-        <h2 className="font-display text-2xl font-extrabold">Table {tableNumber} Practiced!</h2>
-        <Button className="mt-4" onClick={() => navigate(`/multiplication/table/${tableNumber}`)}>
-          Continue
-        </Button>
-      </div>
+      <SessionComplete
+        emoji="🎉"
+        title={`Table ${tableNumber} practiced!`}
+        subtitle="Phase 2 complete — unlock Speed Drill when you're ready."
+        stats={[
+          { label: "Facts", value: facts.length },
+          { label: "XP earned", value: "+5 each" },
+        ]}
+        primaryLabel="Back to table"
+        onPrimary={() => navigate(`/multiplication/table/${tableNumber}`)}
+      />
     );
   }
 

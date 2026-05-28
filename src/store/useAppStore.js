@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { calculateStars, xpForLesson, pointsForLesson, levelForXP } from "../utils/scoring";
 import { computeUnlockedBadges, findNewBadges } from "../utils/badges";
+import { queueLessonUpsert, upsertUserStats } from "../lib/cloud/progress";
+import { DEFAULT_PARENT_PIN } from "../constants/parentPin";
 
 function todayISO() {
   const d = new Date();
@@ -18,6 +20,7 @@ function daysBetween(a, b) {
 const initialState = {
   onboarded: false,
   kidName: "",
+  role: "kid",
   avatarConfig: { skin: 1, hair: 1, outfit: 1, accessory: 0 },
   ageGroup: "adventurer",
 
@@ -40,7 +43,7 @@ const initialState = {
   dailyGoal: 2,
   timerMode: false,
 
-  parentPin: "1234",
+  parentPin: DEFAULT_PARENT_PIN,
 
   pendingCelebration: null,
 
@@ -49,6 +52,8 @@ const initialState = {
   teacherAssignments: [],
   classTarget: "",
   parentDigestLog: [],
+
+  dailyChallengeDone: null,
 };
 
 export const useAppStore = create(
@@ -56,16 +61,18 @@ export const useAppStore = create(
     (set, get) => ({
       ...initialState,
 
-      completeOnboarding: ({ kidName, ageGroup, avatarConfig }) =>
+      completeOnboarding: ({ kidName, ageGroup, avatarConfig, role }) =>
         set((s) => ({
           ...s,
           onboarded: true,
           kidName,
           ageGroup,
+          role: role ?? s.role ?? "kid",
           avatarConfig: avatarConfig ?? s.avatarConfig,
         })),
 
       setKidName: (name) => set({ kidName: name }),
+      setRole: (role) => set({ role }),
       setAgeGroup: (ageGroup) => set({ ageGroup }),
       setAvatar: (avatarConfig) => set({ avatarConfig }),
       setSound: (v) => set({ soundEnabled: v }),
@@ -74,6 +81,9 @@ export const useAppStore = create(
       setTimerMode: (v) => set({ timerMode: v }),
       setParentPin: (v) => set({ parentPin: v }),
       setClassTarget: (v) => set({ classTarget: v }),
+
+      completeDailyChallenge: (dateKey) =>
+        set({ dailyChallengeDone: dateKey ?? todayISO() }),
 
       addTeacherAssignment: ({ title, dueDate, subjectId = "math" }) => {
         if (!title || !dueDate) return;
@@ -231,6 +241,19 @@ export const useAppStore = create(
         };
 
         set(updated);
+
+        queueLessonUpsert(lessonId, subjectId, updated.lessonProgress[lessonId]);
+        upsertUserStats({
+          totalXP: updated.totalXP,
+          totalPoints: updated.totalPoints,
+          level: updated.level,
+          currentStreak: updated.currentStreak,
+          longestStreak: updated.longestStreak,
+          lastPlayDate: updated.lastPlayDate,
+          lessonsToday: updated.lessonsToday,
+          badges: updated.badges,
+        }).catch(() => {});
+
         return updated.pendingCelebration;
       },
 
@@ -243,6 +266,17 @@ export const useAppStore = create(
           return { totalXP: newXP, level: levelForXP(newXP) };
         });
         get()._bumpStreak();
+        const s = get();
+        upsertUserStats({
+          totalXP: s.totalXP,
+          totalPoints: s.totalPoints,
+          level: s.level,
+          currentStreak: s.currentStreak,
+          longestStreak: s.longestStreak,
+          lastPlayDate: s.lastPlayDate,
+          lessonsToday: s.lessonsToday,
+          badges: s.badges,
+        }).catch(() => {});
       },
 
       grantBadge: (badgeId) => {

@@ -4,6 +4,7 @@ import { getFactsForTable } from "../data/multiplication/tables";
 import { calculateNextReview, qualityFromResponse } from "../lib/sm2";
 import { rankForLegendaryCount, medalForRun } from "../utils/multiplicationScoring";
 import { TABLE_BADGES } from "../data/multiplication/badges";
+import { queueMulFactUpsert, queueMulTableUpsert } from "../lib/cloud/progress";
 
 function defaultFact() {
   return {
@@ -62,16 +63,15 @@ export const useMultiplicationStore = create(
       setUnlockAll: (v) => set({ unlockAllTables: v }),
 
       completeLearn: (tableNumber) => {
-        set((s) => ({
-          tables: {
-            ...s.tables,
-            [tableNumber]: {
-              ...s.tables[tableNumber],
-              learnComplete: true,
-              currentPhase: Math.max(s.tables[tableNumber]?.currentPhase ?? 1, 2),
-            },
-          },
-        }));
+        set((s) => {
+          const next = {
+            ...s.tables[tableNumber],
+            learnComplete: true,
+            currentPhase: Math.max(s.tables[tableNumber]?.currentPhase ?? 1, 2),
+          };
+          queueMulTableUpsert(tableNumber, next);
+          return { tables: { ...s.tables, [tableNumber]: next } };
+        });
       },
 
       recordPractice: (factId, correct) => {
@@ -89,7 +89,9 @@ export const useMultiplicationStore = create(
           const tables = { ...s.tables };
           if (allPracticed && tables[tableNumber].currentPhase < 3) {
             tables[tableNumber] = { ...tables[tableNumber], currentPhase: 3 };
+            queueMulTableUpsert(tableNumber, tables[tableNumber]);
           }
+          queueMulFactUpsert(factId, f);
           return { facts, tables };
         });
       },
@@ -117,7 +119,9 @@ export const useMultiplicationStore = create(
           const tables = { ...s.tables };
           if (allDrilled && tables[tableNumber].currentPhase < 4) {
             tables[tableNumber] = { ...tables[tableNumber], currentPhase: 4 };
+            queueMulTableUpsert(tableNumber, tables[tableNumber]);
           }
+          queueMulFactUpsert(factId, f);
           return { facts, tables };
         });
       },
@@ -134,10 +138,12 @@ export const useMultiplicationStore = create(
             t.currentPhase = Math.max(t.currentPhase, 4);
           }
           tables[tableNumber] = t;
+          queueMulTableUpsert(tableNumber, t);
           if (passed) {
             const next = tableNumber + 1;
             if (next <= 20 && tables[next]) {
               tables[next] = { ...tables[next], unlocked: true };
+              queueMulTableUpsert(next, tables[next]);
             }
           }
           return { tables };
@@ -151,6 +157,7 @@ export const useMultiplicationStore = create(
           const quality = qualityFromResponse({ correct, responseMs });
           const next = calculateNextReview(f, quality);
           Object.assign(f, next);
+          queueMulFactUpsert(factId, f);
           return { facts: { ...s.facts, [factId]: f } };
         });
       },
@@ -167,9 +174,11 @@ export const useMultiplicationStore = create(
             const nextTable = tableNumber + 1;
             if (nextTable <= 20 && tables[nextTable]) {
               tables[nextTable] = { ...tables[nextTable], unlocked: true };
+              queueMulTableUpsert(nextTable, tables[nextTable]);
             }
           }
           tables[tableNumber] = t;
+          queueMulTableUpsert(tableNumber, t);
           return { tables };
         });
       },

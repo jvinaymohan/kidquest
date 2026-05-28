@@ -1,54 +1,51 @@
 # KidQuest Initial Alpha To-Do
 
+**Tactical checklist for the current sprint.**  
+For the full product vision and phased delivery plan, see **[ROADMAP.md](./ROADMAP.md)**.
+
 Updated: 2026-05-27
 
 ## P0 - Must be done before alpha invite
 
-- [ ] Stabilize app startup and runtime
-  - [x] Keep dev launch stable on `127.0.0.1:5173`
-  - [ ] Add production error boundary fallback screen per route group
-  - [ ] Add a simple health checklist (home, one subject, one lesson, multiplication, profile, settings)
-- [ ] Finalize kid IA and route consistency
-  - [x] 5-tab nav (`Learn`, `Explore`, `Create`, `Compete`, `Me`)
-  - [ ] Ensure every tab destination has complete, non-placeholder content for alpha
-  - [ ] Ensure back navigation feels consistent from drills/results
-- [ ] Multiplication module alpha readiness
-  - [x] Core pages + phases + local state + speed run
-  - [ ] Remove blocking UX bugs from full 1->5 journey
-  - [ ] Add session-end summaries for Learn/Practice/Drill/Boss
-  - [ ] Add guardrails for accidental exits during active timed sessions
-- [ ] Parent control accessibility
-  - [x] Parent dashboard reachable from Me/Profile
-  - [ ] Parent unlock-all-tables flow UX polish and copy review
-  - [ ] Parent daily-goal messaging tied to multiplication sessions too
+- [x] Stabilize app startup and runtime (dev on :5173)
+- [x] Production error boundary per route group
+- [x] Smoke checklist: landing → register → home → lesson → multiplication → profile → settings (`docs/SMOKE.md`)
+- [x] 5-tab nav (`Learn`, `Explore`, `Create`, `Compete`, `Me`)
+- [x] Every tab has complete, non-placeholder content for alpha (Explore/Create/Compete deepened)
+- [x] Multiplication core: phases, speed run, SRS, cloud sync
+- [ ] Full multiplication 1→Legend journey QA on mobile
+- [x] Exit guardrails for timed sessions (drill, boss, speed run)
+- [x] Parent dashboard reachable; cloud classrooms + assignments when signed in
+- [x] Supabase schema automation (`npm run db:apply`)
+- [x] Auth: register, login, roles, profile sync, password reset
+- [x] Kid-visible teacher assignments on Home
+- [x] Unified `/review` hub + daily challenge on dashboard
+- [x] Offline banner when cloud enabled
+- [ ] Rotate any exposed database passwords; set GitHub secrets for CI
 
 ## P1 - Strongly recommended for alpha quality
 
-- [ ] Login/onboarding redesign alignment
-  - [ ] Match final dark hero + mascot-first composition
-  - [ ] Add social auth shell UI states (real auth can remain deferred)
-  - [ ] Add pre-signup "what you'll explore" visual proof section
-- [ ] Dashboard polish pass
-  - [x] Review due interruption card
-  - [x] Speed challenge card
-  - [ ] Subject cards show clear current phase labels in UI
-  - [ ] Add "next best action" copy on each major card
-- [ ] UX consistency pass
-  - [ ] Touch targets >=48px everywhere, >=72px on numeric keypad
-  - [ ] Replace any harsh wording on mistakes with coaching copy
-  - [ ] Ensure persistent progress indicators on all practice screens
+- [x] Landing page aligned to mockup (dark hero, mascots, subject grid)
+- [x] Dashboard: review card, speed challenge, subject phase grid
+- [ ] Social auth (Google) — real OAuth, not disabled shell
+- [x] Session-end summaries for Practice/Drill/Boss (`SessionComplete` + Web Audio SFX)
+- [ ] Touch targets + coaching copy audit
+- [x] Shareable speed-run result card
+- [x] Personal best chart (basic)
 
-## P2 - Can ship right after alpha starts
+## P2 - Right after alpha starts
 
-- [ ] Audio system integration (Howler) + settings toggles for effects/music
-- [ ] Result share card generation for speed runs
-- [ ] Better charting for personal best trend
-- [ ] Expand Explore/Create/Compete tabs beyond starter hubs
+- [x] Web Audio SFX + settings integration (replaces Howler for alpha)
+- [x] Deepen Explore / Create / Compete hubs
+- [ ] Subject leaderboards from real Supabase aggregates (not mock peers)
+- [x] Playwright smoke E2E scaffold (`e2e/smoke.spec.js`, `npm run test:e2e`)
 
-## Deferred (post-alpha / backend phase)
+## Moved to ROADMAP (no longer “deferred”)
 
-- [ ] Supabase schema integration and user-level sync
-- [ ] Global/class leaderboard filters (age/classroom)
-- [ ] Teacher assignment tools and parent digest automation
-- [ ] Exportable progress reports
-- [ ] Advanced spaced repetition analytics and reminders
+These are tracked in [ROADMAP.md](./ROADMAP.md) with phase numbers:
+
+- Supabase sync (Phase 0 — largely done)
+- Global/class leaderboards (Phase 4)
+- Teacher assignments & parent digests (Phase 0/5 — basics done)
+- i18n, offline, Tesla mode (Phase 6)
+- Life Explorer (Phase 7)

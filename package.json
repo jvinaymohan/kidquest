@@ -11,7 +11,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview --port 4173",
-    "start": "vite preview --port 4173 --host"
+    "start": "vite preview --port 4173 --host",
+    "db:apply": "node scripts/apply-schema.mjs",
+    "db:ping": "node scripts/apply-schema.mjs --ping",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
@@ -39,6 +42,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
     "postcss": "^8.5.15",
+    "postgres": "^3.4.9",
     "tailwindcss": "^3.4.19",
     "vite": "^8.0.12"
   }

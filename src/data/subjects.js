@@ -16,6 +16,7 @@ export const SUBJECTS = [
     mascotKey: "owl",
     mascotName: "Professor Owl",
     icon: "Scroll",
+    learnSurface: true,
   },
   {
     id: "geography",
@@ -37,6 +38,7 @@ export const SUBJECTS = [
     mascotKey: "dino",
     mascotName: "DJ Dino",
     icon: "Music2",
+    learnSurface: true,
   },
   {
     id: "math",
@@ -58,6 +60,7 @@ export const SUBJECTS = [
     mascotKey: "cat",
     mascotName: "Curious Cat",
     icon: "Lightbulb",
+    learnSurface: true,
   },
   {
     id: "trivia",
@@ -68,6 +71,7 @@ export const SUBJECTS = [
     mascotKey: "panda",
     mascotName: "Party Panda",
     icon: "Star",
+    learnSurface: true,
   },
   {
     id: "solar-system",

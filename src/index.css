@@ -28,6 +28,26 @@ body,
   height: 100%;
 }
 
+html.dyslexia-font body {
+  font-family: "Comic Sans MS", "OpenDyslexic", "Nunito", system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  line-height: 1.55;
+}
+
+html.low-bandwidth img:not([data-critical]) {
+  content-visibility: auto;
+}
+
+html.tesla-mode {
+  font-size: 118%;
+}
+
+html.tesla-mode .chunky-btn,
+html.tesla-mode button {
+  min-height: 56px;
+  font-size: 1.1rem;
+}
+
 body {
   margin: 0;
   font-family: "Nunito", system-ui, sans-serif;
@@ -69,6 +89,23 @@ button {
   .focus-ring {
     @apply outline-none focus-visible:ring-4 focus-visible:ring-primary/40;
   }
+
+  .home-card {
+    @apply bg-white/90 backdrop-blur-sm rounded-3xl ring-1 ring-ink/[0.06] shadow-[0_8px_30px_rgba(45,48,71,0.08)];
+  }
+
+  .home-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold
+           bg-white/20 text-white backdrop-blur-md ring-1 ring-white/25;
+  }
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Confetti particle */

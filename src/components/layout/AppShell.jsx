@@ -2,11 +2,16 @@ import { Outlet, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { TopBar } from "./TopBar";
 import { BottomNav } from "./BottomNav";
+import { OfflineBanner } from "./OfflineBanner";
+import { RouteErrorBoundary } from "./RouteErrorBoundary";
+import { useTeslaMode } from "../../hooks/useTeslaMode";
 
 export function AppShell({ hideTop = false, hideBottom = false }) {
+  useTeslaMode();
   const location = useLocation();
   return (
     <div className="min-h-screen flex flex-col">
+      <OfflineBanner />
       {!hideTop && <TopBar />}
       <main className="flex-1 relative overflow-hidden">
         <AnimatePresence mode="wait">
@@ -18,7 +23,9 @@ export function AppShell({ hideTop = false, hideBottom = false }) {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="px-4 py-5 max-w-2xl mx-auto"
           >
-            <Outlet />
+            <RouteErrorBoundary label={location.pathname}>
+              <Outlet />
+            </RouteErrorBoundary>
           </motion.div>
         </AnimatePresence>
       </main>

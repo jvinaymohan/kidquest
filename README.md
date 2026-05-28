@@ -1,245 +1,228 @@
-# 🎓 KidQuest
+# KidQuest
 
-A joyful, gamified learning adventure for kids ages 4–14 that teaches History, Geography, Music, Math, General Knowledge & Trivia through bite-size lessons and interactive quizzes.
+A global, gamified learning adventure for kids ages 4–14 — History, Geography, Music, Math, General Knowledge, Trivia, and Solar System — with a full **Multiplication Mastery** camp (tables 1×–20×), parent/teacher tools, and cloud-backed progress.
 
-> **Stack:** React (Vite) · Tailwind CSS · Framer Motion · Zustand (with localStorage) · React Router v6 · Lucide React
->
-> **No backend.** All content & progress are local. Mobile-first, tablet-friendly, offline-capable.
+> **Stack:** React (Vite) · Tailwind CSS · Framer Motion · Zustand · React Router v6 · Supabase (Auth + Postgres)  
+> **Deploy:** Vercel (frontend) · Supabase (backend) · Docker (optional self-host)
 
----
-
-## ✨ Highlights
-
-- **3 Age Groups** — Explorer (4–6), Adventurer (7–10), Champion (11–14). Each gets age-appropriate content, vocabulary, and question types.
-- **6 Subjects** — History, Geography, Music, Math, General Knowledge, Trivia. Each has its own color, icon, and mascot character.
-- **90 lessons** seeded across all subjects/age groups (5 lessons × 6 subjects × 3 age groups), with 3–5 questions per lesson.
-- **Mastery system** — beginner → apprentice → expert → master. Lessons unlock progressively. 3 stars = mastered.
-- **XP + Levels + Streaks + Badges** — frequent, satisfying rewards tied to learning progress.
-- **Mascot-led UX** — six hand-drawn SVG mascots: Professor Owl, Captain Compass, DJ Dino, Robot Rex, Curious Cat, Party Panda.
-- **Question variety** — image-tap, yes/no, multiple choice, fill-in-the-blank, true/false, and drag-to-order.
-- **Parent zone** — PIN-protected (default `1234`). Time per subject, daily goal, age group switching, sound toggles, progress reset.
-- **Confetti, level-ups, animated stars, page transitions** — delightful Framer Motion animations throughout.
+📋 **[Product PRD →](docs/PRD.md)** — community vision, safety, monetization, MVP scope.  
+📋 **[Engineering roadmap →](docs/ROADMAP.md)** — phases 0–10, shipped features, delivery timeline.
 
 ---
 
-## 🚀 Getting Started
+## What KidQuest is
+
+KidQuest is built around five kid-facing tabs:
+
+| Tab | Purpose |
+|-----|---------|
+| **Learn** | Dashboard, subject progress, review due, speed-run challenge |
+| **Explore** | Geography map learning, Solar System explorer |
+| **Create** | Creative prompts and “today’s plan” (expanding to Life Explorer) |
+| **Compete** | Speed-run leaderboard, subject challenges |
+| **Me** | Profile, badges, streaks, parent dashboard link |
+
+**Roles:** Kid, Parent, and Teacher accounts (email/password). Progress syncs to Supabase when configured.
+
+**Mastery model:** Learn → Practice → Speed Drill → Boss Battle → Legend (multiplication is fully implemented; other subjects use lesson stars + progressive unlock today).
+
+---
+
+## Highlights (current build)
+
+- **7 learning areas** — History, Geography, Music, Math, General Knowledge, Trivia, plus bonus **Solar System**
+- **Geography** — 194 countries, interactive world map, map-locate quizzes, learn/browse mode
+- **Multiplication Mastery** — 400 facts (1×1–20×20), 5 phases per table, SM-2 review, 50-question speed run, shareable result cards
+- **3 age groups** — Explorer (4–6), Adventurer (7–10), Champion (11–14)
+- **Gamification** — XP, named levels, streaks, badges, subject ranks, confetti
+- **Auth & cloud** — Register, login, profiles, lesson + multiplication sync, classrooms, assignments, leaderboards
+- **Parent zone** — PIN-protected dashboard, digests, CSV export, classroom tools
+- **Kid UX** — Dark game header, mascot-led design, encouraging wrong-answer copy
+
+---
+
+## Quick start
 
 ```bash
-npm install
+cd kidquest
+npm install --legacy-peer-deps
+cp .env.example .env.local   # add your Supabase keys (see below)
 npm run dev
 ```
 
-Then open `http://localhost:5173`.
+Open **http://localhost:5173** → `/landing` → register or sign in.
 
-### Production build
+### Environment variables (`.env.local`)
 
-```bash
-npm run build
-npm run preview     # serves dist on :4173
+```env
+# Frontend (required for cloud features)
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+
+# Database schema apply (npm run db:apply) — never commit real passwords
+SUPABASE_PROJECT_REF=YOUR_PROJECT_REF
+SUPABASE_DB_PASSWORD=your_database_password
 ```
+
+### Useful scripts
+
+| Command | What it does |
+|---------|----------------|
+| `npm run dev` | Local dev server |
+| `npm run build` | Production build → `dist/` |
+| `npm run preview` | Preview production build on :4173 |
+| `npm run db:apply` | Apply `supabase/schema.sql` to your Supabase project |
+| `npm run lint` | ESLint |
 
 ---
 
-## ☁️ Deploying to Vercel + Supabase
+## Supabase setup
 
-KidQuest is deployed as a static SPA on Vercel, with Supabase as the shared backend for leaderboard data.
+1. Create a project at [supabase.com](https://supabase.com).
+2. Apply schema (automated — no SQL editor copy-paste):
 
-### 1) Create Supabase project
+   ```bash
+   npm run db:apply
+   ```
 
-1. Create a project at [Supabase](https://supabase.com/).
-2. Open SQL Editor and run `supabase/schema.sql`.
-3. Copy:
-   - Project URL
-   - Anon public key
+   Uses `SUPABASE_PROJECT_REF` + `SUPABASE_DB_PASSWORD` from `.env.local`. Idempotent — safe to re-run after schema changes.
 
-### 2) Configure Vercel environment variables
+3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to `.env.local` and Vercel.
+4. **Auth → Email:** disable “Confirm email” for frictionless alpha, or keep it for production.
+5. **Google sign-in:** enable Google provider and redirect URLs — full steps in [`docs/GOOGLE_AUTH.md`](docs/GOOGLE_AUTH.md).
 
-Set these in **Vercel Project -> Settings -> Environment Variables**:
+**CI:** Add `SUPABASE_DB_URL` (or ref + password) as GitHub secrets. Pushes to `main` that touch `supabase/schema.sql` run [`.github/workflows/supabase-schema.yml`](.github/workflows/supabase-schema.yml).
 
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-
-### 3) Deploy to Vercel
-
-Two ways:
-
-#### Option 1 — Vercel Dashboard (easiest)
-
-1. Push this repo to GitHub/GitLab/Bitbucket.
-2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
-3. Vercel auto-detects Vite. Verify:
-   - **Framework Preset:** Vite
-   - **Build Command:** `npm run build`
-   - **Output Directory:** `dist`
-   - **Install Command:** `npm install --legacy-peer-deps`
-4. Click **Deploy**. You'll get an alpha URL like `https://kidquest-xyz.vercel.app`.
-
-#### Option 2 — Vercel CLI
-
-```bash
-npm i -g vercel
-vercel login
-vercel              # preview deploy
-vercel --prod       # production deploy
-```
-
-The included `vercel.json` handles:
-
-- **SPA rewrites** — every non-asset route falls back to `/index.html` so React Router deep links (e.g. `/lesson/math-adv-001`) work on hard refresh.
-- **Long cache** for hashed `/assets/*` (1 year, immutable) — instant subsequent loads.
-- **Security headers** — `X-Content-Type-Options`, `Referrer-Policy`, `X-Frame-Options`, `Permissions-Policy`.
-
-### 4) Confirm shared leaderboard works
-
-Open `Compete` tab and verify:
-- leaderboard is marked `Supabase live`
-- new speed runs appear when submitted from results screen.
+**Schema includes:** profiles, user_stats, lesson_progress, multiplication progress, geography/solar progress, life_explorer_items, friends, daily_duels, user_preferences, child_profiles, subject_mastery_leaderboard view, classrooms, assignments, parent_digests, speed_run_results + leaderboard view, RLS, new-user trigger.
 
 ---
 
-## 🐳 Container Deployment
+## Deploy to Vercel
 
-### Local container run
+1. Push to GitHub and import at [vercel.com/new](https://vercel.com/new).
+2. Settings:
+   - **Build:** `npm run build`
+   - **Output:** `dist`
+   - **Install:** `npm install --legacy-peer-deps`
+3. Add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` for Production, Preview, and Development.
+
+`vercel.json` provides SPA rewrites, asset caching, and security headers.
+
+**Verify after deploy:** register → onboard → play multiplication → check Supabase tables → Compete tab shows “Supabase live” leaderboard.
+
+---
+
+## Docker (optional)
 
 ```bash
-docker compose up --build
-```
-
-- App: `http://localhost:8080`
-- Postgres (dev): `localhost:54329`
-
-### Production container image
-
-```bash
+docker compose up --build    # http://localhost:8080
+# or
 docker build -t kidquest:latest .
 docker run --rm -p 8080:80 kidquest:latest
 ```
 
-The Docker image serves optimized `dist/` via Nginx with SPA route fallback.
-
-### Sharing the alpha
-
-Send the Vercel URL. Each tester has their own progress saved in their browser's localStorage — there is no shared backend. To start fresh on a device, just clear site data or use the in-app **Settings → Danger Zone → Reset Progress**.
-
-### Custom domain
-
-In Vercel: **Project → Settings → Domains** → add your domain → follow DNS instructions. The `vercel.json` config requires no changes.
-
 ---
 
-## 🗂️ Project Structure
+## Project structure
 
 ```
-src/
-├── components/
-│   ├── ui/              # Button, Card, ProgressRing, StarRating, BadgeChip
-│   ├── quiz/            # QuestionCard, AnswerOption, QuizProgress
-│   ├── lesson/          # ConceptCard
-│   ├── rewards/         # XPBar, StreakFlame, ConfettiBlast, LevelUpModal
-│   ├── mascots/         # Mascot (SVG), MascotSpeech, Avatar (builder)
-│   └── layout/          # AppShell, TopBar, BottomNav, FloatingMascots
-├── pages/
-│   ├── Onboarding.jsx   # name + age + avatar (first run)
-│   ├── Home.jsx         # Dashboard with subject cards
-│   ├── Subject.jsx      # Lesson list with lock/mastery states
-│   ├── Lesson.jsx       # Concept → Quiz state machine
-│   ├── Results.jsx      # Stars, XP, badges, confetti, level up
-│   ├── Profile.jsx      # Avatar editor + badge shelf + mastery
-│   └── Settings.jsx     # Parent PIN-protected dashboard
-├── store/
-│   └── useAppStore.js   # Zustand store (persisted to localStorage)
-├── data/
-│   ├── history.json
-│   ├── geography.json
-│   ├── music.json
-│   ├── math.json
-│   ├── general-knowledge.json
-│   ├── trivia.json
-│   ├── subjects.js      # Subject registry + helpers
-│   └── badges.js        # Badge catalog
-├── hooks/
-│   └── useQuiz.js
-├── utils/
-│   ├── scoring.js       # Stars + XP + level table
-│   ├── content.js       # Per-subject progress / locking
-│   └── badges.js        # Badge unlock rules
-└── index.css            # Design tokens + Tailwind layers
+kidquest/
+├── docs/
+│   ├── PRD.md               # Product requirements (community platform vision)
+│   ├── MODERATION.md        # UGC & child-safety policy
+│   ├── ROADMAP.md           # Engineering roadmap (phases 0–10)
+│   ├── ALPHA_TODO.md        # Tactical alpha checklist
+│   └── UX_REDESIGN_V1.md     # UX architecture rules
+├── supabase/
+│   └── schema.sql           # Database schema (apply via npm run db:apply)
+├── scripts/
+│   └── apply-schema.mjs     # Automated schema runner
+├── src/
+│   ├── pages/               # Landing, Home, Subject, Lesson, Multiplication*, Settings…
+│   ├── components/          # UI, quiz, multiplication, geography map, mascots
+│   ├── store/               # useAppStore, useMultiplicationStore, useAuthStore
+│   ├── lib/cloud/           # auth, progress sync, leaderboard, classrooms
+│   └── data/                # Subject JSON + geography + solar + multiplication
+├── Dockerfile
+├── docker-compose.yml
+└── vercel.json
 ```
 
 ---
 
-## 🎨 Design system
+## Learning model
 
-- **Fonts:** `Baloo 2` (display/headings, chunky & playful) + `Nunito` (body, legible & warm).
-- **Colors:** warm cream background, energetic orange primary, playful teal, sunshine yellow accent. Each subject has its own color.
-- **Aesthetic:** chunky cards with thick borders + offset drop shadows (not blurry), pill-shaped buttons with 3D press effect.
-- **Animations:** spring-y transitions, scale-bounce feedback, side-shake on wrong answers, confetti on 3-star wins.
+1. **Concept** — Short explanation + emoji + fun fact  
+2. **Quiz** — Multiple choice, fill-in, true/false, ordering, map-locate (geography)  
+3. **Feedback** — Instant, encouraging coaching  
+4. **Results** — Stars, XP, badges, level-up  
+5. **Mastery** — Progressive unlock; multiplication uses explicit 5-phase journey per table  
 
----
-
-## 🧠 Learning model
-
-1. **Concept card** — one idea introduced with an emoji, a short kid-friendly explanation, and a fun fact.
-2. **Quiz** — 3–5 questions, type varies by age group.
-3. **Instant feedback** — green check (with bounce) or red X (with shake) overlay.
-4. **Results** — animated stars (1/2/3), XP gain, badge unlocks, confetti for perfect scores.
-5. **Mastery** — 3 stars to master a lesson. Mastered lessons unlock the next one.
-6. **Adaptive difficulty** — question types and copy automatically scale by age group.
+**Multiplication routes:** `/multiplication`, `/multiplication/table/:n`, learn/practice/drill/boss, `/multiplication/review`, `/multiplication/speed-run`, `/multiplication/results`.
 
 ---
 
-## 🧩 Adding new content
+## Adding content
 
-Add a new lesson by editing the appropriate JSON file in `src/data/`. Each lesson:
+Edit JSON under `src/data/` (see existing `history.json`, `geography/`, `math/`, etc.). Lesson shape:
 
 ```json
 {
   "id": "math-adv-006",
   "title": "Negative Numbers",
-  "concept": {
-    "text": "Numbers below zero are called negative. They show up in temperatures and money!",
-    "emoji": "🌡️",
-    "funFact": "The coldest temperature ever recorded was −89.2°C in Antarctica."
-  },
+  "concept": { "text": "…", "emoji": "🌡️", "funFact": "…" },
   "questions": [
-    { "type": "choice", "prompt": "Which is colder?", "options": ["−5°C", "0°C", "5°C"], "answer": "−5°C" },
-    { "type": "fill", "prompt": "−10 + 5 = ____", "answer": "-5" }
+    { "type": "choice", "prompt": "…", "options": ["A", "B"], "answer": "A" }
   ]
 }
 ```
 
-Supported question types: `yes-no`, `choice`, `fill`, `tf`, `order`.
+Question types: `yes-no`, `choice`, `fill`, `tf`, `order`, plus `map-locate` for geography.
 
 ---
 
-## 🔒 Parent zone
+## Parent & teacher zone
 
-Visit **/settings** and enter PIN `1234` (changeable in-app). Lets you:
+**Settings** (`/settings`) — PIN default `1234` (change in-app).
 
-- Switch age group on the fly.
-- Set daily lesson goals.
-- View time spent per subject.
-- Toggle sound effects & background music.
-- Change PIN.
-- Reset all learning progress (keeps profile + avatar + PIN).
+When signed in with Supabase:
 
----
-
-## ✅ Accessibility & UX
-
-- All tap targets ≥ 48×48 px.
-- Generous typography (≥ 16px body, ≥ 24px headings).
-- Focus rings on all interactive elements.
-- WCAG-AA compliant text on backgrounds.
-- No external links, no ads, no auth required.
-- Encouraging tone — no "wrong" messaging; instead "good try, let's keep going!"
+- Create/join **classrooms** with shareable codes  
+- **Assignments** with due dates and subject templates  
+- **Daily digest** log + **CSV export** (lessons + multiplication tables)  
+- Daily goals, age group, sound, time-per-subject, progress reset  
 
 ---
 
-## 🛣️ Stretch ideas (v2)
+## Roadmap at a glance
 
-- Web Speech API text-to-speech for Explorers.
-- Multi-child profiles per device.
-- Printable mastery certificates.
-- Daily challenge mode.
-- AI hint system (one Socratic nudge per question).
+| Phase | Focus |
+|-------|--------|
+| **0 — Alpha (now)** | Stable deploy, auth, core Math/Geo/Solar QA |
+| **1 — Hardening** | Audio, session summaries, E2E tests, password reset |
+| **2 — Mastery engine** | 5-phase geography/solar; unified review hub |
+| **3 — Accounts** | OAuth, COPPA, multi-child, moderation |
+| **4 — Social** | Friends, duels, real subject leaderboards |
+| **5 — Parent/Teacher** | Email digests, class heatmaps, PDF exports |
+| **6 — Global Edition** | i18n, PWA, offline, Tesla mode, a11y |
+| **7 — Life Explorer** | Personal map, journals, stories, Create tab |
+| **8–9 — Community & scale** | Contributions, subscriptions, native apps |
+
+Details, status columns, and success metrics: **[docs/ROADMAP.md](docs/ROADMAP.md)**
+
+---
+
+## Design & accessibility
+
+- **Fonts:** Baloo 2 (display) + Nunito (body)  
+- **UI:** Chunky cards, thick borders, spring animations, phase colors (Learn=green … Legend=gold)  
+- **Targets:** ≥48px tap targets; focus rings; encouraging error copy  
+- **Goals:** WCAG AA and dyslexia-friendly font (planned — Phase 6)  
+
+---
+
+## License & credits
+
+Designed by Vinay · Built with Cursor · Knowledge is free.
+
+For tactical tasks this week, see [docs/ALPHA_TODO.md](docs/ALPHA_TODO.md).

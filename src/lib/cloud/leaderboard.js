@@ -1,6 +1,7 @@
 import { isSupabaseEnabled, supabase } from "../supabaseClient";
 
 export async function submitSpeedRunToCloud({
+  userId,
   kidName,
   ageGroup,
   classroom = "A",
@@ -10,6 +11,7 @@ export async function submitSpeedRunToCloud({
 }) {
   if (!isSupabaseEnabled || !supabase) return { ok: false, reason: "supabase-disabled" };
   const payload = {
+    user_id: userId ?? null,
     kid_name: kidName || "Hero",
     age_group: ageGroup || "adventurer",
     classroom,
@@ -26,7 +28,7 @@ export async function fetchSpeedRunLeaderboard(scope, { ageGroup, classroom = "A
   if (!isSupabaseEnabled || !supabase) return { rows: [], cloud: false };
   let query = supabase
     .from("speed_run_leaderboard")
-    .select("kid_name,age_group,classroom,score,total_time_ms,best_at")
+    .select("user_id,kid_name,age_group,classroom,score,total_time_ms,best_at")
     .order("score", { ascending: false })
     .order("total_time_ms", { ascending: true })
     .limit(limit);
@@ -42,6 +44,7 @@ export async function fetchSpeedRunLeaderboard(scope, { ageGroup, classroom = "A
 
   return {
     rows: (data ?? []).map((r) => ({
+      userId: r.user_id,
       name: r.kid_name,
       ageGroup: r.age_group,
       classroom: r.classroom,

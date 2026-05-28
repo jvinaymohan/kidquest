@@ -5,6 +5,8 @@ import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { formatMs } from "../utils/multiplicationScoring";
 import { useAppStore } from "../store/useAppStore";
 import { fetchSpeedRunLeaderboard } from "../lib/cloud/leaderboard";
+import { fetchSubjectMasteryLeaderboard } from "../lib/cloud/subjectLeaderboard";
+import { ParentConsentGate } from "../components/auth/ParentConsentGate";
 
 const PEERS = [
   { name: "Maya", ageGroup: "adventurer", classroom: "A", score: 49, totalTimeMs: 181000 },
@@ -38,6 +40,7 @@ export default function CompeteHub() {
   const [scope, setScope] = useState("global");
   const [cloudRows, setCloudRows] = useState([]);
   const [cloudMode, setCloudMode] = useState(false);
+  const [subjectBoards, setSubjectBoards] = useState({});
 
   useEffect(() => {
     let mounted = true;
@@ -57,6 +60,22 @@ export default function CompeteHub() {
         setCloudMode(false);
         setCloudRows([]);
       });
+    return () => {
+      mounted = false;
+    };
+  }, [scope, ageGroup]);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      const ids = ["geography", "solar-system", "math"];
+      const boards = {};
+      for (const id of ids) {
+        const res = await fetchSubjectMasteryLeaderboard(id, { ageGroup: scope === "age" ? ageGroup : undefined });
+        boards[id] = res.rows ?? [];
+      }
+      if (mounted) setSubjectBoards(boards);
+    })();
     return () => {
       mounted = false;
     };
@@ -91,6 +110,19 @@ export default function CompeteHub() {
           </div>
         </div>
       </header>
+
+      <div className="grid grid-cols-2 gap-2">
+        <Link to="/compete/daily-duel" className="chunky-card p-3 text-center focus-ring">
+          <p className="font-display font-extrabold text-sm">Daily Duel</p>
+          <p className="text-[10px] font-bold text-ink/55">10 mixed Qs</p>
+        </Link>
+        <ParentConsentGate ageGroup={ageGroup}>
+          <Link to="/compete/friends" className="chunky-card p-3 text-center focus-ring block">
+            <p className="font-display font-extrabold text-sm">Friends</p>
+            <p className="text-[10px] font-bold text-ink/55">Invite code</p>
+          </Link>
+        </ParentConsentGate>
+      </div>
 
       <Link to="/multiplication/speed-run" className="chunky-card p-4 flex items-center justify-between focus-ring">
         <div className="flex items-center gap-3">
@@ -148,8 +180,8 @@ export default function CompeteHub() {
       <section className="chunky-card p-4">
         <h3 className="font-display font-extrabold mb-2">Subject Challenges</h3>
         <div className="grid gap-2">
-          <Link to="/subject/geography" className="rounded-chunky border-2 border-ink/15 px-3 py-2 text-sm font-bold">
-            Geography Sprint: 8 map-locate questions
+          <Link to="/compete/geography-sprint" className="rounded-chunky border-2 border-ink/15 px-3 py-2 text-sm font-bold">
+            Geography Sprint: 8 capital questions
           </Link>
           <Link to="/subject/solar-system" className="rounded-chunky border-2 border-ink/15 px-3 py-2 text-sm font-bold">
             Solar Mission Quiz: 10 rapid-fire planet facts
@@ -164,7 +196,12 @@ export default function CompeteHub() {
         <h3 className="font-display font-extrabold mb-2">Subject Leaderboards</h3>
         <div className="grid gap-3">
           {Object.entries(SUBJECT_PEERS).map(([subjectId, list]) => {
-            const filtered = list
+            const cloud = subjectBoards[subjectId];
+            const source =
+              cloud?.length > 0
+                ? cloud.map((r) => ({ name: r.name, ageGroup: r.ageGroup, mastery: r.mastery }))
+                : list;
+            const filtered = source
               .filter((r) => (scope === "age" ? r.ageGroup === ageGroup : scope === "class" ? r.classroom === "A" : true))
               .sort((a, b) => b.mastery - a.mastery)
               .slice(0, 3);
@@ -172,6 +209,9 @@ export default function CompeteHub() {
               <div key={subjectId} className="rounded-chunky border-2 border-ink/10 p-2">
                 <p className="text-sm font-display font-extrabold capitalize mb-1">
                   {subjectId.replace("-", " ")}
+                  {cloud?.length > 0 && (
+                    <span className="text-[10px] text-ink/45 font-bold ml-1">live</span>
+                  )}
                 </p>
                 <ul className="space-y-1">
                   {filtered.map((r, i) => (

@@ -12,6 +12,8 @@ import { LearnTabs } from "../components/learn/LearnTabs";
 import { GeographyLearn } from "../components/geography/GeographyLearn";
 import { SolarSystemLearn } from "../components/solar-system/SolarSystemLearn";
 import { MathLearn } from "../components/math/MathLearn";
+import { GenericSubjectLearn } from "../components/learn/GenericSubjectLearn";
+import { GeographyHub } from "./GeographyHub";
 import { isLessonUnlocked, subjectProgress, subjectRankFor } from "../utils/content";
 
 export default function Subject() {
@@ -112,6 +114,8 @@ export default function Subject() {
 
       {tab === "learn" && showLearn ? (
         <LearnSurface subjectId={subjectId} />
+      ) : subjectId === "geography" ? (
+        <GeographyHub ageGroup={ageGroup} lessonProgress={lessonProgress} />
       ) : (
         <LessonsList
           lessons={lessons}
@@ -130,7 +134,8 @@ function LearnSurface({ subjectId }) {
   if (subjectId === "geography") return <GeographyLearn />;
   if (subjectId === "solar-system") return <SolarSystemLearn />;
   if (subjectId === "math") return <MathLearn />;
-  return null;
+  const subject = getSubject(subjectId);
+  return <GenericSubjectLearn subjectId={subjectId} subjectName={subject?.name ?? subjectId} />;
 }
 
 function LessonsList({ lessons, subject, subjectId, ageGroup, lessonProgress, navigate }) {

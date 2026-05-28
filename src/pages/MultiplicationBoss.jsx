@@ -10,6 +10,7 @@ import { useAppStore } from "../store/useAppStore";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
 import { TABLE_BADGES } from "../data/multiplication/badges";
 import { confirmExit, useExitGuard } from "../hooks/useExitGuard";
+import { useSound } from "../hooks/useSound";
 
 const BOSS_COUNT = 20;
 const COUNTDOWN_MS = 3000;
@@ -30,6 +31,7 @@ export default function MultiplicationBoss() {
   const grantXP = useAppStore((s) => s.grantXP);
   const grantBadge = useAppStore((s) => s.grantBadge);
   const navigate = useNavigate();
+  const sound = useSound();
 
   const [idx, setIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -64,9 +66,12 @@ export default function MultiplicationBoss() {
       setPassed(ok);
       setFinished(true);
       if (ok) {
+        sound.bossWin();
         grantXP(100);
         const badge = TABLE_BADGES[tableNumber];
         if (badge) grantBadge(badge.id);
+      } else {
+        sound.wrong();
       }
       return;
     }

@@ -3,6 +3,9 @@ import { ALL_FACTS } from "../data/multiplication/tables";
 import { shuffle } from "../utils/multiplicationScoring";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 
+/** Ignore impossibly fast taps (anti-cheat / mis-taps). */
+export const MIN_SPEED_RUN_RESPONSE_MS = 350;
+
 export function useSpeedRun() {
   const tables = useMultiplicationStore((s) => s.tables);
   const [index, setIndex] = useState(0);
@@ -41,6 +44,7 @@ export function useSpeedRun() {
 
   const submitAnswer = useCallback(
     (given, responseMs) => {
+      const clampedMs = Math.max(responseMs ?? 0, MIN_SPEED_RUN_RESPONSE_MS);
       const correct = Number(given) === current.product;
       const entry = {
         factId: current.id,
@@ -49,7 +53,8 @@ export function useSpeedRun() {
         product: current.product,
         given: Number(given),
         correct,
-        responseMs,
+        responseMs: clampedMs,
+        tooFast: (responseMs ?? 0) < MIN_SPEED_RUN_RESPONSE_MS,
       };
       setAnswers((a) => [...a, entry]);
       setIndex((i) => i + 1);

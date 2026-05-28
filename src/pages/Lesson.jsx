@@ -9,6 +9,7 @@ import { QuestionCard } from "../components/quiz/QuestionCard";
 import { QuizProgress } from "../components/quiz/QuizProgress";
 import { Button } from "../components/ui/Button";
 import { useQuiz } from "../hooks/useQuiz";
+import { useGeographyStore } from "../store/useGeographyStore";
 
 export default function Lesson() {
   const { lessonId } = useParams();
@@ -65,6 +66,7 @@ export default function Lesson() {
           <QuizPhase
             lesson={lesson}
             subject={subject}
+            subjectId={subjectId}
             onComplete={(correct, total) => {
               const elapsed = Math.round((Date.now() - startedAt.current) / 1000);
               submit({ lessonId: lesson.id, subjectId, correct, total, secondsElapsed: elapsed });
@@ -111,10 +113,20 @@ export default function Lesson() {
   );
 }
 
-function QuizPhase({ lesson, subject, onComplete }) {
+function countryCodeFromQuestion(q) {
+  if (!q?.answer || typeof q.answer !== "string") return null;
+  if (q.type === "map-locate" || q.type === "flag-choice" || q.type === "flag-grid") {
+    return q.answer.length === 2 ? q.answer : null;
+  }
+  return null;
+}
+
+function QuizPhase({ lesson, subject, subjectId, onComplete }) {
   const ageGroup = useAppStore((s) => s.ageGroup);
+  const recordGeoSR = useGeographyStore((s) => s.recordSRReview);
   const quiz = useQuiz(lesson.questions);
   const submittedRef = useRef(false);
+  const questionStartedAt = useRef(Date.now());
 
   useEffect(() => {
     if (quiz.done && !submittedRef.current) {
@@ -122,6 +134,18 @@ function QuizPhase({ lesson, subject, onComplete }) {
       onComplete(quiz.correctCount, quiz.total);
     }
   }, [quiz.done, quiz.correctCount, quiz.total, onComplete]);
+
+  function handleAnswered(correct) {
+    if (subjectId === "geography" && quiz.current) {
+      const code = countryCodeFromQuestion(quiz.current);
+      if (code) {
+        const ms = Date.now() - questionStartedAt.current;
+        recordGeoSR(code, correct, ms);
+      }
+    }
+    quiz.submit(correct);
+    questionStartedAt.current = Date.now();
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -131,7 +155,7 @@ function QuizPhase({ lesson, subject, onComplete }) {
           key={quiz.index}
           question={quiz.current}
           ageGroup={ageGroup}
-          onAnswered={(c) => quiz.submit(c)}
+          onAnswered={handleAnswered}
         />
       )}
     </div>

@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "../store/useAppStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { isSupabaseEnabled } from "../lib/supabaseClient";
 import { AGE_GROUPS } from "../data/subjects";
 import { Button } from "../components/ui/Button";
 import { Avatar, AVATAR_OPTIONS } from "../components/mascots/Avatar";
@@ -11,13 +13,24 @@ import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
 const STEPS = ["welcome", "name", "age", "avatar", "go"];
 
 export default function Onboarding() {
-  const [step, setStep] = useState(0);
-  const [name, setName] = useState("");
-  const [ageGroup, setAgeGroup] = useState("adventurer");
-  const [avatar, setAvatar] = useState({ skin: 1, hair: 1, outfit: 1, accessory: 0 });
+  const existingName = useAppStore((s) => s.kidName);
+  const existingAge = useAppStore((s) => s.ageGroup);
+  const existingAvatar = useAppStore((s) => s.avatarConfig);
+  const existingRole = useAppStore((s) => s.role);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
+  const profile = useAuthStore((s) => s.profile);
+  const session = useAuthStore((s) => s.session);
+  const [step, setStep] = useState(existingName ? 3 : 0);
+  const [name, setName] = useState(existingName || profile?.kid_name || "");
+  const [ageGroup, setAgeGroup] = useState(existingAge || profile?.age_group || "adventurer");
+  const [avatar, setAvatar] = useState(existingAvatar || { skin: 1, hair: 1, outfit: 1, accessory: 0 });
   const [celebrate, setCelebrate] = useState(false);
   const navigate = useNavigate();
   const complete = useAppStore((s) => s.completeOnboarding);
+
+  if (isSupabaseEnabled && !session) {
+    return <Navigate to="/landing" replace />;
+  }
 
   function next() {
     setStep((s) => Math.min(STEPS.length - 1, s + 1));
@@ -28,8 +41,16 @@ export default function Onboarding() {
 
   function finish() {
     setCelebrate(true);
+    const finalName = name.trim() || "Friend";
+    complete({ kidName: finalName, ageGroup, avatarConfig: avatar, role: existingRole || "kid" });
+    updateProfile({
+      kid_name: finalName,
+      display_name: finalName,
+      age_group: ageGroup,
+      avatar_config: avatar,
+      role: existingRole || "kid",
+    }).catch(() => {});
     setTimeout(() => {
-      complete({ kidName: name.trim() || "Friend", ageGroup, avatarConfig: avatar });
       navigate("/home", { replace: true });
     }, 1400);
   }

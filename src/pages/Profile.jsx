@@ -1,7 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { LogOut, Cloud, CloudOff } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { Avatar, AVATAR_OPTIONS } from "../components/mascots/Avatar";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -9,15 +11,22 @@ import { BADGES, BADGE_BY_ID } from "../data/badges";
 import { BadgeChip } from "../components/ui/BadgeChip";
 import { SUBJECTS } from "../data/subjects";
 import { subjectProgress } from "../utils/content";
+import { GEO_TRACKS } from "../data/geography/tracks";
+import { getLessonsFor } from "../data/subjects";
 import { ProgressRing } from "../components/ui/ProgressRing";
 import { RankBadge } from "../components/multiplication/RankBadge";
+import { isSupabaseEnabled } from "../lib/supabaseClient";
 
 export default function Profile() {
   const {
     kidName, setKidName, avatarConfig, setAvatar,
     totalXP, totalPoints, level, currentStreak, longestStreak,
-    badges, ageGroup, lessonProgress,
+    badges, ageGroup, lessonProgress, role,
   } = useAppStore();
+  const updateProfile = useAuthStore((s) => s.updateProfile);
+  const signOut = useAuthStore((s) => s.signOut);
+  const session = useAuthStore((s) => s.session);
+  const navigate = useNavigate();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(kidName);
@@ -27,9 +36,17 @@ export default function Profile() {
     setConfig((c) => ({ ...c, [key]: (c[key] + d + AVATAR_OPTIONS[key]) % AVATAR_OPTIONS[key] }));
   }
   function save() {
-    setKidName(name.trim() || kidName);
+    const finalName = name.trim() || kidName;
+    setKidName(finalName);
     setAvatar(config);
+    updateProfile({ kid_name: finalName, display_name: finalName, avatar_config: config }).catch(() => {});
     setEditing(false);
+  }
+
+  async function onSignOut() {
+    if (!confirm("Sign out of KidQuest?")) return;
+    await signOut();
+    navigate("/landing", { replace: true });
   }
 
   const earnedSet = new Set(badges);
@@ -68,9 +85,27 @@ export default function Profile() {
         to="/settings"
         className="chunky-card p-3 border-[3px] border-ink/15 bg-white flex items-center justify-between focus-ring"
       >
-        <span className="font-display font-extrabold">Parent Dashboard</span>
+        <span className="font-display font-extrabold">
+          {role === "teacher" ? "Teacher Dashboard" : role === "parent" ? "Parent Dashboard" : "Parent Dashboard"}
+        </span>
         <span className="text-sm font-bold text-ink/60">PIN protected →</span>
       </Link>
+
+      <div className="chunky-card p-3 flex items-center gap-3">
+        {session ? <Cloud className="text-success" size={18} /> : <CloudOff className="text-ink/40" size={18} />}
+        <div className="flex-1 text-xs font-bold text-ink/70">
+          {isSupabaseEnabled
+            ? session
+              ? "Cloud sync on — progress saves across devices."
+              : "Cloud disabled — local progress only."
+            : "Configure Supabase to enable cloud sync."}
+        </div>
+        {session && (
+          <Button variant="ghost" size="sm" onClick={onSignOut} leftIcon={<LogOut size={16} />}>
+            Sign out
+          </Button>
+        )}
+      </div>
 
       <section>
         <h3 className="font-display text-xl font-extrabold mb-2">Subject Mastery</h3>
@@ -87,6 +122,49 @@ export default function Profile() {
             );
           })}
         </div>
+      </section>
+
+      <section className="chunky-card p-4">
+        <h3 className="font-display text-lg font-extrabold mb-3 flex items-center gap-2">
+          <span aria-hidden>🌍</span> Geography tracks
+        </h3>
+        <ul className="flex flex-col gap-2.5">
+          {GEO_TRACKS.map((track) => {
+            const lessons = getLessonsFor("geography", ageGroup);
+            const lesson = lessons.find((l) => l.track === track.id);
+            const p = lesson ? lessonProgress[lesson.id] : null;
+            const pct = p?.mastered ? 100 : p?.stars ? 50 : 0;
+            return (
+              <li key={track.id}>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl" aria-hidden>
+                    {track.emoji}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-display font-extrabold" style={{ color: track.color }}>
+                      {track.title}
+                    </div>
+                    <div className="h-1.5 rounded-full bg-ink/10 mt-1 overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all"
+                        style={{ width: `${pct}%`, backgroundColor: track.color }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-xs font-bold text-ink/50 tabular-nums">
+                    {p?.mastered ? "✓" : p ? `${p.stars}★` : "—"}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <Link
+          to="/subject/geography"
+          className="mt-3 inline-block text-sm font-display font-extrabold text-geography focus-ring"
+        >
+          Open geography hub →
+        </Link>
       </section>
 
       <section>

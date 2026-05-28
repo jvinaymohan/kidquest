@@ -5,6 +5,7 @@ import { MedalDisplay } from "../components/multiplication/MedalDisplay";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
 import { Button } from "../components/ui/Button";
 import { useAppStore } from "../store/useAppStore";
+import { useAuthStore } from "../store/useAuthStore";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { formatMs, medalForRun, xpForSpeedRun } from "../utils/multiplicationScoring";
 import { MOTIVATIONAL } from "../data/multiplication/tables";
@@ -19,6 +20,7 @@ export default function MultiplicationResults() {
   const grantBadge = useAppStore((s) => s.grantBadge);
   const kidName = useAppStore((s) => s.kidName);
   const ageGroup = useAppStore((s) => s.ageGroup);
+  const userId = useAuthStore((s) => s.user?.id);
   const granted = useRef(false);
 
   const xp = results ? xpForSpeedRun(results.score, results.accuracy) : 0;
@@ -28,6 +30,7 @@ export default function MultiplicationResults() {
     granted.current = true;
     grantXP(xp);
     submitSpeedRunToCloud({
+      userId,
       kidName,
       ageGroup,
       score: results.score,
@@ -43,7 +46,7 @@ export default function MultiplicationResults() {
     if (results.totalTimeMs < 120000 && results.score >= 45) {
       grantBadge("mul_speed_demon");
     }
-  }, [results, grantXP, grantBadge, xp, kidName, ageGroup]);
+  }, [results, grantXP, grantBadge, xp, kidName, ageGroup, userId]);
 
   if (!results) {
     return (
