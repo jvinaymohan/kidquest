@@ -6,7 +6,10 @@ A global, gamified learning adventure for kids ages 4–14 — History, Geograph
 > **Deploy:** Vercel (frontend) · Supabase (backend) · Docker (optional self-host)
 
 📋 **[Product PRD →](docs/PRD.md)** — community vision, safety, monetization, MVP scope.  
-📋 **[Engineering roadmap →](docs/ROADMAP.md)** — phases 0–10, shipped features, delivery timeline.
+📋 **[Engineering roadmap →](docs/ROADMAP.md)** — phases 0–10, shipped features, delivery timeline.  
+🚀 **[Share with testers →](docs/SHARE.md)** — live URL, Supabase auth, Vercel env (alpha invite).
+
+**Live app:** https://kidquest-indol.vercel.app
 
 ---
 

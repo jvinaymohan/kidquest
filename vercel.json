@@ -4,10 +4,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "installCommand": "npm install --legacy-peer-deps",
-  "cleanUrls": true,
   "trailingSlash": false,
-  "rewrites": [
-    { "source": "/((?!api/|assets/|.*\\..*).*)", "destination": "/index.html" }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ],
   "headers": [
     {
@@ -17,7 +17,7 @@
       ]
     },
     {
-      "source": "/(.*)\\.(svg|png|jpg|jpeg|webp|ico|woff2)",
+      "source": "/(.*)\\.(svg|png|jpg|jpeg|webp|ico|woff2|json|js|css)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=604800" }
       ]
