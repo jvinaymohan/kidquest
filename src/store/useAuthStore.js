@@ -7,6 +7,7 @@ import {
   signOut as cloudSignOut,
   getProfile,
   upsertProfile,
+  syncProfileEmail,
   onAuthChange,
 } from "../lib/cloud/auth";
 import {
@@ -60,7 +61,11 @@ export const useAuthStore = create((set, get) => ({
     const user = session.user;
     set({ session, user });
     setCloudUser(user.id);
-    const profile = await getProfile(user.id);
+    let profile = await getProfile(user.id);
+    if (user.email && profile?.email !== user.email) {
+      await syncProfileEmail(user.id, user.email);
+      profile = await getProfile(user.id);
+    }
     set({ profile, cloudReady: true });
     await get()._hydrateFromCloud(profile);
   },
@@ -167,6 +172,10 @@ export const useAuthStore = create((set, get) => ({
     if (!res.ok) {
       set({ loading: false, authError: res.reason });
       return res;
+    }
+    const { data } = await supabase.auth.getSession();
+    if (data?.session) {
+      await get()._onLogin(data.session);
     }
     set({ loading: false });
     return res;

@@ -119,6 +119,11 @@ export default function Login() {
               ← Back to landing
             </Link>
           </div>
+          <div className="text-center text-[10px] font-bold text-ink/40 mt-2">
+            <Link to="/admin" className="hover:text-ink/60">
+              Admin sign-in
+            </Link>
+          </div>
           <p className="text-center text-[10px] font-bold text-ink/45 pt-1">
             <Link to="/privacy" className="underline hover:text-primary">
               Privacy

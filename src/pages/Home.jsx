@@ -14,6 +14,8 @@ import {
   Trophy,
 } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
+import { useAuthStore } from "../store/useAuthStore";
+import { isAdminUser } from "../lib/adminAccess";
 import { SUBJECTS } from "../data/subjects";
 import { subjectProgress, findNextLesson } from "../utils/content";
 import { getMonthlyTheme } from "../utils/theme";
@@ -82,6 +84,12 @@ function pickNextAction(ageGroup, lessonProgress) {
 export default function Home() {
   const navigate = useNavigate();
   const reduce = useReducedMotion();
+  const profile = useAuthStore((s) => s.profile);
+  const user = useAuthStore((s) => s.user);
+  const showAdmin = isAdminUser({
+    profile,
+    email: user?.email ?? profile?.email,
+  });
   const {
     kidName,
     role,
@@ -376,7 +384,26 @@ export default function Home() {
         </motion.section>
 
         {/* Grown-ups */}
-        <motion.div {...fadeUp(6, reduce)}>
+        <motion.div {...fadeUp(6, reduce)} className="space-y-2">
+          {showAdmin && (
+            <Link
+              to="/admin"
+              className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-ink text-white transition focus-ring"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/15 grid place-items-center">
+                  <Sparkles size={18} />
+                </div>
+                <div>
+                  <p className="font-display font-extrabold text-sm">Admin</p>
+                  <p className="text-xs font-medium text-white/70">
+                    Users, feedback & password help
+                  </p>
+                </div>
+              </div>
+              <ChevronRight size={18} className="text-white/50" />
+            </Link>
+          )}
           <Link
             to="/settings"
             className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-ink/[0.04] hover:bg-ink/[0.06] transition focus-ring"

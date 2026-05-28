@@ -37,6 +37,7 @@ import { downloadExportJson } from "../lib/exportData";
 import { LOCALES, setLocale } from "../lib/i18n";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { DEFAULT_PARENT_PIN, isDefaultParentPin } from "../constants/parentPin";
+import { isAdminUser } from "../lib/adminAccess";
 
 export default function Settings() {
   const {
@@ -48,7 +49,12 @@ export default function Settings() {
   } = useAppStore();
 
   const user = useAuthStore((s) => s.user);
+  const profile = useAuthStore((s) => s.profile);
   const updateProfile = useAuthStore((s) => s.updateProfile);
+  const showAdmin = isAdminUser({
+    profile,
+    email: user?.email ?? profile?.email,
+  });
 
   const [unlocked, setUnlocked] = useState(false);
   const [mustChangePin, setMustChangePin] = useState(false);
@@ -277,6 +283,16 @@ export default function Settings() {
           {role === "teacher" ? "Teacher Dashboard" : "Parent Dashboard"}
         </h1>
       </header>
+
+      {showAdmin && (
+        <Link
+          to="/admin"
+          className="flex items-center justify-between px-4 py-3 rounded-2xl bg-ink text-white focus-ring"
+        >
+          <span className="font-display font-extrabold text-sm">KidQuest Admin</span>
+          <span className="text-xs font-bold opacity-80">Users · feedback · resets →</span>
+        </Link>
+      )}
 
       {cloudOk ? (
         <section className="chunky-card p-4 border-[3px] border-success/30">

@@ -12,7 +12,8 @@ create table if not exists public.profiles (
   kid_name text,
   display_name text,
   age_group text not null default 'adventurer' check (age_group in ('explorer','adventurer','champion')),
-  role text not null default 'kid' check (role in ('kid','parent','teacher','contributor')),
+  role text not null default 'kid' check (role in ('kid','parent','teacher','contributor','admin')),
+  email text,
   avatar_config jsonb not null default '{"skin":1,"hair":1,"outfit":1,"accessory":0}'::jsonb,
   parent_pin text not null default '1234',
   classroom_code text,
@@ -581,3 +582,101 @@ grant select, insert, update, delete on public.user_preferences to authenticated
 grant select, insert, update, delete on public.friend_codes to authenticated;
 grant select, insert, update, delete on public.friend_links to authenticated;
 grant select, insert, update, delete on public.daily_duels to authenticated;
+
+-- ============================================================
+-- ADMIN + APP FEEDBACK (alpha ops)
+-- ============================================================
+alter table public.profiles add column if not exists email text;
+
+-- Relax role check to allow admin (idempotent)
+alter table public.profiles drop constraint if exists profiles_role_check;
+alter table public.profiles add constraint profiles_role_check
+  check (role in ('kid','parent','teacher','contributor','admin'));
+
+create table if not exists public.app_feedback (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
+  contact_email text,
+  contact_name text,
+  user_role text,
+  page_path text,
+  category text not null default 'general'
+    check (category in ('bug','feature','password','general','praise','other')),
+  message text not null check (char_length(message) between 3 and 4000),
+  rating smallint check (rating is null or (rating between 1 and 5)),
+  status text not null default 'new'
+    check (status in ('new','reviewing','resolved','wontfix')),
+  admin_notes text,
+  suggested_action text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_app_feedback_status on public.app_feedback(status, created_at desc);
+create index if not exists idx_app_feedback_category on public.app_feedback(category, created_at desc);
+create index if not exists idx_app_feedback_user on public.app_feedback(user_id);
+
+drop trigger if exists trg_app_feedback_touch on public.app_feedback;
+create trigger trg_app_feedback_touch before update on public.app_feedback
+  for each row execute function public.touch_updated_at();
+
+alter table public.app_feedback enable row level security;
+
+create or replace function public.is_admin()
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1 from public.profiles
+    where id = auth.uid() and role = 'admin'
+  );
+$$;
+
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated;
+
+-- Profiles: admins read all; users cannot self-promote to admin
+drop policy if exists "admin profile select all" on public.profiles;
+create policy "admin profile select all" on public.profiles
+  for select to authenticated using (public.is_admin());
+
+drop policy if exists "self profile upsert" on public.profiles;
+create policy "self profile upsert" on public.profiles
+  for insert to authenticated
+  with check (auth.uid() = id and role in ('kid','parent','teacher','contributor'));
+
+drop policy if exists "self profile update" on public.profiles;
+create policy "self profile update" on public.profiles
+  for update to authenticated
+  using (auth.uid() = id)
+  with check (auth.uid() = id and role in ('kid','parent','teacher','contributor'));
+
+-- Feedback: anyone authenticated can submit; admins manage
+drop policy if exists "feedback insert auth" on public.app_feedback;
+create policy "feedback insert auth" on public.app_feedback
+  for insert to authenticated
+  with check (
+    user_id is null or user_id = auth.uid()
+  );
+
+drop policy if exists "feedback insert anon" on public.app_feedback;
+create policy "feedback insert anon" on public.app_feedback
+  for insert to anon
+  with check (user_id is null and contact_email is not null);
+
+drop policy if exists "feedback select self" on public.app_feedback;
+create policy "feedback select self" on public.app_feedback
+  for select to authenticated
+  using (user_id = auth.uid());
+
+drop policy if exists "feedback admin all" on public.app_feedback;
+create policy "feedback admin all" on public.app_feedback
+  for all to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+grant select, insert, update, delete on public.app_feedback to authenticated;
+grant insert on public.app_feedback to anon;

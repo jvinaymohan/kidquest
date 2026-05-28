@@ -16,13 +16,14 @@ export async function signUpWithEmail({ email, password, kidName, ageGroup, role
   });
   if (error) return { ok: false, reason: error.message };
 
-  if (data.user && kidName) {
+  if (data.user) {
     await supabase
       .from("profiles")
       .upsert({
         id: data.user.id,
-        kid_name: kidName,
-        display_name: kidName,
+        email: email?.trim() || data.user.email || null,
+        kid_name: kidName ?? null,
+        display_name: kidName ?? email?.split("@")[0] ?? null,
         age_group: ageGroup ?? "adventurer",
         role,
       })
@@ -100,4 +101,10 @@ export async function upsertProfile(profile) {
   const { error } = await supabase.from("profiles").upsert(profile);
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
+}
+
+/** Keep profiles.email in sync with auth.users for admin user list & password resets. */
+export async function syncProfileEmail(userId, email) {
+  if (!isSupabaseEnabled || !userId || !email?.trim()) return { ok: false };
+  return upsertProfile({ id: userId, email: email.trim() });
 }

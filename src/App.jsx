@@ -41,6 +41,9 @@ import LifeJournal from "./pages/LifeJournal";
 import LifeStory from "./pages/LifeStory";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import AdminDashboard from "./pages/AdminDashboard";
+import { RequireAdmin } from "./components/auth/RequireAdmin";
+import { GlobalFeedback } from "./components/feedback/GlobalFeedback";
 
 function RequireOnboarded({ children }) {
   const onboarded = useAppStore((s) => s.onboarded);
@@ -73,6 +76,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <GlobalFeedback />
       <Routes>
         <Route
           path="/landing"
@@ -102,6 +106,16 @@ export default function App() {
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <AppShell hideBottom />
+            </RequireAdmin>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+        </Route>
         <Route path="/onboarding" element={<Onboarding />} />
         <Route
           element={
