@@ -47,6 +47,13 @@ const QUICK_NAV = [
   { to: "/review", label: "Review", Icon: ClipboardList },
 ];
 
+const FEATURE_ORBITS = [
+  { Icon: Sparkles, title: "Fun quests", desc: "Short adventures kids actually want to finish." },
+  { Icon: BookOpen, title: "Smart learning", desc: "Math, geography, science, and more in one place." },
+  { Icon: Users, title: "Family ready", desc: "Parents and teachers see progress at a glance." },
+  { Icon: Trophy, title: "Play together", desc: "Challenges, reviews, and wins that build confidence." },
+];
+
 const fadeUp = (i, reduce) =>
   reduce
     ? {}
@@ -129,27 +136,31 @@ export default function Home() {
   const level = xpToNextLevel(totalXP);
 
   return (
-    <div className="flex min-h-full flex-col bg-bg pb-2">
-      <section className="relative overflow-hidden px-4 pt-6 pb-8 sm:pb-10 bg-gradient-to-br from-[#6259f8] via-[#8a5cf6] to-[#ff7b5b]">
+    <div className="home-page flex min-h-full flex-col pb-2">
+      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-[#ff9348] to-[#3A86FF] px-4 pt-5 pb-12 sm:pb-14">
         <div
-          className="pointer-events-none absolute inset-0 opacity-45"
+          className="pointer-events-none absolute inset-0 opacity-50"
           aria-hidden
           style={{
             backgroundImage:
-              "radial-gradient(circle at 18% 20%, rgba(255,255,255,0.8) 0%, transparent 38%), radial-gradient(circle at 76% 14%, rgba(255,235,175,0.55) 0%, transparent 40%)",
+              "radial-gradient(circle at 14% 18%, rgba(255,255,255,0.85) 0%, transparent 36%), radial-gradient(circle at 82% 12%, rgba(255,230,109,0.65) 0%, transparent 38%)",
           }}
         />
+        <div className="home-hero-wave" aria-hidden />
         <motion.div className="relative mx-auto max-w-2xl" {...fadeUp(0, reduce)}>
-          <p className="text-sm font-semibold text-white/85">
-            {theme.emoji} {theme.name}
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white ring-1 ring-white/30">
+            <span aria-hidden>🎒</span> KidQuest · Study is fun
           </p>
-          <h1 className="mt-2 font-display text-[1.95rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-[2.35rem]">
+          <h1 className="mt-3 font-display text-[2rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[2.5rem]">
             {isFirstTime
-              ? `Welcome ${kidName || "Explorer"}!`
-              : `Hi ${kidName || "Explorer"}, ready for your next quest?`}
+              ? `Welcome, ${kidName || "Explorer"}!`
+              : `Hi ${kidName || "Explorer"} — let’s learn!`}
           </h1>
-          <p className="mt-3 max-w-[34rem] text-[15px] font-medium leading-snug text-white/90 sm:text-base">
-            Learning adventures for kids, with clear parent visibility and safe progress every day.
+          <p className="mt-3 max-w-[34rem] text-[15px] font-semibold leading-snug text-white/95 sm:text-base">
+            Joyful learning adventures for kids, with streaks, mastery, and parent-friendly progress you can trust.
+          </p>
+          <p className="mt-1 text-sm font-bold text-white/80">
+            {theme.emoji} {theme.name} theme this month
           </p>
 
           <div className="mt-4 flex flex-wrap gap-2.5">
@@ -162,39 +173,39 @@ export default function Home() {
             <button
               type="button"
               onClick={() => navigate(nextAction ? nextAction.path : "/multiplication")}
-              className="group rounded-3xl bg-white px-4 py-4 text-left shadow-[0_10px_30px_rgba(17,17,35,0.18)] transition hover:translate-y-[-1px] focus-ring"
+              className="group rounded-3xl bg-[#3A86FF] px-4 py-4 text-left text-white shadow-[0_10px_0_rgba(25,70,140,0.35)] transition hover:translate-y-[-1px] focus-ring"
               aria-label={nextAction ? "Continue your next lesson" : "Start learning now"}
             >
-              <p className="text-xs font-bold uppercase tracking-wide text-primary/80">
-                {nextAction ? "Continue your quest" : "Start your journey"}
+              <p className="text-xs font-bold uppercase tracking-wide text-white/85">
+                {nextAction ? "Continue your quest" : "Try now"}
               </p>
-              <p className="mt-1 font-display text-lg font-extrabold leading-tight text-ink">
+              <p className="mt-1 font-display text-lg font-extrabold leading-tight text-white">
                 {nextAction ? nextAction.lesson.title : "Begin with multiplication"}
               </p>
-              <p className="mt-1 text-sm font-medium text-ink/60">
+              <p className="mt-1 text-sm font-medium text-white/80">
                 {nextAction ? nextAction.subject.name : "Fast wins with tables and games"}
               </p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
+              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-white">
                 Jump in <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
               </span>
             </button>
 
-            <div className="rounded-3xl bg-ink/85 p-4 text-white shadow-[0_10px_30px_rgba(24,29,60,0.3)]">
-              <div className="flex items-center justify-between text-xs font-bold text-white/75">
+            <div className="rounded-3xl bg-white p-4 text-ink shadow-[0_10px_30px_rgba(17,17,35,0.12)] ring-2 ring-white/50">
+              <div className="flex items-center justify-between text-xs font-bold text-ink/60">
                 <span>Today&apos;s goal</span>
                 <span>
                   {lessonsDone}/{dailyGoal} lessons
                 </span>
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/20">
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink/10">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FFCF5C]"
+                  className="h-full rounded-full bg-gradient-to-r from-secondary to-accent"
                   initial={{ width: 0 }}
                   animate={{ width: `${goalPct}%` }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                 />
               </div>
-              <p className="mt-3 text-sm font-semibold text-white/90">
+              <p className="mt-3 text-sm font-semibold text-ink/80">
                 {goalPct >= 100 ? "You crushed today’s goal!" : `${goalPct}% complete. Keep going!`}
               </p>
             </div>
@@ -202,7 +213,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <div className="sticky top-0 z-20 border-b border-ink/[0.06] bg-bg/85 px-4 py-2.5 backdrop-blur-lg">
+      <div className="sticky top-0 z-20 border-b border-ink/[0.06] bg-[#f3f4f8]/90 px-4 py-2.5 backdrop-blur-lg">
         <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto scrollbar-none">
           {QUICK_NAV.map(({ to, label, Icon, active }) => (
             <Link
@@ -224,26 +235,11 @@ export default function Home() {
 
       <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-5">
         <motion.section {...fadeUp(1, reduce)}>
-          <SectionTitle>Why families choose KidQuest</SectionTitle>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <ValueCard
-              Icon={Sparkles}
-              title="Playful learning"
-              desc="Adventures and mini games keep kids curious and motivated."
-              tint="from-[#ffe7db] to-[#fff5ef]"
-            />
-            <ValueCard
-              Icon={BarChart3}
-              title="Parent visibility"
-              desc="Goals, streaks, and mastery snapshots are easy to follow."
-              tint="from-[#e8f0ff] to-[#f7f9ff]"
-            />
-            <ValueCard
-              Icon={ShieldCheck}
-              title="Safe progress"
-              desc="Kid-friendly and ad-free with trusted family controls."
-              tint="from-[#e7fbf5] to-[#f2fef9]"
-            />
+          <SectionTitle>What makes KidQuest special</SectionTitle>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            {FEATURE_ORBITS.map(({ Icon, title, desc }) => (
+              <FeatureOrbit key={title} Icon={Icon} title={title} desc={desc} />
+            ))}
           </div>
         </motion.section>
 
@@ -427,14 +423,14 @@ function Chip({ children }) {
   );
 }
 
-function ValueCard({ Icon, title, desc, tint }) {
+function FeatureOrbit({ Icon, title, desc }) {
   return (
-    <article className={`rounded-2xl bg-gradient-to-br ${tint} p-3.5 ring-1 ring-ink/[0.06]`}>
-      <div className="grid h-9 w-9 place-items-center rounded-xl bg-white text-primary ring-1 ring-ink/[0.08]">
-        <Icon size={18} />
+    <article className="text-center">
+      <div className="home-feature-orbit">
+        <Icon size={26} strokeWidth={2.25} />
       </div>
-      <h3 className="mt-2 font-display text-sm font-extrabold text-ink">{title}</h3>
-      <p className="mt-1 text-xs font-medium leading-relaxed text-ink/65">{desc}</p>
+      <h3 className="mt-3 font-display text-sm font-extrabold text-ink">{title}</h3>
+      <p className="mt-1 text-[11px] font-semibold leading-snug text-ink/60">{desc}</p>
     </article>
   );
 }

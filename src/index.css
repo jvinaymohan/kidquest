@@ -98,6 +98,29 @@ button {
     @apply inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-sm font-bold
            bg-white/20 text-white backdrop-blur-md ring-1 ring-white/25;
   }
+
+  .home-page {
+    background-color: #f3f4f8;
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(255, 107, 53, 0.08) 0%, transparent 42%),
+      radial-gradient(circle at 88% 18%, rgba(58, 134, 255, 0.08) 0%, transparent 40%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='%232d3047' fill-opacity='0.04'%3E%3Ctext x='8' y='28' font-size='18'%3E2%2B2%3C/text%3E%3Ctext x='62' y='72' font-size='16'%3E🌍%3C/text%3E%3Ctext x='20' y='98' font-size='14'%3E⭐%3C/text%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, auto, 120px 120px;
+  }
+
+  .home-hero-wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 28px;
+    background: #f3f4f8;
+    clip-path: ellipse(58% 100% at 50% 100%);
+  }
+
+  .home-feature-orbit {
+    @apply mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary text-white shadow-[0_8px_0_rgba(180,70,20,0.35)] ring-4 ring-white;
+  }
 }
 
 .scrollbar-none::-webkit-scrollbar {
