@@ -35,9 +35,9 @@ export const useAuthStore = create((set, get) => ({
 
   init: async () => {
     if (get().initialized) return;
-    set({ initialized: true });
 
     if (!isSupabaseEnabled) {
+      set({ initialized: true });
       return;
     }
 
@@ -45,6 +45,8 @@ export const useAuthStore = create((set, get) => ({
     const session = data?.session ?? null;
     if (session?.user) {
       await get()._onLogin(session);
+    } else {
+      set({ session: null, user: null, profile: null, cloudReady: false });
     }
 
     onAuthChange(async ({ event, session: nextSession }) => {
@@ -55,6 +57,8 @@ export const useAuthStore = create((set, get) => ({
         set({ session: null, user: null, profile: null, cloudReady: false });
       }
     });
+
+    set({ initialized: true });
   },
 
   _onLogin: async (session) => {
