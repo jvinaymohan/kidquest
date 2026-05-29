@@ -58,14 +58,20 @@ export default function Landing() {
             to="/register"
             className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white font-display font-extrabold py-3.5 rounded-pill shadow-chunky focus-ring"
           >
-            <Rocket size={18} /> Start your adventure — it's free!
+            <Rocket size={18} /> Have an invite? Create account
+          </Link>
+          <Link
+            to="/invite-request"
+            className="mt-2 w-full inline-flex items-center justify-center gap-2 bg-white text-ink font-display font-extrabold py-3 rounded-pill ring-1 ring-ink/15 focus-ring"
+          >
+            <Sparkles size={16} /> Need access? Request invite
           </Link>
 
           {isGoogleOAuthEnabled && (
             <>
               <div className="flex items-center gap-3 mt-3 mb-1">
                 <div className="flex-1 h-px bg-ink/15" />
-                <span className="text-[11px] font-bold text-ink/50">or join with</span>
+                <span className="text-[11px] font-bold text-ink/50">existing users</span>
                 <div className="flex-1 h-px bg-ink/15" />
               </div>
               <div className="mt-2">

@@ -243,7 +243,57 @@ returns trigger
 language plpgsql
 security definer set search_path = public
 as $$
+declare
+  v_invite_code text;
+  v_invite record;
 begin
+  v_invite_code := nullif(trim(coalesce(new.raw_user_meta_data ->> 'invite_code', '')), '');
+
+  if v_invite_code is null then
+    raise exception 'Invite code required to register.';
+  end if;
+
+  select *
+  into v_invite
+  from public.invite_codes
+  where code = v_invite_code
+  order by created_at desc
+  limit 1
+  for update;
+
+  if v_invite.id is null then
+    raise exception 'Invite code is invalid.';
+  end if;
+
+  if v_invite.status <> 'active' then
+    raise exception 'Invite code is not active.';
+  end if;
+
+  if v_invite.expires_at is not null and v_invite.expires_at <= now() then
+    raise exception 'Invite code has expired.';
+  end if;
+
+  if v_invite.issued_to_email is not null and lower(v_invite.issued_to_email) <> lower(new.email) then
+    raise exception 'Invite code is issued to a different email.';
+  end if;
+
+  update public.invite_codes
+  set
+    status = 'used',
+    used_by_user_id = new.id,
+    used_by_email = new.email,
+    used_at = now()
+  where id = v_invite.id;
+
+  if v_invite.approved_request_id is not null then
+    update public.referral_requests
+    set
+      status = 'approved',
+      reviewed_at = coalesce(reviewed_at, now()),
+      approved_invite_id = v_invite.id
+    where id = v_invite.approved_request_id;
+  end if;
+
   insert into public.profiles (id, display_name, kid_name)
   values (new.id, coalesce(new.raw_user_meta_data ->> 'display_name', split_part(new.email, '@', 1)), coalesce(new.raw_user_meta_data ->> 'kid_name', split_part(new.email, '@', 1)))
   on conflict (id) do nothing;
@@ -612,12 +662,73 @@ create table if not exists public.app_feedback (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists public.referral_requests (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null check (char_length(trim(full_name)) between 2 and 120),
+  email text not null check (position('@' in email) > 1),
+  reason text not null check (char_length(trim(reason)) between 8 and 2000),
+  referrer_name text,
+  referrer_email text,
+  status text not null default 'pending'
+    check (status in ('pending','approved','rejected')),
+  admin_notes text,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  reviewed_at timestamptz,
+  approved_invite_id uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.invite_codes (
+  id uuid primary key default gen_random_uuid(),
+  code text not null unique check (char_length(trim(code)) between 8 and 64),
+  status text not null default 'active'
+    check (status in ('active','used','revoked','expired')),
+  issued_to_email text,
+  note text,
+  approved_request_id uuid references public.referral_requests(id) on delete set null,
+  issued_by uuid references auth.users(id) on delete set null,
+  issued_at timestamptz not null default now(),
+  expires_at timestamptz,
+  used_by_user_id uuid references auth.users(id) on delete set null,
+  used_by_email text,
+  used_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'referral_requests_approved_invite_fkey'
+  ) then
+    alter table public.referral_requests
+      add constraint referral_requests_approved_invite_fkey
+      foreign key (approved_invite_id) references public.invite_codes(id) on delete set null;
+  end if;
+end;
+$$;
+
 create index if not exists idx_app_feedback_status on public.app_feedback(status, created_at desc);
 create index if not exists idx_app_feedback_category on public.app_feedback(category, created_at desc);
 create index if not exists idx_app_feedback_user on public.app_feedback(user_id);
+create index if not exists idx_referrals_status on public.referral_requests(status, created_at desc);
+create index if not exists idx_referrals_email on public.referral_requests(lower(email));
+create index if not exists idx_invites_status on public.invite_codes(status, issued_at desc);
+create index if not exists idx_invites_code on public.invite_codes(code);
 
 drop trigger if exists trg_app_feedback_touch on public.app_feedback;
 create trigger trg_app_feedback_touch before update on public.app_feedback
+  for each row execute function public.touch_updated_at();
+
+drop trigger if exists trg_referral_requests_touch on public.referral_requests;
+create trigger trg_referral_requests_touch before update on public.referral_requests
+  for each row execute function public.touch_updated_at();
+
+drop trigger if exists trg_invite_codes_touch on public.invite_codes;
+create trigger trg_invite_codes_touch before update on public.invite_codes
   for each row execute function public.touch_updated_at();
 
 alter table public.app_feedback enable row level security;
@@ -637,6 +748,54 @@ $$;
 
 revoke all on function public.is_admin() from public;
 grant execute on function public.is_admin() to authenticated;
+
+create or replace function public.validate_invite_code(p_code text, p_email text default null)
+returns table (
+  valid boolean,
+  reason text,
+  invite_id uuid
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_invite public.invite_codes;
+  v_email text := nullif(lower(trim(coalesce(p_email, ''))), '');
+begin
+  select *
+  into v_invite
+  from public.invite_codes
+  where code = trim(coalesce(p_code, ''))
+  order by created_at desc
+  limit 1;
+
+  if v_invite.id is null then
+    return query select false, 'Invite code not found.', null::uuid;
+    return;
+  end if;
+
+  if v_invite.status <> 'active' then
+    return query select false, 'Invite code is no longer active.', v_invite.id;
+    return;
+  end if;
+
+  if v_invite.expires_at is not null and v_invite.expires_at <= now() then
+    return query select false, 'Invite code has expired.', v_invite.id;
+    return;
+  end if;
+
+  if v_invite.issued_to_email is not null and v_email is not null and lower(v_invite.issued_to_email) <> v_email then
+    return query select false, 'Invite code was issued to a different email.', v_invite.id;
+    return;
+  end if;
+
+  return query select true, 'ok', v_invite.id;
+end;
+$$;
+
+revoke all on function public.validate_invite_code(text, text) from public;
+grant execute on function public.validate_invite_code(text, text) to anon, authenticated;
 
 -- Profiles: admins read all; users cannot self-promote to admin
 drop policy if exists "admin profile select all" on public.profiles;
@@ -678,5 +837,43 @@ create policy "feedback admin all" on public.app_feedback
   using (public.is_admin())
   with check (public.is_admin());
 
+alter table public.referral_requests enable row level security;
+alter table public.invite_codes enable row level security;
+
+drop policy if exists "referrals submit anon" on public.referral_requests;
+create policy "referrals submit anon" on public.referral_requests
+  for insert to anon
+  with check (
+    status = 'pending'
+    and reviewed_by is null
+    and reviewed_at is null
+    and approved_invite_id is null
+  );
+
+drop policy if exists "referrals submit auth" on public.referral_requests;
+create policy "referrals submit auth" on public.referral_requests
+  for insert to authenticated
+  with check (
+    status = 'pending'
+    and reviewed_by is null
+    and reviewed_at is null
+    and approved_invite_id is null
+  );
+
+drop policy if exists "referrals admin all" on public.referral_requests;
+create policy "referrals admin all" on public.referral_requests
+  for all to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists "invites admin all" on public.invite_codes;
+create policy "invites admin all" on public.invite_codes
+  for all to authenticated
+  using (public.is_admin())
+  with check (public.is_admin());
+
 grant select, insert, update, delete on public.app_feedback to authenticated;
 grant insert on public.app_feedback to anon;
+grant select, insert, update, delete on public.referral_requests to authenticated;
+grant insert on public.referral_requests to anon;
+grant select, insert, update, delete on public.invite_codes to authenticated;

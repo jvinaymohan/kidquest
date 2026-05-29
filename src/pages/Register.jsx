@@ -9,6 +9,7 @@ import { AGE_GROUPS } from "../data/subjects";
 import { isSupabaseEnabled } from "../lib/supabaseClient";
 import { GoogleSignInButton } from "../components/auth/GoogleSignInButton";
 import { isGoogleOAuthEnabled } from "../lib/featureFlags";
+import { validateInviteCode } from "../lib/cloud/invites";
 
 const ROLES = [
   { id: "kid", label: "I'm a Kid", emoji: "🧒", description: "Learn, play, earn badges." },
@@ -22,6 +23,7 @@ export default function Register() {
   const [kidName, setKidName] = useState("");
   const [ageGroup, setAgeGroup] = useState("adventurer");
   const [email, setEmail] = useState("");
+  const [inviteCode, setInviteCode] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -47,16 +49,21 @@ export default function Register() {
       setError("Kids under 13 need a parent or guardian to approve this account.");
       return;
     }
-    if (!email || !password || !kidName) {
-      setError("Fill out all fields to start.");
+    if (!email || !password || !kidName || !inviteCode.trim()) {
+      setError("Fill out all fields, including your invite code.");
       return;
     }
     if (password.length < 6) {
       setError("Password must be at least 6 characters.");
       return;
     }
+    const inviteCheck = await validateInviteCode({ code: inviteCode, email });
+    if (!inviteCheck.ok) {
+      setError(inviteCheck.reason || "Invite code is invalid.");
+      return;
+    }
     setBusy(true);
-    const res = await signUp({ email, password, kidName, ageGroup, role });
+    const res = await signUp({ email, password, kidName, ageGroup, role, inviteCode });
     setBusy(false);
     if (!res.ok) {
       setError(res.reason || "Sign up failed");
@@ -162,6 +169,16 @@ export default function Register() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm font-bold">
+            Invite code
+            <input
+              value={inviteCode}
+              onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+              placeholder="e.g. KQ-ABC123XYZ"
+              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base uppercase"
+              required
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm font-bold">
             Create a password
             <input
               type="password"
@@ -237,10 +254,10 @@ export default function Register() {
             <>
               <div className="flex items-center gap-3 my-1">
                 <div className="flex-1 h-px bg-ink/15" />
-                <span className="text-[11px] font-bold text-ink/50">or</span>
+                <span className="text-[11px] font-bold text-ink/50">existing users</span>
                 <div className="flex-1 h-px bg-ink/15" />
               </div>
-              <GoogleSignInButton label="Sign up with Google" />
+              <GoogleSignInButton label="Sign in with Google" />
             </>
           )}
 
@@ -248,6 +265,12 @@ export default function Register() {
             Already have one?{" "}
             <Link to="/login" className="text-primary font-extrabold">
               Sign in
+            </Link>
+          </div>
+          <div className="text-center text-xs font-bold text-ink/45">
+            Need an invite?{" "}
+            <Link to="/invite-request" className="text-primary font-extrabold">
+              Request access
             </Link>
           </div>
           <div className="text-center text-xs font-bold text-ink/45">

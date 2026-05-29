@@ -1,6 +1,6 @@
 import { isSupabaseEnabled, supabase } from "../supabaseClient";
 
-export async function signUpWithEmail({ email, password, kidName, ageGroup, role = "kid" }) {
+export async function signUpWithEmail({ email, password, kidName, ageGroup, role = "kid", inviteCode }) {
   if (!isSupabaseEnabled) return { ok: false, reason: "supabase-disabled" };
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -11,6 +11,7 @@ export async function signUpWithEmail({ email, password, kidName, ageGroup, role
         age_group: ageGroup ?? "adventurer",
         role,
         display_name: kidName ?? email.split("@")[0],
+        invite_code: inviteCode?.trim() ?? null,
       },
     },
   });

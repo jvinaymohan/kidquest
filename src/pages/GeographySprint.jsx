@@ -7,7 +7,7 @@ import { useGeographyStore } from "../store/useGeographyStore";
 import { useAppStore } from "../store/useAppStore";
 import { shuffle } from "../utils/multiplicationScoring";
 
-const SPRINT_SIZE = 8;
+const SPRINT_SIZE = 10;
 const TIME_LIMIT_MS = 120_000;
 
 function pickWrongCapitals(correct, n = 3) {

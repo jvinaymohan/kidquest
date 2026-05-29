@@ -149,7 +149,12 @@ function QuizPhase({ lesson, subject, subjectId, onComplete }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <QuizProgress index={quiz.index} total={quiz.total} />
+      <QuizProgress
+        index={quiz.index}
+        total={quiz.total}
+        masteredCount={quiz.masteredCount}
+        masteryTotal={quiz.scopeCount}
+      />
       {quiz.current && (
         <QuestionCard
           key={quiz.index}

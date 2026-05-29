@@ -136,9 +136,9 @@ export const useAuthStore = create((set, get) => ({
     });
   },
 
-  signUp: async ({ email, password, kidName, ageGroup, role = "kid" }) => {
+  signUp: async ({ email, password, kidName, ageGroup, role = "kid", inviteCode }) => {
     set({ loading: true, authError: null });
-    const res = await signUpWithEmail({ email, password, kidName, ageGroup, role });
+    const res = await signUpWithEmail({ email, password, kidName, ageGroup, role, inviteCode });
     if (!res.ok) {
       set({ loading: false, authError: res.reason });
       return res;

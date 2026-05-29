@@ -9,6 +9,7 @@ import { StarRating } from "../components/ui/StarRating";
 
 export function GeographyHub({ ageGroup, lessonProgress }) {
   const navigate = useNavigate();
+  const minimumQuestions = 10;
   const lessons = getLessonsFor("geography", ageGroup);
   const lessonByTrack = Object.fromEntries(
     lessons.map((l) => [l.track ?? l.id.split("-")[1], l])
@@ -93,7 +94,7 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
                     {track.blurb}
                   </p>
                   <p className="text-[10px] font-bold text-ink/45 mt-1">
-                    {lesson.questions.length} questions
+                    {Math.max(lesson.questions.length, minimumQuestions)}+ questions
                     {p?.mastered ? " · Mastered" : unlocked ? "" : " · Locked"}
                   </p>
                 </div>

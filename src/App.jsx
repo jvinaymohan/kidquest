@@ -7,6 +7,7 @@ import { AppShell } from "./components/layout/AppShell";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import InviteRequest from "./pages/InviteRequest";
 import ForgotPassword from "./pages/ForgotPassword";
 import AuthCallback from "./pages/AuthCallback";
 import ReviewHub from "./pages/ReviewHub";
@@ -102,6 +103,7 @@ export default function App() {
             </PublicOnly>
           }
         />
+        <Route path="/invite-request" element={<InviteRequest />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />

@@ -11,7 +11,12 @@ import {
 } from "./geography/countries";
 import { poolForAgeGroup } from "./geography/difficulty";
 
-const AGE_QUESTION_COUNTS = { explorer: 5, adventurer: 6, champion: 8 };
+const MIN_TRACK_QUESTIONS = 10;
+const AGE_QUESTION_COUNTS = {
+  explorer: MIN_TRACK_QUESTIONS,
+  adventurer: MIN_TRACK_QUESTIONS,
+  champion: MIN_TRACK_QUESTIONS,
+};
 
 const CONCEPTS = {
   continents: {
@@ -233,7 +238,7 @@ function genCurrenciesQuestions(ageGroup, rng, pool) {
 }
 
 function genMapQuestions(ageGroup, rng, pool) {
-  const count = ageGroup === "champion" ? 8 : ageGroup === "adventurer" ? 6 : 5;
+  const count = AGE_QUESTION_COUNTS[ageGroup] ?? MIN_TRACK_QUESTIONS;
   const targets = sampleN(pool, count, rng);
   return targets.map((country) => {
     const zoomTo = ageGroup === "champion" ? "world" : country.continent;

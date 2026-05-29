@@ -7,6 +7,8 @@ import {
   Mail,
   ChevronLeft,
   Sparkles,
+  Ticket,
+  UserPlus,
 } from "lucide-react";
 import {
   fetchAdminUserStats,
@@ -19,6 +21,13 @@ import {
   fetchFeedbackForAdmin,
   updateFeedbackAdmin,
 } from "../lib/cloud/feedback";
+import {
+  fetchAdminReferralRequests,
+  updateReferralRequestAdmin,
+  fetchAdminInviteCodes,
+  createInviteCodeAdmin,
+  updateInviteCodeAdmin,
+} from "../lib/cloud/invites";
 import { useAuthStore } from "../store/useAuthStore";
 
 const STATUS_OPTIONS = [
@@ -44,9 +53,15 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [feedback, setFeedback] = useState([]);
+  const [referrals, setReferrals] = useState([]);
+  const [invites, setInvites] = useState([]);
   const [userSearch, setUserSearch] = useState("");
   const [fbStatus, setFbStatus] = useState("all");
   const [fbCategory, setFbCategory] = useState("all");
+  const [referralStatus, setReferralStatus] = useState("all");
+  const [inviteStatus, setInviteStatus] = useState("all");
+  const [newInviteEmail, setNewInviteEmail] = useState("");
+  const [newInviteNote, setNewInviteNote] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState(null);
@@ -60,20 +75,24 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [s, u, f] = await Promise.all([
+      const [s, u, f, r, i] = await Promise.all([
         fetchAdminUserStats(),
         fetchAdminUsers({ search: userSearch }),
         fetchFeedbackForAdmin({ status: fbStatus, category: fbCategory }),
+        fetchAdminReferralRequests({ status: referralStatus }),
+        fetchAdminInviteCodes({ status: inviteStatus }),
       ]);
       setStats(s);
       setUsers(u);
       setFeedback(f);
+      setReferrals(r);
+      setInvites(i);
     } catch (e) {
       setError(e.message ?? "Failed to load admin data");
     } finally {
       setLoading(false);
     }
-  }, [userSearch, fbStatus, fbCategory]);
+  }, [userSearch, fbStatus, fbCategory, referralStatus, inviteStatus]);
 
   useEffect(() => {
     load();
@@ -96,6 +115,74 @@ export default function AdminDashboard() {
     }
     setFeedback((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
     showToast("Feedback updated");
+  }
+
+  async function handleReferralDecision(item, status) {
+    const patch = {
+      status,
+      reviewed_by: user?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+    };
+    const res = await updateReferralRequestAdmin(item.id, patch);
+    if (!res.ok) {
+      showToast(res.reason ?? "Could not update referral");
+      return;
+    }
+    setReferrals((rows) => rows.map((r) => (r.id === item.id ? { ...r, ...patch } : r)));
+    showToast(`Referral marked ${status}`);
+  }
+
+  async function handleCreateInvite({ requestId = null, email = null, note = null } = {}) {
+    const res = await createInviteCodeAdmin({
+      issuedToEmail: email || newInviteEmail,
+      note: note || newInviteNote,
+      approvedRequestId: requestId,
+      issuedBy: user?.id ?? null,
+    });
+    if (!res.ok) {
+      showToast(res.reason ?? "Failed to create invite");
+      return null;
+    }
+    setInvites((rows) => [res.invite, ...rows]);
+    if (!requestId) {
+      setNewInviteEmail("");
+      setNewInviteNote("");
+    }
+    showToast(`Invite created: ${res.invite.code}`);
+    return res.invite;
+  }
+
+  async function approveReferralAndIssueInvite(item) {
+    const invite = await handleCreateInvite({
+      requestId: item.id,
+      email: item.email,
+      note: `Approved referral for ${item.full_name}`,
+    });
+    if (!invite) return;
+    const patch = {
+      status: "approved",
+      reviewed_by: user?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+      approved_invite_id: invite.id,
+    };
+    const res = await updateReferralRequestAdmin(item.id, patch);
+    if (!res.ok) {
+      showToast(res.reason ?? "Invite created, but referral update failed");
+      return;
+    }
+    setReferrals((rows) => rows.map((r) => (r.id === item.id ? { ...r, ...patch } : r)));
+    showToast("Referral approved and invite issued");
+  }
+
+  async function markInviteStatus(id, status) {
+    const patch = status === "used" ? { status, used_at: new Date().toISOString() } : { status };
+    const res = await updateInviteCodeAdmin(id, patch);
+    if (!res.ok) {
+      showToast(res.reason ?? "Could not update invite");
+      return;
+    }
+    setInvites((rows) => rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
+    showToast(`Invite marked ${status}`);
   }
 
   function applySuggestion(item) {
@@ -137,10 +224,12 @@ export default function AdminDashboard() {
       )}
 
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
           <StatCard label="Total users" value={stats.total} icon={Users} />
           <StatCard label="New (7 days)" value={stats.newThisWeek} />
           <StatCard label="Open feedback" value={stats.openFeedback} icon={MessageSquare} />
+          <StatCard label="Pending referrals" value={stats.pendingReferrals} icon={UserPlus} />
+          <StatCard label="Active invites" value={stats.activeInvites} icon={Ticket} />
           <StatCard
             label="Parents"
             value={stats.byRole?.parent ?? 0}
@@ -153,6 +242,8 @@ export default function AdminDashboard() {
         {[
           { id: "feedback", label: "Feedback" },
           { id: "users", label: "Users & passwords" },
+          { id: "referrals", label: "Referrals" },
+          { id: "invites", label: "Invites" },
         ].map((t) => (
           <button
             key={t.id}
@@ -261,6 +352,140 @@ export default function AdminDashboard() {
               <p className="text-sm text-ink/50 text-center py-8">
                 No feedback yet — share the app and encourage parents & kids to use the 💬 button.
               </p>
+            )}
+          </ul>
+        </section>
+      )}
+
+      {tab === "referrals" && (
+        <section className="space-y-3">
+          <div className="flex flex-wrap gap-2">
+            <select
+              value={referralStatus}
+              onChange={(e) => setReferralStatus(e.target.value)}
+              className="px-3 py-2 rounded-xl border border-ink/15 text-sm font-bold focus-ring"
+            >
+              <option value="all">All statuses</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
+          <ul className="space-y-3">
+            {referrals.map((item) => (
+              <li key={item.id} className="p-4 rounded-2xl bg-white ring-1 ring-ink/10 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-display font-extrabold text-sm">{item.full_name}</p>
+                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-ink/5">{item.status}</span>
+                </div>
+                <p className="text-xs font-medium text-ink/60">{item.email}</p>
+                <p className="text-sm text-ink whitespace-pre-wrap">{item.reason}</p>
+                {(item.referrer_name || item.referrer_email) && (
+                  <p className="text-xs text-ink/50 font-medium">
+                    Referred by {item.referrer_name || "Unknown"} {item.referrer_email ? `(${item.referrer_email})` : ""}
+                  </p>
+                )}
+                <p className="text-[11px] text-ink/45 font-medium">{formatDate(item.created_at)}</p>
+                {item.status === "pending" && (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => approveReferralAndIssueInvite(item)}
+                      className="px-3 py-1.5 rounded-xl bg-primary text-white text-xs font-bold focus-ring"
+                    >
+                      Approve + issue invite
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleReferralDecision(item, "rejected")}
+                      className="px-3 py-1.5 rounded-xl bg-ink/10 text-ink text-xs font-bold focus-ring"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                )}
+              </li>
+            ))}
+            {!loading && referrals.length === 0 && (
+              <p className="text-sm text-ink/50 text-center py-8">No referral requests in this filter.</p>
+            )}
+          </ul>
+        </section>
+      )}
+
+      {tab === "invites" && (
+        <section className="space-y-3">
+          <div className="p-3 rounded-2xl bg-white ring-1 ring-ink/10 space-y-2">
+            <p className="text-xs font-bold text-ink/55">Create invite</p>
+            <input
+              type="email"
+              value={newInviteEmail}
+              onChange={(e) => setNewInviteEmail(e.target.value)}
+              placeholder="Issued to email (optional)"
+              className="w-full px-3 py-2.5 rounded-xl border border-ink/15 font-medium focus-ring"
+            />
+            <input
+              value={newInviteNote}
+              onChange={(e) => setNewInviteNote(e.target.value)}
+              placeholder="Internal note (optional)"
+              className="w-full px-3 py-2.5 rounded-xl border border-ink/15 font-medium focus-ring"
+            />
+            <button
+              type="button"
+              onClick={() => handleCreateInvite()}
+              className="px-3 py-2 rounded-xl bg-primary text-white text-sm font-bold focus-ring"
+            >
+              Generate invite
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <select
+              value={inviteStatus}
+              onChange={(e) => setInviteStatus(e.target.value)}
+              className="px-3 py-2 rounded-xl border border-ink/15 text-sm font-bold focus-ring"
+            >
+              <option value="all">All statuses</option>
+              <option value="active">Active</option>
+              <option value="used">Used</option>
+              <option value="revoked">Revoked</option>
+              <option value="expired">Expired</option>
+            </select>
+          </div>
+          <ul className="space-y-2">
+            {invites.map((invite) => (
+              <li
+                key={invite.id}
+                className="p-3 rounded-2xl bg-white ring-1 ring-ink/10 flex flex-col gap-1"
+              >
+                <p className="font-display text-sm font-extrabold break-all">{invite.code}</p>
+                <p className="text-xs font-medium text-ink/55">
+                  {invite.issued_to_email || "Any email"} · {invite.status} · issued {formatDate(invite.issued_at)}
+                </p>
+                {invite.note && <p className="text-xs text-ink/50">{invite.note}</p>}
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {invite.status !== "used" && (
+                    <button
+                      type="button"
+                      onClick={() => markInviteStatus(invite.id, "used")}
+                      className="px-2 py-1 rounded-lg bg-ink text-white text-[11px] font-bold focus-ring"
+                    >
+                      Mark used
+                    </button>
+                  )}
+                  {invite.status !== "revoked" && (
+                    <button
+                      type="button"
+                      onClick={() => markInviteStatus(invite.id, "revoked")}
+                      className="px-2 py-1 rounded-lg bg-ink/10 text-ink text-[11px] font-bold focus-ring"
+                    >
+                      Revoke
+                    </button>
+                  )}
+                </div>
+              </li>
+            ))}
+            {!loading && invites.length === 0 && (
+              <p className="text-sm text-ink/50 text-center py-8">No invites in this filter.</p>
             )}
           </ul>
         </section>

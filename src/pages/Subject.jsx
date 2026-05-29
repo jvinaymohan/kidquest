@@ -139,6 +139,7 @@ function LearnSurface({ subjectId }) {
 }
 
 function LessonsList({ lessons, subject, subjectId, ageGroup, lessonProgress, navigate }) {
+  const minimumQuestions = 10;
   return (
     <ul className="flex flex-col gap-3">
       {lessons.map((lesson, i) => {
@@ -169,7 +170,7 @@ function LessonsList({ lessons, subject, subjectId, ageGroup, lessonProgress, na
               <div className="flex-1 min-w-0">
                 <div className="font-display text-lg font-extrabold truncate">{lesson.title}</div>
                 <div className="text-xs font-bold text-ink/60">
-                  {lesson.questions.length} questions · {p?.mastered ? "Mastered ⭐" : unlocked ? "Tap to begin" : "Locked"}
+                  {Math.max(lesson.questions.length, minimumQuestions)}+ questions · {p?.mastered ? "Mastered ⭐" : unlocked ? "Tap to begin" : "Locked"}
                 </div>
               </div>
               <StarRating value={stars} size={20} />

@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
+  BarChart3,
   BookOpen,
   ChevronRight,
   ClipboardList,
@@ -10,8 +11,10 @@ import {
   PencilLine,
   Play,
   Settings,
+  ShieldCheck,
   Sparkles,
   Trophy,
+  Users,
 } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
@@ -41,15 +44,16 @@ const QUICK_NAV = [
   { to: "/explore", label: "Explore", Icon: Compass },
   { to: "/create", label: "Create", Icon: PencilLine },
   { to: "/compete", label: "Compete", Icon: Trophy },
+  { to: "/review", label: "Review", Icon: ClipboardList },
 ];
 
 const fadeUp = (i, reduce) =>
   reduce
     ? {}
     : {
-        initial: { opacity: 0, y: 12 },
+        initial: { opacity: 0, y: 14 },
         animate: { opacity: 1, y: 0 },
-        transition: { delay: i * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] },
+        transition: { delay: i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] },
       };
 
 function todayKey() {
@@ -90,6 +94,7 @@ export default function Home() {
     profile,
     email: user?.email ?? profile?.email,
   });
+
   const {
     kidName,
     role,
@@ -117,79 +122,98 @@ export default function Home() {
     () => pickNextAction(ageGroup, lessonProgress),
     [ageGroup, lessonProgress]
   );
-
   const isFirstTime = Object.keys(lessonProgress).length === 0;
   const xpToday = sumTodayXP(learnXPDaily);
-  const lessonsDone =
-    lessonsToday?.date === todayKey() ? lessonsToday.count : 0;
+  const lessonsDone = lessonsToday?.date === todayKey() ? lessonsToday.count : 0;
   const goalPct = Math.min(100, Math.round((lessonsDone / Math.max(1, dailyGoal)) * 100));
   const level = xpToNextLevel(totalXP);
 
   return (
-    <div className="-mx-4 -mt-5 flex flex-col min-h-[calc(100dvh-8rem)]">
-      {/* Hero — full bleed */}
-      <section className="relative overflow-hidden px-4 pt-6 pb-8 bg-gradient-to-br from-[#FF6B35] via-[#FF8F5C] to-[#4ECDC4]">
+    <div className="-mx-4 -mt-5 flex min-h-[calc(100dvh-8rem)] flex-col bg-bg">
+      <section className="relative overflow-hidden px-4 pt-6 pb-8 sm:pb-10 bg-gradient-to-br from-[#6259f8] via-[#8a5cf6] to-[#ff7b5b]">
         <div
-          className="absolute inset-0 opacity-40 pointer-events-none"
+          className="pointer-events-none absolute inset-0 opacity-45"
           aria-hidden
           style={{
             backgroundImage:
-              "radial-gradient(circle at 20% 20%, white 0%, transparent 45%), radial-gradient(circle at 80% 60%, rgba(255,230,109,0.5) 0%, transparent 40%)",
+              "radial-gradient(circle at 18% 20%, rgba(255,255,255,0.8) 0%, transparent 38%), radial-gradient(circle at 76% 14%, rgba(255,235,175,0.55) 0%, transparent 40%)",
           }}
         />
-        <motion.div className="relative max-w-2xl mx-auto" {...fadeUp(0, reduce)}>
-          <p className="text-white/80 text-sm font-semibold mb-1">
+        <motion.div className="relative mx-auto max-w-2xl" {...fadeUp(0, reduce)}>
+          <p className="text-sm font-semibold text-white/85">
             {theme.emoji} {theme.name}
           </p>
-          <h1 className="font-display text-[1.75rem] sm:text-3xl font-extrabold text-white leading-[1.15] tracking-tight">
+          <h1 className="mt-2 font-display text-[1.95rem] font-extrabold leading-[1.1] tracking-tight text-white sm:text-[2.35rem]">
             {isFirstTime
-              ? `Hey ${kidName || "there"} — let's explore!`
-              : `Welcome back, ${kidName || "friend"}!`}
+              ? `Welcome ${kidName || "Explorer"}!`
+              : `Hi ${kidName || "Explorer"}, ready for your next quest?`}
           </h1>
-          <p className="text-white/85 text-[15px] font-medium mt-2 max-w-[280px] leading-snug">
-            Seven subjects, real skills, and adventures made for curious kids.
+          <p className="mt-3 max-w-[34rem] text-[15px] font-medium leading-snug text-white/90 sm:text-base">
+            Learning adventures for kids, with clear parent visibility and safe progress every day.
           </p>
 
-          <div className="flex flex-wrap gap-2 mt-4">
-            <span className="home-pill">
-              <span className="font-display font-extrabold">{level.emoji}</span>
-              Lvl {level.level}
-            </span>
-            <span className="home-pill">🔥 {currentStreak} day streak</span>
-            <span className="home-pill">⚡ {xpToday} XP today</span>
+          <div className="mt-4 flex flex-wrap gap-2.5">
+            <Chip>{level.emoji} Level {level.level}</Chip>
+            <Chip>🔥 {currentStreak} day streak</Chip>
+            <Chip>⚡ {xpToday} XP today</Chip>
           </div>
 
-          <div className="mt-4 home-card p-3">
-            <div className="flex items-center justify-between text-xs font-bold text-ink/60 mb-1.5">
-              <span>Today's goal</span>
-              <span className="text-ink">
-                {lessonsDone}/{dailyGoal} lessons
+          <div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
+            <button
+              type="button"
+              onClick={() => navigate(nextAction ? nextAction.path : "/multiplication")}
+              className="group rounded-3xl bg-white px-4 py-4 text-left shadow-[0_10px_30px_rgba(17,17,35,0.18)] transition hover:translate-y-[-1px] focus-ring"
+              aria-label={nextAction ? "Continue your next lesson" : "Start learning now"}
+            >
+              <p className="text-xs font-bold uppercase tracking-wide text-primary/80">
+                {nextAction ? "Continue your quest" : "Start your journey"}
+              </p>
+              <p className="mt-1 font-display text-lg font-extrabold leading-tight text-ink">
+                {nextAction ? nextAction.lesson.title : "Begin with multiplication"}
+              </p>
+              <p className="mt-1 text-sm font-medium text-ink/60">
+                {nextAction ? nextAction.subject.name : "Fast wins with tables and games"}
+              </p>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-primary">
+                Jump in <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
               </span>
-            </div>
-            <div className="h-2 rounded-full bg-ink/[0.06] overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                initial={{ width: 0 }}
-                animate={{ width: `${goalPct}%` }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-              />
+            </button>
+
+            <div className="rounded-3xl bg-ink/85 p-4 text-white shadow-[0_10px_30px_rgba(24,29,60,0.3)]">
+              <div className="flex items-center justify-between text-xs font-bold text-white/75">
+                <span>Today&apos;s goal</span>
+                <span>
+                  {lessonsDone}/{dailyGoal} lessons
+                </span>
+              </div>
+              <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/20">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-[#4ECDC4] to-[#FFCF5C]"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${goalPct}%` }}
+                  transition={{ duration: 0.7, ease: "easeOut" }}
+                />
+              </div>
+              <p className="mt-3 text-sm font-semibold text-white/90">
+                {goalPct >= 100 ? "You crushed today’s goal!" : `${goalPct}% complete. Keep going!`}
+              </p>
             </div>
           </div>
         </motion.div>
       </section>
 
-      {/* Quick nav — mirrors bottom tabs for wayfinding */}
-      <div className="sticky top-0 z-20 bg-bg/80 backdrop-blur-lg border-b border-ink/[0.06] px-4 py-2.5">
-        <div className="flex gap-2 overflow-x-auto scrollbar-none max-w-2xl mx-auto">
+      <div className="sticky top-0 z-20 border-b border-ink/[0.06] bg-bg/85 px-4 py-2.5 backdrop-blur-lg">
+        <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto scrollbar-none">
           {QUICK_NAV.map(({ to, label, Icon, active }) => (
             <Link
               key={to}
               to={to}
-              className={`shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold transition focus-ring ${
+              className={`inline-flex shrink-0 items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition focus-ring ${
                 active
                   ? "bg-ink text-white shadow-md"
-                  : "bg-white text-ink/70 ring-1 ring-ink/[0.08] hover:bg-ink/[0.03]"
+                  : "bg-white text-ink/75 ring-1 ring-ink/[0.08] hover:bg-ink/[0.03]"
               }`}
+              aria-label={`Go to ${label}`}
             >
               <Icon size={16} strokeWidth={2.5} />
               {label}
@@ -198,140 +222,70 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="px-4 py-5 flex flex-col gap-5 max-w-2xl mx-auto w-full">
-        {/* Primary CTA */}
-        <motion.div {...fadeUp(1, reduce)}>
-          {nextAction ? (
-            <button
-              type="button"
-              onClick={() => navigate(nextAction.path)}
-              className="group w-full text-left rounded-3xl p-5 bg-gradient-to-br from-ink to-[#3d4268] text-white shadow-[0_12px_40px_rgba(45,48,71,0.25)] focus-ring overflow-hidden relative"
-            >
-              <div
-                className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-primary/30 blur-2xl"
-                aria-hidden
-              />
-              <div className="relative flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white/15 grid place-items-center text-3xl shrink-0 backdrop-blur-sm">
-                  {SUBJECT_THEMES[nextAction.subject.id]?.emoji ?? "✨"}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-white/70 text-xs font-semibold">
-                    Continue learning
-                  </p>
-                  <p className="font-display text-xl font-extrabold leading-tight mt-0.5 line-clamp-2">
-                    {nextAction.lesson.title}
-                  </p>
-                  <p className="text-white/60 text-sm font-medium mt-1">
-                    {nextAction.subject.name}
-                  </p>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-primary grid place-items-center shrink-0 group-hover:scale-105 transition-transform">
-                  <Play size={22} className="text-white ml-0.5" fill="white" />
-                </div>
-              </div>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => navigate("/multiplication")}
-              className="group w-full text-left rounded-3xl p-5 bg-gradient-to-br from-primary to-[#ff8f5c] text-white shadow-[0_12px_40px_rgba(255,107,53,0.35)] focus-ring"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-white/20 grid place-items-center text-3xl">
-                  🚀
-                </div>
-                <div className="flex-1">
-                  <p className="text-white/90 text-xs font-semibold">
-                    {isFirstTime ? "Start your journey" : "Pick something new"}
-                  </p>
-                  <p className="font-display text-xl font-extrabold leading-tight mt-0.5">
-                    Begin with multiplication
-                  </p>
-                  <p className="text-white/80 text-sm font-medium mt-1">
-                    Tables 1×1 through 20×20
-                  </p>
-                </div>
-                <ArrowRight
-                  size={24}
-                  className="shrink-0 group-hover:translate-x-1 transition-transform"
-                />
-              </div>
-            </button>
-          )}
-        </motion.div>
-
-        {/* Today's picks — horizontal cards */}
-        <motion.section {...fadeUp(2, reduce)}>
-          <SectionTitle>Today&apos;s picks</SectionTitle>
-          <div className="flex gap-3 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-none snap-x snap-mandatory">
-            <PickCard
-              to={daily.path}
-              icon={daily.emoji}
-              title={dailyDone ? "Challenge done" : daily.title}
-              sub={dailyDone ? "See you tomorrow" : `+${daily.xpBonus} XP bonus`}
-              gradient="from-amber-100 to-yellow-50"
-              done={dailyDone}
-              onClick={() => {
-                if (!dailyDone) {
-                  completeDailyChallenge(daily.dateKey);
-                  grantXP(daily.xpBonus);
-                }
-              }}
+      <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-5">
+        <motion.section {...fadeUp(1, reduce)}>
+          <SectionTitle>Why families choose KidQuest</SectionTitle>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <ValueCard
+              Icon={Sparkles}
+              title="Playful learning"
+              desc="Adventures and mini games keep kids curious and motivated."
+              tint="from-[#ffe7db] to-[#fff5ef]"
             />
-            <PickCard
-              to="/multiplication/speed-run"
-              icon="⚡"
-              title="Speed Run"
-              sub={
-                bestSpeedRun
-                  ? `Best ${formatMs(bestSpeedRun.totalTimeMs)}`
-                  : "50 questions · beat the clock"
-              }
-              gradient="from-slate-800 to-slate-700"
-              dark
+            <ValueCard
+              Icon={BarChart3}
+              title="Parent visibility"
+              desc="Goals, streaks, and mastery snapshots are easy to follow."
+              tint="from-[#e8f0ff] to-[#f7f9ff]"
             />
-            <PickCard
-              to={dueReviews > 0 ? "/review" : "/explore"}
-              icon={dueReviews > 0 ? "🧠" : "🧭"}
-              title={dueReviews > 0 ? "Review time" : "Explore"}
-              sub={
-                dueReviews > 0
-                  ? `${mulDue} math · ${geoDue} geo due`
-                  : "Maps, space & more"
-              }
-              gradient="from-violet-100 to-indigo-50"
-            />
-            <PickCard
-              to="/life"
-              icon="📍"
-              title="Life Explorer"
-              sub="Places, books & stories"
-              gradient="from-teal-100 to-cyan-50"
+            <ValueCard
+              Icon={ShieldCheck}
+              title="Safe progress"
+              desc="Kid-friendly and ad-free with trusted family controls."
+              tint="from-[#e7fbf5] to-[#f2fef9]"
             />
           </div>
         </motion.section>
 
-        {assignments.length > 0 && (
-          <motion.div {...fadeUp(3, reduce)}>
-            <AssignmentsBanner assignments={assignments} />
-          </motion.div>
-        )}
+        <motion.section
+          className="home-card bg-gradient-to-br from-[#fff9e7] via-white to-[#f2f4ff] p-4 sm:p-5"
+          {...fadeUp(2, reduce)}
+        >
+          <SectionTitle>Growing learner community</SectionTitle>
+          <div className="grid gap-4 sm:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <p className="text-sm font-medium leading-relaxed text-ink/70">
+                Kids build confidence through short daily wins, while parents and teachers can track
+                healthy learning habits over time.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <TrustTag icon={<Users size={13} />} label="Family + classroom ready" />
+                <TrustTag icon={<ShieldCheck size={13} />} label="Safe, guided experience" />
+                <TrustTag icon={<BarChart3 size={13} />} label="Progress insights" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <ImpactStat label="Subjects" value={`${SUBJECTS.length}`} />
+              <ImpactStat label="XP Today" value={`${xpToday}`} />
+              <ImpactStat label="Reviews Due" value={`${dueReviews}`} />
+              <ImpactStat label="Current Streak" value={`${currentStreak}d`} />
+            </div>
+          </div>
+        </motion.section>
 
-        {/* Subjects */}
-        <motion.section {...fadeUp(4, reduce)}>
+        <motion.section {...fadeUp(3, reduce)}>
           <SectionTitle
             action={
               <button
                 type="button"
                 onClick={() => navigate("/explore")}
-                className="text-sm font-bold text-primary flex items-center gap-0.5 focus-ring rounded-lg px-1"
+                className="flex items-center gap-0.5 rounded-lg px-1 text-sm font-bold text-primary focus-ring"
               >
                 See all <ChevronRight size={16} />
               </button>
             }
           >
-            What you can learn
+            Discover your next adventure
           </SectionTitle>
           <div className="grid grid-cols-2 gap-3">
             {SUBJECTS.map((s) => (
@@ -340,65 +294,80 @@ export default function Home() {
                 subject={s}
                 ageGroup={ageGroup}
                 lessonProgress={lessonProgress}
-                onClick={() =>
-                  navigate(
-                    s.id === "math" ? "/multiplication" : `/subject/${s.id}`
-                  )
-                }
+                onClick={() => navigate(s.id === "math" ? "/multiplication" : `/subject/${s.id}`)}
               />
             ))}
           </div>
         </motion.section>
 
-        {/* Why KidQuest — compact trust strip */}
-        <motion.section
-          className="home-card p-4 bg-gradient-to-br from-white to-secondary/5"
-          {...fadeUp(5, reduce)}
-        >
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-secondary/15 grid place-items-center shrink-0">
-              <Sparkles className="text-secondary" size={20} />
-            </div>
-            <div>
-              <h3 className="font-display font-extrabold text-ink text-base leading-tight">
-                Built for kids & families
-              </h3>
-              <p className="text-sm text-ink/60 font-medium mt-1 leading-relaxed">
-                Master math, explore 195 countries, learn space science, and grow
-                with streaks, XP, and parent-friendly progress tools.
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                {["Math fluency", "Geography", "Science", "Safe & ad-free"].map(
-                  (tag) => (
-                    <span
-                      key={tag}
-                      className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-ink/[0.05] text-ink/70"
-                    >
-                      {tag}
-                    </span>
-                  )
-                )}
-              </div>
-            </div>
+        <motion.section {...fadeUp(4, reduce)}>
+          <SectionTitle
+            action={
+              <Link to="/compete" className="flex items-center gap-0.5 rounded-lg px-1 text-sm font-bold text-primary focus-ring">
+                Open hub <ChevronRight size={16} />
+              </Link>
+            }
+          >
+            Spotlight challenges
+          </SectionTitle>
+          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-none">
+            <SpotlightCard
+              to={daily.path}
+              icon={daily.emoji}
+              title={dailyDone ? "Daily challenge done" : daily.title}
+              sub={dailyDone ? "Come back tomorrow for a new quest" : `Earn +${daily.xpBonus} XP bonus`}
+              gradient="from-[#fff0bf] to-[#ffe8a1]"
+              onClick={() => {
+                if (!dailyDone) {
+                  completeDailyChallenge(daily.dateKey);
+                  grantXP(daily.xpBonus);
+                }
+              }}
+            />
+            <SpotlightCard
+              to="/multiplication/speed-run"
+              icon="⚡"
+              title="Speed Run"
+              sub={bestSpeedRun ? `Best ${formatMs(bestSpeedRun.totalTimeMs)}` : "50 questions against the clock"}
+              gradient="from-slate-900 to-slate-700"
+              dark
+            />
+            <SpotlightCard
+              to={dueReviews > 0 ? "/review" : "/explore"}
+              icon={dueReviews > 0 ? "🧠" : "🧭"}
+              title={dueReviews > 0 ? "Review mission" : "Explore mission"}
+              sub={dueReviews > 0 ? `${mulDue} math · ${geoDue} geo ready` : "Try maps, trivia, and more"}
+              gradient="from-[#ece6ff] to-[#e4ecff]"
+            />
+            <SpotlightCard
+              to="/create"
+              icon="🎨"
+              title="Create mode"
+              sub="Build your own quiz adventure"
+              gradient="from-[#dff9f4] to-[#dff1ff]"
+            />
           </div>
         </motion.section>
 
-        {/* Grown-ups */}
-        <motion.div {...fadeUp(6, reduce)} className="space-y-2">
+        {assignments.length > 0 && (
+          <motion.div {...fadeUp(5, reduce)}>
+            <AssignmentsBanner assignments={assignments} />
+          </motion.div>
+        )}
+
+        <motion.section {...fadeUp(6, reduce)} className="space-y-2">
           {showAdmin && (
             <Link
               to="/admin"
-              className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-ink text-white transition focus-ring"
+              className="flex items-center justify-between rounded-2xl bg-ink px-4 py-3.5 text-white transition focus-ring"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-white/15 grid place-items-center">
+                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
                   <Sparkles size={18} />
                 </div>
                 <div>
-                  <p className="font-display font-extrabold text-sm">Admin</p>
-                  <p className="text-xs font-medium text-white/70">
-                    Users, feedback & password help
-                  </p>
+                  <p className="font-display text-sm font-extrabold">Admin</p>
+                  <p className="text-xs font-medium text-white/70">Users, feedback & password help</p>
                 </div>
               </div>
               <ChevronRight size={18} className="text-white/50" />
@@ -406,82 +375,104 @@ export default function Home() {
           )}
           <Link
             to="/settings"
-            className="flex items-center justify-between px-4 py-3.5 rounded-2xl bg-ink/[0.04] hover:bg-ink/[0.06] transition focus-ring"
+            className="flex items-center justify-between rounded-2xl bg-ink/[0.04] px-4 py-3.5 transition hover:bg-ink/[0.06] focus-ring"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white grid place-items-center ring-1 ring-ink/[0.08]">
+              <div className="grid h-10 w-10 place-items-center rounded-xl bg-white ring-1 ring-ink/[0.08]">
                 <Settings size={18} className="text-ink/70" />
               </div>
               <div>
-                <p className="font-display font-extrabold text-sm text-ink">
+                <p className="font-display text-sm font-extrabold text-ink">
                   {role === "teacher" ? "Teacher dashboard" : "Parent dashboard"}
                 </p>
-                <p className="text-xs font-medium text-ink/50">
-                  Progress · PIN · classrooms
-                </p>
+                <p className="text-xs font-medium text-ink/50">Progress · PIN · classrooms</p>
               </div>
             </div>
             <ChevronRight size={18} className="text-ink/30" />
           </Link>
-        </motion.div>
+        </motion.section>
 
-        <footer className="text-center pb-4 pt-1">
+        <footer className="pb-4 pt-1 text-center">
           <div className="flex justify-center gap-4 text-xs font-semibold text-ink/40">
-            <Link to="/about" className="hover:text-primary focus-ring rounded">
+            <Link to="/about" className="rounded hover:text-primary focus-ring">
               Our story
             </Link>
-            <Link to="/impact" className="hover:text-primary focus-ring rounded">
+            <Link to="/impact" className="rounded hover:text-primary focus-ring">
               Mission
             </Link>
-            <Link to="/privacy" className="hover:text-primary focus-ring rounded">
+            <Link to="/privacy" className="rounded hover:text-primary focus-ring">
               Privacy
             </Link>
           </div>
         </footer>
-      </div>
+      </main>
     </div>
   );
 }
 
 function SectionTitle({ children, action }) {
   return (
-    <div className="flex items-center justify-between mb-3">
-      <h2 className="font-display text-lg font-extrabold text-ink tracking-tight">
-        {children}
-      </h2>
+    <div className="mb-3 flex items-center justify-between">
+      <h2 className="font-display text-lg font-extrabold tracking-tight text-ink">{children}</h2>
       {action}
     </div>
   );
 }
 
-function PickCard({ to, icon, title, sub, gradient, dark, done, onClick }) {
+function Chip({ children }) {
+  return (
+    <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-sm">
+      {children}
+    </span>
+  );
+}
+
+function ValueCard({ Icon, title, desc, tint }) {
+  return (
+    <article className={`rounded-2xl bg-gradient-to-br ${tint} p-3.5 ring-1 ring-ink/[0.06]`}>
+      <div className="grid h-9 w-9 place-items-center rounded-xl bg-white text-primary ring-1 ring-ink/[0.08]">
+        <Icon size={18} />
+      </div>
+      <h3 className="mt-2 font-display text-sm font-extrabold text-ink">{title}</h3>
+      <p className="mt-1 text-xs font-medium leading-relaxed text-ink/65">{desc}</p>
+    </article>
+  );
+}
+
+function TrustTag({ icon, label }) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-ink/[0.06] px-2.5 py-1 text-[11px] font-bold text-ink/75">
+      {icon}
+      {label}
+    </span>
+  );
+}
+
+function ImpactStat({ label, value }) {
+  return (
+    <div className="rounded-2xl bg-white p-3 text-center ring-1 ring-ink/[0.07]">
+      <p className="font-display text-lg font-extrabold text-ink">{value}</p>
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/55">{label}</p>
+    </div>
+  );
+}
+
+function SpotlightCard({ to, icon, title, sub, gradient, onClick, dark }) {
   return (
     <Link
       to={to}
       onClick={onClick}
-      className={`snap-start shrink-0 w-[148px] rounded-3xl p-4 flex flex-col gap-2 focus-ring transition hover:scale-[1.02] active:scale-[0.98] bg-gradient-to-br ${gradient} ${
+      className={`snap-start shrink-0 w-[170px] rounded-3xl p-4 transition hover:scale-[1.02] active:scale-[0.98] focus-ring bg-gradient-to-br ${gradient} ${
         dark ? "text-white" : "text-ink"
-      } ${done ? "opacity-75" : "shadow-[0_4px_20px_rgba(45,48,71,0.08)]"}`}
+      }`}
     >
       <span className="text-3xl leading-none" aria-hidden>
         {icon}
       </span>
-      <div>
-        <p
-          className={`font-display font-extrabold text-[15px] leading-tight ${
-            dark ? "text-white" : "text-ink"
-          }`}
-        >
-          {title}
-        </p>
-        <p
-          className={`text-xs font-medium mt-1 leading-snug ${
-            dark ? "text-white/70" : "text-ink/55"
-          }`}
-        >
-          {sub}
-        </p>
-      </div>
+      <p className={`mt-2 font-display text-[15px] font-extrabold leading-tight ${dark ? "text-white" : "text-ink"}`}>
+        {title}
+      </p>
+      <p className={`mt-1 text-xs font-medium leading-snug ${dark ? "text-white/70" : "text-ink/60"}`}>{sub}</p>
     </Link>
   );
 }
@@ -507,64 +498,44 @@ function SubjectTile({ subject, ageGroup, lessonProgress, onClick }) {
       type="button"
       onClick={onClick}
       whileTap={{ scale: 0.98 }}
-      className={`text-left rounded-3xl p-4 bg-gradient-to-br ${theme.gradient} ring-1 ring-ink/[0.06] focus-ring hover:shadow-md transition-shadow`}
+      className={`rounded-3xl bg-gradient-to-br ${theme.gradient} p-4 text-left ring-1 ring-ink/[0.06] transition-shadow hover:shadow-md focus-ring`}
+      aria-label={`Open ${subject.name}`}
     >
       <div className="flex items-center justify-between">
         <span className="text-3xl" aria-hidden>
           {theme.emoji}
         </span>
         <span
-          className="text-xs font-extrabold tabular-nums px-2 py-0.5 rounded-full bg-white/80"
+          className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-extrabold tabular-nums"
           style={{ color: theme.accent }}
         >
           {pct}%
         </span>
       </div>
-      <p
-        className="font-display font-extrabold text-[15px] mt-2 leading-tight"
-        style={{ color: theme.accent }}
-      >
+      <p className="mt-2 font-display text-[15px] font-extrabold leading-tight" style={{ color: theme.accent }}>
         {subject.name}
       </p>
-      <p className="text-[11px] font-semibold text-ink/50 mt-0.5">
-        {subject.tagline}
-      </p>
-      <div className="h-1.5 rounded-full bg-ink/[0.08] mt-3 overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${pct}%`, backgroundColor: theme.accent }}
-        />
+      <p className="mt-0.5 text-[11px] font-semibold text-ink/55">{subject.tagline}</p>
+      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-ink/[0.08]">
+        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: theme.accent }} />
       </div>
-      {next && (
-        <p className="text-[10px] font-medium text-ink/45 mt-2 line-clamp-1">
-          Next: {next.title}
-        </p>
-      )}
+      {next && <p className="mt-2 line-clamp-1 text-[10px] font-medium text-ink/45">Next: {next.title}</p>}
     </motion.button>
   );
 }
 
 function AssignmentsBanner({ assignments }) {
   return (
-    <div className="rounded-3xl bg-amber-50/90 ring-1 ring-amber-200/60 px-4 py-3.5">
-      <div className="flex items-center gap-2 mb-2">
+    <div className="rounded-3xl bg-amber-50/90 px-4 py-3.5 ring-1 ring-amber-200/60">
+      <div className="mb-2 flex items-center gap-2">
         <ClipboardList size={16} className="text-amber-700" />
-        <span className="font-display text-sm font-extrabold text-amber-900">
-          From your teacher
-        </span>
+        <span className="font-display text-sm font-extrabold text-amber-900">From your teacher</span>
       </div>
       <ul className="space-y-2">
         {assignments.slice(0, 3).map((a) => (
-          <li
-            key={a.id}
-            className="text-sm font-semibold text-amber-900/85 flex justify-between gap-2"
-          >
+          <li key={a.id} className="flex justify-between gap-2 text-sm font-semibold text-amber-900/85">
             <span className="truncate">{a.title}</span>
-            {a.dueDate && (
-              <span className="text-amber-700/70 shrink-0 text-xs">
-                Due {a.dueDate}
-              </span>
-            )}
+            {a.dueDate && <span className="shrink-0 text-xs text-amber-700/70">Due {a.dueDate}</span>}
           </li>
         ))}
       </ul>

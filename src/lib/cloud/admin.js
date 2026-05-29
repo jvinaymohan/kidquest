@@ -32,11 +32,25 @@ export async function fetchAdminUserStats() {
     .in("status", ["new", "reviewing"]);
   if (e3) throw new Error(e3.message);
 
+  const { count: pendingReferrals, error: e4 } = await supabase
+    .from("referral_requests")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "pending");
+  if (e4) throw new Error(e4.message);
+
+  const { count: activeInvites, error: e5 } = await supabase
+    .from("invite_codes")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "active");
+  if (e5) throw new Error(e5.message);
+
   return {
     total: total ?? 0,
     byRole,
     newThisWeek: newThisWeek ?? 0,
     openFeedback: openFeedback ?? 0,
+    pendingReferrals: pendingReferrals ?? 0,
+    activeInvites: activeInvites ?? 0,
   };
 }
 

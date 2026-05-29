@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test:unit": "node --test src/utils/quizSession.test.js",
     "lint": "eslint .",
     "preview": "vite preview --port 4173",
     "start": "vite preview --port 4173 --host",
