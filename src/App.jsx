@@ -49,7 +49,16 @@ import { GlobalFeedback } from "./components/feedback/GlobalFeedback";
 function RequireOnboarded({ children }) {
   const onboarded = useAppStore((s) => s.onboarded);
   const session = useAuthStore((s) => s.session);
+  const authReady = useAuthStore((s) => s.initialized);
   const location = useLocation();
+
+  if (isSupabaseEnabled && !authReady) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-bg">
+        <p className="font-display text-lg font-extrabold text-ink/60">Loading KidQuest…</p>
+      </div>
+    );
+  }
 
   if (isSupabaseEnabled && !session) {
     return <Navigate to="/landing" replace state={{ from: location.pathname }} />;

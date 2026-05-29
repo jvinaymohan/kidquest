@@ -129,7 +129,7 @@ export default function Home() {
   const level = xpToNextLevel(totalXP);
 
   return (
-    <div className="-mx-4 -mt-5 flex min-h-[calc(100dvh-8rem)] flex-col bg-bg">
+    <div className="flex min-h-full flex-col bg-bg pb-2">
       <section className="relative overflow-hidden px-4 pt-6 pb-8 sm:pb-10 bg-gradient-to-br from-[#6259f8] via-[#8a5cf6] to-[#ff7b5b]">
         <div
           className="pointer-events-none absolute inset-0 opacity-45"
