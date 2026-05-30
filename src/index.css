@@ -108,20 +108,76 @@ button {
     background-size: auto, auto, 120px 120px;
   }
 
-  .home-hub {
-    background:
-      radial-gradient(circle at 50% -10%, rgba(255, 107, 53, 0.18) 0%, transparent 55%),
-      radial-gradient(circle at 10% 90%, rgba(78, 205, 196, 0.15) 0%, transparent 45%),
-      radial-gradient(circle at 95% 80%, rgba(255, 230, 109, 0.2) 0%, transparent 40%),
-      linear-gradient(180deg, #fff9f3 0%, #f4f8ff 55%, #fff5ef 100%);
+  /* Home v2 — kid adventure hub */
+  .home-v2 {
+    background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 38%, #fef3ff 72%, #fff9f3 100%);
   }
 
-  .home-panel {
-    @apply rounded-[1.75rem] bg-white/95 p-5 shadow-[0_16px_48px_rgba(45,48,71,0.1)] ring-1 ring-ink/[0.05] backdrop-blur-sm;
+  .home-v2-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(48px);
+    pointer-events: none;
   }
 
-  .home-cta {
-    @apply rounded-[1.25rem] bg-gradient-to-r from-primary via-[#ff8f4a] to-[#3A86FF] px-5 py-4 shadow-[0_8px_0_rgba(180,70,20,0.28)] transition hover:translate-y-[-2px] hover:shadow-[0_10px_0_rgba(180,70,20,0.28)] active:translate-y-[2px] active:shadow-[0_4px_0_rgba(180,70,20,0.28)];
+  .home-v2-blob-a {
+    width: 280px;
+    height: 280px;
+    top: -80px;
+    left: -60px;
+    background: rgba(255, 107, 53, 0.35);
+  }
+
+  .home-v2-blob-b {
+    width: 240px;
+    height: 240px;
+    top: 120px;
+    right: -70px;
+    background: rgba(58, 134, 255, 0.28);
+  }
+
+  .home-v2-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.45;
+    background-image:
+      radial-gradient(circle, rgba(255, 230, 109, 0.9) 1px, transparent 1px),
+      radial-gradient(circle, rgba(255, 255, 255, 0.8) 1px, transparent 1px);
+    background-size: 48px 48px, 72px 72px;
+    background-position: 0 0, 24px 24px;
+  }
+
+  .home-v2-badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-primary;
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 16px rgba(45, 48, 71, 0.08);
+  }
+
+  .home-v2-play {
+    @apply rounded-[1.5rem] px-6 py-5 text-white;
+    background: linear-gradient(135deg, #ff6b35 0%, #ff9348 45%, #3a86ff 100%);
+    box-shadow:
+      0 10px 0 rgba(180, 70, 20, 0.35),
+      0 20px 40px rgba(255, 107, 53, 0.35);
+  }
+
+  .home-v2-world {
+    @apply rounded-[1.35rem] p-[3px] bg-white transition-transform hover:scale-[1.03];
+    min-height: 7.5rem;
+  }
+
+  .home-v2-orb {
+    @apply flex w-[4.25rem] flex-col items-center rounded-2xl bg-white/90 px-2 py-3 shadow-md ring-2 ring-white transition hover:scale-105 active:scale-95 sm:w-[4.75rem];
+  }
+
+  .home-v2-daily {
+    @apply rounded-[1.5rem] bg-white/90 p-4 shadow-lg ring-2 ring-white backdrop-blur-sm transition hover:scale-[1.01];
+  }
+
+  .home-v2-thanks {
+    @apply rounded-[2rem] bg-white/70 backdrop-blur-md ring-2 ring-white/80;
+    box-shadow: 0 16px 48px rgba(45, 48, 71, 0.06);
   }
 }
 

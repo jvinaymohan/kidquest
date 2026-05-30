@@ -1,56 +1,44 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import {
-  ArrowRight,
-  BookOpen,
-  ChevronRight,
-  ClipboardList,
-  Compass,
-  PencilLine,
-  Settings,
-  Sparkles,
-  Trophy,
-} from "lucide-react";
+import { Play, Settings, Sparkles } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { isAdminUser } from "../lib/adminAccess";
 import { SUBJECTS } from "../data/subjects";
-import { subjectProgress, findNextLesson } from "../utils/content";
+import { findNextLesson } from "../utils/content";
 import { getMonthlyTheme } from "../utils/theme";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useGeographyStore } from "../store/useGeographyStore";
-import { formatMs } from "../utils/multiplicationScoring";
-import { useAssignments } from "../hooks/useAssignments";
 import { getDailyChallenge } from "../utils/dailyChallenge";
 import { xpToNextLevel } from "../utils/scoring";
 import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
 
-const SUBJECT_THEMES = {
-  geography: { bg: "#E8F8F4", accent: "#0F6E56", emoji: "🌍" },
-  history: { bg: "#FFF4E0", accent: "#854F0B", emoji: "📜" },
-  math: { bg: "#EAF3FF", accent: "#185FA5", emoji: "🔢" },
-  music: { bg: "#F3EBFF", accent: "#534AB7", emoji: "🎵" },
-  "solar-system": { bg: "#FFEDE8", accent: "#993C1D", emoji: "🪐" },
-  "general-knowledge": { bg: "#EFFBE8", accent: "#3B6D11", emoji: "💡" },
-  trivia: { bg: "#FFE8EC", accent: "#B7273A", emoji: "⭐" },
+const WORLD = {
+  geography: { emoji: "🌍", from: "#34d399", to: "#0d9488", glow: "rgba(52,211,153,0.35)" },
+  history: { emoji: "📜", from: "#fbbf24", to: "#d97706", glow: "rgba(251,191,36,0.35)" },
+  math: { emoji: "🔢", from: "#60a5fa", to: "#2563eb", glow: "rgba(96,165,250,0.35)" },
+  music: { emoji: "🎵", from: "#c084fc", to: "#7c3aed", glow: "rgba(192,132,252,0.35)" },
+  "solar-system": { emoji: "🪐", from: "#fb923c", to: "#ea580c", glow: "rgba(251,146,60,0.35)" },
+  "general-knowledge": { emoji: "💡", from: "#a3e635", to: "#65a30d", glow: "rgba(163,230,53,0.35)" },
+  trivia: { emoji: "⭐", from: "#f472b6", to: "#db2777", glow: "rgba(244,114,182,0.35)" },
 };
 
-const HUB_LINKS = [
-  { to: "/explore", label: "Explore", Icon: Compass, color: "bg-sky-100 text-sky-800" },
-  { to: "/create", label: "Create", Icon: PencilLine, color: "bg-violet-100 text-violet-800" },
-  { to: "/compete", label: "Compete", Icon: Trophy, color: "bg-amber-100 text-amber-900" },
-  { to: "/review", label: "Review", Icon: BookOpen, color: "bg-emerald-100 text-emerald-800" },
+const ORBS = [
+  { to: "/explore", emoji: "🧭", label: "Explore" },
+  { to: "/create", emoji: "🎨", label: "Create" },
+  { to: "/compete", emoji: "🏆", label: "Compete" },
+  { to: "/review", emoji: "🧠", label: "Review" },
 ];
 
-const pop = (i, reduce) =>
+const slide = (i, reduce) =>
   reduce
     ? {}
     : {
-        initial: { opacity: 0, scale: 0.96, y: 12 },
-        animate: { opacity: 1, scale: 1, y: 0 },
-        transition: { delay: i * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] },
+        initial: { opacity: 0, y: 24 },
+        animate: { opacity: 1, y: 0 },
+        transition: { delay: 0.08 + i * 0.06, duration: 0.5, ease: [0.22, 1, 0.36, 1] },
       };
 
 function todayKey() {
@@ -87,10 +75,7 @@ export default function Home() {
   const reduce = useReducedMotion();
   const profile = useAuthStore((s) => s.profile);
   const user = useAuthStore((s) => s.user);
-  const showAdmin = isAdminUser({
-    profile,
-    email: user?.email ?? profile?.email,
-  });
+  const showAdmin = isAdminUser({ profile, email: user?.email ?? profile?.email });
 
   const {
     kidName,
@@ -110,9 +95,6 @@ export default function Home() {
 
   const mulDue = useMultiplicationStore((s) => s.getDueReviews().length);
   const geoDue = useGeographyStore((s) => s.getDueReviews().length);
-  const dueReviews = mulDue + geoDue;
-  const bestSpeedRun = useMultiplicationStore((s) => s.bestSpeedRun);
-  const { assignments } = useAssignments();
   const theme = getMonthlyTheme();
   const daily = useMemo(() => getDailyChallenge(), []);
   const dailyDone = dailyChallengeDone === daily.dateKey;
@@ -120,300 +102,277 @@ export default function Home() {
     () => pickNextAction(ageGroup, lessonProgress),
     [ageGroup, lessonProgress]
   );
-  const isFirstTime = Object.keys(lessonProgress).length === 0;
   const xpToday = sumTodayXP(learnXPDaily);
   const lessonsDone = lessonsToday?.date === todayKey() ? lessonsToday.count : 0;
   const goalPct = Math.min(100, Math.round((lessonsDone / Math.max(1, dailyGoal)) * 100));
   const level = xpToNextLevel(totalXP);
 
+  const playPath = nextAction?.path ?? "/multiplication";
+  const playTitle = nextAction?.lesson.title ?? "Math Adventure";
+
   return (
-    <div className="home-hub min-h-full w-full pb-6">
-      <div className="mx-auto flex w-full max-w-md flex-col items-center gap-5 px-4 py-5 sm:py-6">
-        {/* Hero — everything centered */}
-        <motion.section className="home-panel w-full text-center" {...pop(0, reduce)}>
-          <div className="relative mx-auto mb-4 flex h-24 w-24 items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 via-accent/30 to-secondary/25 animate-[floaty_4s_ease-in-out_infinite]" />
-            <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-white shadow-lg ring-4 ring-white">
-              {avatarConfig ? (
-                <Avatar config={avatarConfig} size={72} />
-              ) : (
-                <Mascot kind="owl" size={64} />
-              )}
-            </div>
-            <span className="absolute -right-1 -top-1 grid h-9 w-9 place-items-center rounded-full bg-accent text-lg shadow-md ring-2 ring-white">
-              {level.emoji}
+    <div className="home-v2 relative min-h-full overflow-hidden pb-8">
+      {/* Decorative sky blobs */}
+      <div className="home-v2-blob home-v2-blob-a" aria-hidden />
+      <div className="home-v2-blob home-v2-blob-b" aria-hidden />
+      <div className="home-v2-stars" aria-hidden />
+
+      <div className="relative mx-auto flex w-full max-w-lg flex-col items-center px-4 pt-4">
+        {/* Game HUD */}
+        <motion.header className="flex w-full items-center gap-2" {...slide(0, reduce)}>
+          <Link
+            to="/profile"
+            className="flex shrink-0 items-center gap-2 rounded-2xl bg-white/90 px-2 py-1.5 shadow-md ring-2 ring-white focus-ring"
+          >
+            <span className="grid h-10 w-10 place-items-center overflow-hidden rounded-xl bg-gradient-to-br from-accent/40 to-primary/30">
+              {avatarConfig ? <Avatar config={avatarConfig} size={36} /> : <Mascot kind="owl" size={32} animate={false} />}
             </span>
+            <span className="hidden min-w-0 sm:block">
+              <span className="block truncate font-display text-sm font-extrabold text-ink">{kidName || "Explorer"}</span>
+              <span className="block text-[10px] font-bold text-ink/50">Lvl {level.level}</span>
+            </span>
+          </Link>
+
+          <div className="flex flex-1 justify-center gap-2">
+            <HudPill emoji="🔥" value={currentStreak} label="streak" />
+            <HudPill emoji="⚡" value={xpToday} label="XP" />
           </div>
 
-          <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
+          <Link
+            to="/settings"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-white/90 text-ink/60 shadow-md ring-2 ring-white focus-ring"
+            aria-label="Settings"
+          >
+            <Settings size={20} />
+          </Link>
+        </motion.header>
+
+        {/* Hero — centered adventure launch */}
+        <motion.section className="mt-6 w-full text-center" {...slide(1, reduce)}>
+          <p className="home-v2-badge mx-auto">
             {theme.emoji} {theme.name}
           </p>
-          <h1 className="mt-2 font-display text-[1.85rem] font-extrabold leading-tight text-ink sm:text-[2.1rem]">
-            {isFirstTime ? `Hey ${kidName || "Explorer"}!` : `Welcome back, ${kidName || "Explorer"}!`}
+
+          <div className="relative mx-auto mt-5 flex h-36 w-36 items-center justify-center">
+            <motion.div
+              className="absolute inset-0 rounded-full bg-gradient-to-br from-[#ffe066] via-[#ff9f43] to-[#ff6b6b] opacity-90 blur-sm"
+              animate={reduce ? undefined : { scale: [1, 1.06, 1], rotate: [0, 4, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="relative z-10 grid h-28 w-28 place-items-center rounded-full bg-white shadow-[0_12px_40px_rgba(0,0,0,0.15)] ring-[5px] ring-white">
+              <Mascot kind="rocket" size={72} />
+            </div>
+            <span className="absolute -right-2 top-2 z-20 animate-[wiggle_2s_ease-in-out_infinite] text-3xl" aria-hidden>
+              ✨
+            </span>
+            <span className="absolute -left-3 bottom-4 z-20 text-2xl" aria-hidden>
+              🌈
+            </span>
+          </div>
+
+          <h1 className="mt-5 font-display text-[2rem] font-extrabold leading-[1.08] tracking-tight text-ink sm:text-[2.35rem]">
+            Ready for your
+            <span className="block bg-gradient-to-r from-primary via-[#ff8f4a] to-[#3A86FF] bg-clip-text text-transparent">
+              next quest?
+            </span>
           </h1>
-          <p className="mx-auto mt-2 max-w-[18rem] text-sm font-semibold leading-relaxed text-ink/65">
-            Learn, play, and grow — with a little help from your family along the way.
+          <p className="mx-auto mt-3 max-w-[20rem] text-[15px] font-bold leading-snug text-ink/55">
+            Hi {kidName || "friend"}! Tap play and explore worlds made for curious kids.
           </p>
 
-          <div className="mt-5 grid grid-cols-3 gap-2">
-            <StatBubble label="Level" value={level.level} />
-            <StatBubble label="Streak" value={`${currentStreak}🔥`} />
-            <StatBubble label="XP today" value={xpToday} />
-          </div>
-
-          <div className="mt-5 rounded-2xl bg-ink/[0.04] px-4 py-3">
-            <div className="flex items-center justify-between text-xs font-bold text-ink/55">
-              <span>Daily goal</span>
-              <span>
-                {lessonsDone}/{dailyGoal} lessons
+          {/* Daily goal ring */}
+          <div className="mx-auto mt-5 flex max-w-[16rem] items-center gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-lg ring-2 ring-white backdrop-blur-sm">
+            <div
+              className="relative grid h-12 w-12 shrink-0 place-items-center rounded-full bg-ink/[0.06]"
+              style={{
+                background: `conic-gradient(#FF6B35 ${goalPct}%, rgba(45,48,71,0.08) ${goalPct}%)`,
+              }}
+            >
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-xs font-extrabold text-ink">
+                {goalPct}%
               </span>
             </div>
-            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                initial={{ width: 0 }}
-                animate={{ width: `${goalPct}%` }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              />
+            <div className="text-left">
+              <p className="font-display text-sm font-extrabold text-ink">Today&apos;s goal</p>
+              <p className="text-xs font-bold text-ink/50">
+                {lessonsDone}/{dailyGoal} lessons · keep the streak alive!
+              </p>
             </div>
           </div>
 
-          <button
+          {/* Primary CTA */}
+          <motion.button
             type="button"
-            onClick={() => navigate(nextAction ? nextAction.path : "/multiplication")}
-            className="home-cta mt-5 w-full focus-ring"
+            onClick={() => navigate(playPath)}
+            className="home-v2-play mt-6 w-full max-w-[18rem] focus-ring"
+            whileTap={{ scale: 0.96 }}
+            {...slide(2, reduce)}
           >
-            <span className="block text-xs font-bold uppercase tracking-wide text-white/90">
-              {nextAction ? "Continue learning" : "Start your adventure"}
+            <span className="flex items-center justify-center gap-2">
+              <Play size={22} fill="currentColor" />
+              <span className="font-display text-xl font-extrabold">Play now</span>
             </span>
-            <span className="mt-1 block font-display text-xl font-extrabold text-white">
-              {nextAction ? nextAction.lesson.title : "Jump into Math"}
-            </span>
-            <span className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-white/95">
-              Let&apos;s go <ArrowRight size={16} />
-            </span>
-          </button>
+            <span className="mt-1 block text-sm font-bold text-white/90">{playTitle}</span>
+          </motion.button>
         </motion.section>
 
-        {/* Quick hubs */}
-        <motion.section className="home-panel w-full" {...pop(1, reduce)}>
-          <h2 className="text-center font-display text-base font-extrabold text-ink">Where to next?</h2>
-          <div className="mt-4 grid grid-cols-2 gap-2.5">
-            {HUB_LINKS.map(({ to, label, Icon, color }) => (
-              <Link
-                key={to}
-                to={to}
-                className={`flex flex-col items-center gap-2 rounded-2xl px-3 py-4 transition hover:scale-[1.02] active:scale-[0.98] focus-ring ${color}`}
-              >
-                <Icon size={22} strokeWidth={2.5} />
-                <span className="font-display text-sm font-extrabold">{label}</span>
+        {/* Subject worlds — big tappable tiles */}
+        <motion.section className="mt-10 w-full" {...slide(3, reduce)}>
+          <h2 className="text-center font-display text-lg font-extrabold text-ink">Choose your world</h2>
+          <p className="mt-1 text-center text-xs font-bold uppercase tracking-widest text-ink/40">Tap to explore</p>
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {SUBJECTS.map((s, i) => {
+              const w = WORLD[s.id] ?? WORLD.trivia;
+              return (
+                <WorldTile
+                  key={s.id}
+                  name={s.name}
+                  emoji={w.emoji}
+                  from={w.from}
+                  to={w.to}
+                  glow={w.glow}
+                  delay={i * 0.04}
+                  reduce={reduce}
+                  onClick={() => navigate(s.id === "math" ? "/multiplication" : `/subject/${s.id}`)}
+                />
+              );
+            })}
+          </div>
+        </motion.section>
+
+        {/* Quick orbs */}
+        <motion.section className="mt-8 w-full" {...slide(4, reduce)}>
+          <div className="flex justify-center gap-3 sm:gap-4">
+            {ORBS.map(({ to, emoji, label }) => (
+              <Link key={to} to={to} className="home-v2-orb focus-ring">
+                <span className="text-2xl" aria-hidden>
+                  {emoji}
+                </span>
+                <span className="mt-1 font-display text-[11px] font-extrabold text-ink/75">{label}</span>
               </Link>
             ))}
           </div>
         </motion.section>
 
-        {/* Subjects */}
-        <motion.section className="home-panel w-full" {...pop(2, reduce)}>
-          <div className="mb-4 text-center">
-            <h2 className="font-display text-base font-extrabold text-ink">Pick a subject</h2>
-            <p className="mt-1 text-xs font-semibold text-ink/50">Tap a world to explore</p>
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            {SUBJECTS.map((s) => (
-              <SubjectTile
-                key={s.id}
-                subject={s}
-                ageGroup={ageGroup}
-                lessonProgress={lessonProgress}
-                onClick={() => navigate(s.id === "math" ? "/multiplication" : `/subject/${s.id}`)}
-              />
-            ))}
-          </div>
+        {/* Daily bonus */}
+        <motion.section className="mt-8 w-full" {...slide(5, reduce)}>
+          <Link
+            to={daily.path}
+            onClick={() => {
+              if (!dailyDone) {
+                completeDailyChallenge(daily.dateKey);
+                grantXP(daily.xpBonus);
+              }
+            }}
+            className="home-v2-daily flex items-center gap-4 focus-ring"
+          >
+            <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-white text-3xl shadow-inner">
+              {dailyDone ? "✅" : daily.emoji}
+            </span>
+            <div className="flex-1 text-left">
+              <p className="font-display text-base font-extrabold text-ink">
+                {dailyDone ? "Daily bonus collected!" : "Daily bonus quest"}
+              </p>
+              <p className="text-sm font-bold text-ink/50">
+                {dailyDone ? "Come back tomorrow" : `${daily.title} · +${daily.xpBonus} XP`}
+              </p>
+            </div>
+            {!dailyDone && (
+              <span className="rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-white">Go</span>
+            )}
+          </Link>
         </motion.section>
 
-        {/* Play today */}
-        <motion.section className="home-panel w-full" {...pop(3, reduce)}>
-          <h2 className="text-center font-display text-base font-extrabold text-ink">Play today</h2>
-          <div className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 scrollbar-none">
-            <MiniQuest
-              to={daily.path}
-              emoji={daily.emoji}
-              title={dailyDone ? "Daily done!" : daily.title}
-              sub={dailyDone ? "See you tomorrow" : `+${daily.xpBonus} XP`}
-              tint="from-amber-100 to-yellow-50"
-              onClick={() => {
-                if (!dailyDone) {
-                  completeDailyChallenge(daily.dateKey);
-                  grantXP(daily.xpBonus);
-                }
-              }}
-            />
-            <MiniQuest
-              to="/multiplication/speed-run"
-              emoji="⚡"
-              title="Speed run"
-              sub={bestSpeedRun ? formatMs(bestSpeedRun.totalTimeMs) : "Beat the clock"}
-              tint="from-slate-800 to-slate-600"
-              dark
-            />
-            <MiniQuest
-              to={dueReviews > 0 ? "/review" : "/explore"}
-              emoji={dueReviews > 0 ? "🧠" : "🧭"}
-              title={dueReviews > 0 ? "Review time" : "Explore"}
-              sub={dueReviews > 0 ? `${dueReviews} ready` : "Discover more"}
-              tint="from-violet-100 to-indigo-50"
-            />
-          </div>
-        </motion.section>
-
-        {assignments.length > 0 && (
-          <motion.div className="home-panel w-full" {...pop(4, reduce)}>
-            <AssignmentsBanner assignments={assignments} />
-          </motion.div>
+        {(mulDue + geoDue) > 0 && (
+          <motion.button
+            type="button"
+            onClick={() => navigate("/review")}
+            className="mt-4 w-full rounded-2xl bg-violet-500 px-4 py-3 font-display text-sm font-extrabold text-white shadow-lg focus-ring"
+            {...slide(5, reduce)}
+          >
+            🧠 {mulDue + geoDue} reviews waiting for you!
+          </motion.button>
         )}
 
-        {/* Grown-ups + thank you — centered */}
-        <motion.section className="w-full space-y-2 text-center" {...pop(5, reduce)}>
+        {/* Footer — thanks centered */}
+        <motion.footer className="mt-10 w-full text-center" {...slide(6, reduce)}>
           {showAdmin && (
             <Link
               to="/admin"
-              className="home-panel flex items-center justify-between px-4 py-3.5 text-left transition hover:scale-[1.01] focus-ring"
+              className="mb-3 inline-flex items-center gap-2 rounded-full bg-ink px-4 py-2 text-xs font-extrabold text-white focus-ring"
             >
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-ink text-white">
-                  <Sparkles size={18} />
-                </span>
-                <div>
-                  <p className="font-display text-sm font-extrabold text-ink">Admin</p>
-                  <p className="text-xs font-medium text-ink/50">Approvals & feedback</p>
-                </div>
-              </div>
-              <ChevronRight size={18} className="text-ink/30" />
+              <Sparkles size={14} /> Admin dashboard
             </Link>
           )}
-          <Link
-            to="/settings"
-            className="home-panel flex items-center justify-between px-4 py-3.5 text-left transition hover:scale-[1.01] focus-ring"
-          >
-            <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary">
-                <Settings size={18} />
-              </span>
-              <div>
-                <p className="font-display text-sm font-extrabold text-ink">
-                  {role === "teacher" ? "Teacher space" : "Parent space"}
-                </p>
-                <p className="text-xs font-medium text-ink/50">Progress & settings</p>
-              </div>
-            </div>
-            <ChevronRight size={18} className="text-ink/30" />
-          </Link>
 
-          <div className="home-panel px-5 py-6">
-            <p className="font-display text-lg font-extrabold text-ink">Thanks for learning with us!</p>
-            <p className="mx-auto mt-2 max-w-[16rem] text-sm font-semibold leading-relaxed text-ink/55">
-              Every quest you finish helps KidQuest get better for kids and families everywhere.
+          <div className="home-v2-thanks mx-auto max-w-sm px-6 py-8">
+            <p className="text-3xl" aria-hidden>
+              💛
             </p>
-            <p className="mt-3 text-2xl" aria-hidden>
-              💛✨🎒
+            <p className="mt-2 font-display text-xl font-extrabold text-ink">Thanks for being awesome!</p>
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-ink/55">
+              Every adventure you complete makes KidQuest more fun for kids everywhere.
+            </p>
+            <p className="mt-4 text-xs font-bold text-ink/35">
+              {role === "teacher" ? "Teachers" : "Parents"} ·{" "}
+              <Link to="/settings" className="text-primary hover:underline">
+                open dashboard
+              </Link>
             </p>
           </div>
 
-          <footer className="flex justify-center gap-4 pb-2 pt-1 text-xs font-semibold text-ink/40">
-            <Link to="/about" className="rounded hover:text-primary focus-ring">
-              Our story
+          <div className="flex justify-center gap-4 pb-2 text-xs font-bold text-ink/35">
+            <Link to="/about" className="hover:text-primary focus-ring">
+              Story
             </Link>
-            <Link to="/impact" className="rounded hover:text-primary focus-ring">
+            <Link to="/impact" className="hover:text-primary focus-ring">
               Mission
             </Link>
-            <Link to="/privacy" className="rounded hover:text-primary focus-ring">
+            <Link to="/privacy" className="hover:text-primary focus-ring">
               Privacy
             </Link>
-          </footer>
-        </motion.section>
+          </div>
+        </motion.footer>
       </div>
     </div>
   );
 }
 
-function StatBubble({ label, value }) {
+function HudPill({ emoji, value, label }) {
   return (
-    <div className="rounded-2xl bg-ink/[0.04] px-2 py-3">
-      <p className="font-display text-lg font-extrabold tabular-nums text-ink">{value}</p>
-      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-ink/45">{label}</p>
+    <div className="flex items-center gap-1.5 rounded-2xl bg-white/90 px-3 py-2 shadow-md ring-2 ring-white">
+      <span className="text-base" aria-hidden>
+        {emoji}
+      </span>
+      <div className="text-left leading-none">
+        <p className="font-display text-sm font-extrabold tabular-nums text-ink">{value}</p>
+        <p className="text-[9px] font-bold uppercase tracking-wide text-ink/40">{label}</p>
+      </div>
     </div>
   );
 }
 
-function SubjectTile({ subject, ageGroup, lessonProgress, onClick }) {
-  const stats = useMemo(
-    () => subjectProgress(subject.id, ageGroup, lessonProgress),
-    [subject.id, ageGroup, lessonProgress]
-  );
-  const theme = SUBJECT_THEMES[subject.id] ?? { bg: "#F5F5F5", accent: "#2D3047", emoji: "✨" };
-  const pct = Math.round(stats.masteryPct * 100);
-
+function WorldTile({ name, emoji, from, to, glow, delay, reduce, onClick }) {
   return (
     <motion.button
       type="button"
       onClick={onClick}
-      whileTap={{ scale: 0.97 }}
-      className="flex flex-col items-center rounded-2xl p-3.5 text-center transition hover:scale-[1.02] focus-ring"
-      style={{ backgroundColor: theme.bg }}
-      aria-label={`Open ${subject.name}`}
+      initial={reduce ? false : { opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.35 }}
+      whileTap={{ scale: 0.94 }}
+      className="home-v2-world focus-ring"
+      style={{ boxShadow: `0 8px 0 rgba(0,0,0,0.08), 0 12px 32px ${glow}` }}
     >
-      <span className="text-3xl" aria-hidden>
-        {theme.emoji}
-      </span>
-      <p className="mt-2 font-display text-sm font-extrabold" style={{ color: theme.accent }}>
-        {subject.name}
-      </p>
-      <p className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/70">
-        <span
-          className="block h-full rounded-full transition-all"
-          style={{ width: `${pct}%`, backgroundColor: theme.accent }}
-        />
-      </p>
-      <p className="mt-1 text-[10px] font-bold text-ink/45">{pct}% mastered</p>
-    </motion.button>
-  );
-}
-
-function MiniQuest({ to, emoji, title, sub, tint, onClick, dark }) {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className={`snap-center shrink-0 w-[9.5rem] rounded-2xl bg-gradient-to-br ${tint} p-3.5 text-center transition hover:scale-[1.03] active:scale-[0.98] focus-ring ${
-        dark ? "text-white" : "text-ink"
-      }`}
-    >
-      <span className="text-2xl" aria-hidden>
-        {emoji}
-      </span>
-      <p className={`mt-2 font-display text-sm font-extrabold leading-tight ${dark ? "text-white" : "text-ink"}`}>
-        {title}
-      </p>
-      <p className={`mt-1 text-[11px] font-semibold ${dark ? "text-white/75" : "text-ink/55"}`}>{sub}</p>
-    </Link>
-  );
-}
-
-function AssignmentsBanner({ assignments }) {
-  return (
-    <div className="text-left">
-      <div className="mb-2 flex items-center justify-center gap-2 sm:justify-start">
-        <ClipboardList size={16} className="text-amber-700" />
-        <span className="font-display text-sm font-extrabold text-amber-900">From your teacher</span>
+      <div
+        className="flex h-full flex-col items-center justify-center gap-1 rounded-[1.35rem] p-4"
+        style={{ background: `linear-gradient(145deg, ${from} 0%, ${to} 100%)` }}
+      >
+        <span className="text-4xl drop-shadow-sm" aria-hidden>
+          {emoji}
+        </span>
+        <span className="font-display text-sm font-extrabold text-white drop-shadow-sm">{name}</span>
       </div>
-      <ul className="space-y-2">
-        {assignments.slice(0, 3).map((a) => (
-          <li key={a.id} className="flex justify-between gap-2 text-sm font-semibold text-amber-900/85">
-            <span className="truncate">{a.title}</span>
-            {a.dueDate && <span className="shrink-0 text-xs text-amber-700/70">Due {a.dueDate}</span>}
-          </li>
-        ))}
-      </ul>
-    </div>
+    </motion.button>
   );
 }
