@@ -11,9 +11,9 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   const isHome = location.pathname === "/home";
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg">
+    <div className={`min-h-screen flex flex-col ${isHome ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
-      {!hideTop && <TopBar />}
+      {!hideTop && !isHome && <TopBar />}
       <main className="flex-1 overflow-x-hidden overflow-y-auto">
         <div
           className={

@@ -108,18 +108,20 @@ button {
     background-size: auto, auto, 120px 120px;
   }
 
-  .home-hero-wave {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -1px;
-    height: 28px;
-    background: #f3f4f8;
-    clip-path: ellipse(58% 100% at 50% 100%);
+  .home-hub {
+    background:
+      radial-gradient(circle at 50% -10%, rgba(255, 107, 53, 0.18) 0%, transparent 55%),
+      radial-gradient(circle at 10% 90%, rgba(78, 205, 196, 0.15) 0%, transparent 45%),
+      radial-gradient(circle at 95% 80%, rgba(255, 230, 109, 0.2) 0%, transparent 40%),
+      linear-gradient(180deg, #fff9f3 0%, #f4f8ff 55%, #fff5ef 100%);
   }
 
-  .home-feature-orbit {
-    @apply mx-auto grid h-16 w-16 place-items-center rounded-full bg-primary text-white shadow-[0_8px_0_rgba(180,70,20,0.35)] ring-4 ring-white;
+  .home-panel {
+    @apply rounded-[1.75rem] bg-white/95 p-5 shadow-[0_16px_48px_rgba(45,48,71,0.1)] ring-1 ring-ink/[0.05] backdrop-blur-sm;
+  }
+
+  .home-cta {
+    @apply rounded-[1.25rem] bg-gradient-to-r from-primary via-[#ff8f4a] to-[#3A86FF] px-5 py-4 shadow-[0_8px_0_rgba(180,70,20,0.28)] transition hover:translate-y-[-2px] hover:shadow-[0_10px_0_rgba(180,70,20,0.28)] active:translate-y-[2px] active:shadow-[0_4px_0_rgba(180,70,20,0.28)];
   }
 }
 

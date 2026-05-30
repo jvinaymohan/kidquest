@@ -3,18 +3,14 @@ import { useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   ArrowRight,
-  BarChart3,
   BookOpen,
   ChevronRight,
   ClipboardList,
   Compass,
   PencilLine,
-  Play,
   Settings,
-  ShieldCheck,
   Sparkles,
   Trophy,
-  Users,
 } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
@@ -28,39 +24,33 @@ import { formatMs } from "../utils/multiplicationScoring";
 import { useAssignments } from "../hooks/useAssignments";
 import { getDailyChallenge } from "../utils/dailyChallenge";
 import { xpToNextLevel } from "../utils/scoring";
+import { Mascot } from "../components/mascots/Mascot";
+import { Avatar } from "../components/mascots/Avatar";
 
 const SUBJECT_THEMES = {
-  geography: { gradient: "from-emerald-400/20 to-teal-50", accent: "#0F6E56", emoji: "🌍" },
-  history: { gradient: "from-amber-400/25 to-orange-50", accent: "#854F0B", emoji: "📜" },
-  math: { gradient: "from-blue-400/20 to-sky-50", accent: "#185FA5", emoji: "🔢" },
-  music: { gradient: "from-violet-400/20 to-purple-50", accent: "#534AB7", emoji: "🎵" },
-  "solar-system": { gradient: "from-orange-400/20 to-rose-50", accent: "#993C1D", emoji: "🪐" },
-  "general-knowledge": { gradient: "from-lime-400/20 to-green-50", accent: "#3B6D11", emoji: "💡" },
-  trivia: { gradient: "from-rose-400/20 to-pink-50", accent: "#B7273A", emoji: "⭐" },
+  geography: { bg: "#E8F8F4", accent: "#0F6E56", emoji: "🌍" },
+  history: { bg: "#FFF4E0", accent: "#854F0B", emoji: "📜" },
+  math: { bg: "#EAF3FF", accent: "#185FA5", emoji: "🔢" },
+  music: { bg: "#F3EBFF", accent: "#534AB7", emoji: "🎵" },
+  "solar-system": { bg: "#FFEDE8", accent: "#993C1D", emoji: "🪐" },
+  "general-knowledge": { bg: "#EFFBE8", accent: "#3B6D11", emoji: "💡" },
+  trivia: { bg: "#FFE8EC", accent: "#B7273A", emoji: "⭐" },
 };
 
-const QUICK_NAV = [
-  { to: "/home", label: "Learn", Icon: BookOpen, active: true },
-  { to: "/explore", label: "Explore", Icon: Compass },
-  { to: "/create", label: "Create", Icon: PencilLine },
-  { to: "/compete", label: "Compete", Icon: Trophy },
-  { to: "/review", label: "Review", Icon: ClipboardList },
+const HUB_LINKS = [
+  { to: "/explore", label: "Explore", Icon: Compass, color: "bg-sky-100 text-sky-800" },
+  { to: "/create", label: "Create", Icon: PencilLine, color: "bg-violet-100 text-violet-800" },
+  { to: "/compete", label: "Compete", Icon: Trophy, color: "bg-amber-100 text-amber-900" },
+  { to: "/review", label: "Review", Icon: BookOpen, color: "bg-emerald-100 text-emerald-800" },
 ];
 
-const FEATURE_ORBITS = [
-  { Icon: Sparkles, title: "Fun quests", desc: "Short adventures kids actually want to finish." },
-  { Icon: BookOpen, title: "Smart learning", desc: "Math, geography, science, and more in one place." },
-  { Icon: Users, title: "Family ready", desc: "Parents and teachers see progress at a glance." },
-  { Icon: Trophy, title: "Play together", desc: "Challenges, reviews, and wins that build confidence." },
-];
-
-const fadeUp = (i, reduce) =>
+const pop = (i, reduce) =>
   reduce
     ? {}
     : {
-        initial: { opacity: 0, y: 14 },
-        animate: { opacity: 1, y: 0 },
-        transition: { delay: i * 0.06, duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+        initial: { opacity: 0, scale: 0.96, y: 12 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        transition: { delay: i * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] },
       };
 
 function todayKey() {
@@ -106,6 +96,7 @@ export default function Home() {
     kidName,
     role,
     ageGroup,
+    avatarConfig,
     lessonProgress,
     dailyChallengeDone,
     completeDailyChallenge,
@@ -136,154 +127,98 @@ export default function Home() {
   const level = xpToNextLevel(totalXP);
 
   return (
-    <div className="home-page flex min-h-full flex-col pb-2">
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary via-[#ff9348] to-[#3A86FF] px-4 pt-5 pb-12 sm:pb-14">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-50"
-          aria-hidden
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 14% 18%, rgba(255,255,255,0.85) 0%, transparent 36%), radial-gradient(circle at 82% 12%, rgba(255,230,109,0.65) 0%, transparent 38%)",
-          }}
-        />
-        <div className="home-hero-wave" aria-hidden />
-        <motion.div className="relative mx-auto max-w-2xl" {...fadeUp(0, reduce)}>
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-white ring-1 ring-white/30">
-            <span aria-hidden>🎒</span> KidQuest · Study is fun
-          </p>
-          <h1 className="mt-3 font-display text-[2rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-[2.5rem]">
-            {isFirstTime
-              ? `Welcome, ${kidName || "Explorer"}!`
-              : `Hi ${kidName || "Explorer"} — let’s learn!`}
-          </h1>
-          <p className="mt-3 max-w-[34rem] text-[15px] font-semibold leading-snug text-white/95 sm:text-base">
-            Joyful learning adventures for kids, with streaks, mastery, and parent-friendly progress you can trust.
-          </p>
-          <p className="mt-1 text-sm font-bold text-white/80">
-            {theme.emoji} {theme.name} theme this month
-          </p>
-
-          <div className="mt-4 flex flex-wrap gap-2.5">
-            <Chip>{level.emoji} Level {level.level}</Chip>
-            <Chip>🔥 {currentStreak} day streak</Chip>
-            <Chip>⚡ {xpToday} XP today</Chip>
+    <div className="home-hub min-h-full w-full pb-6">
+      <div className="mx-auto flex w-full max-w-md flex-col items-center gap-5 px-4 py-5 sm:py-6">
+        {/* Hero — everything centered */}
+        <motion.section className="home-panel w-full text-center" {...pop(0, reduce)}>
+          <div className="relative mx-auto mb-4 flex h-24 w-24 items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary/20 via-accent/30 to-secondary/25 animate-[floaty_4s_ease-in-out_infinite]" />
+            <div className="relative grid h-20 w-20 place-items-center overflow-hidden rounded-full bg-white shadow-lg ring-4 ring-white">
+              {avatarConfig ? (
+                <Avatar config={avatarConfig} size={72} />
+              ) : (
+                <Mascot kind="owl" size={64} />
+              )}
+            </div>
+            <span className="absolute -right-1 -top-1 grid h-9 w-9 place-items-center rounded-full bg-accent text-lg shadow-md ring-2 ring-white">
+              {level.emoji}
+            </span>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-[1.1fr_0.9fr]">
-            <button
-              type="button"
-              onClick={() => navigate(nextAction ? nextAction.path : "/multiplication")}
-              className="group rounded-3xl bg-[#3A86FF] px-4 py-4 text-left text-white shadow-[0_10px_0_rgba(25,70,140,0.35)] transition hover:translate-y-[-1px] focus-ring"
-              aria-label={nextAction ? "Continue your next lesson" : "Start learning now"}
-            >
-              <p className="text-xs font-bold uppercase tracking-wide text-white/85">
-                {nextAction ? "Continue your quest" : "Try now"}
-              </p>
-              <p className="mt-1 font-display text-lg font-extrabold leading-tight text-white">
-                {nextAction ? nextAction.lesson.title : "Begin with multiplication"}
-              </p>
-              <p className="mt-1 text-sm font-medium text-white/80">
-                {nextAction ? nextAction.subject.name : "Fast wins with tables and games"}
-              </p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-white">
-                Jump in <ArrowRight size={16} className="transition group-hover:translate-x-0.5" />
-              </span>
-            </button>
+          <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-primary">
+            {theme.emoji} {theme.name}
+          </p>
+          <h1 className="mt-2 font-display text-[1.85rem] font-extrabold leading-tight text-ink sm:text-[2.1rem]">
+            {isFirstTime ? `Hey ${kidName || "Explorer"}!` : `Welcome back, ${kidName || "Explorer"}!`}
+          </h1>
+          <p className="mx-auto mt-2 max-w-[18rem] text-sm font-semibold leading-relaxed text-ink/65">
+            Learn, play, and grow — with a little help from your family along the way.
+          </p>
 
-            <div className="rounded-3xl bg-white p-4 text-ink shadow-[0_10px_30px_rgba(17,17,35,0.12)] ring-2 ring-white/50">
-              <div className="flex items-center justify-between text-xs font-bold text-ink/60">
-                <span>Today&apos;s goal</span>
-                <span>
-                  {lessonsDone}/{dailyGoal} lessons
-                </span>
-              </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-ink/10">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-secondary to-accent"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${goalPct}%` }}
-                  transition={{ duration: 0.7, ease: "easeOut" }}
-                />
-              </div>
-              <p className="mt-3 text-sm font-semibold text-ink/80">
-                {goalPct >= 100 ? "You crushed today’s goal!" : `${goalPct}% complete. Keep going!`}
-              </p>
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            <StatBubble label="Level" value={level.level} />
+            <StatBubble label="Streak" value={`${currentStreak}🔥`} />
+            <StatBubble label="XP today" value={xpToday} />
+          </div>
+
+          <div className="mt-5 rounded-2xl bg-ink/[0.04] px-4 py-3">
+            <div className="flex items-center justify-between text-xs font-bold text-ink/55">
+              <span>Daily goal</span>
+              <span>
+                {lessonsDone}/{dailyGoal} lessons
+              </span>
+            </div>
+            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-white">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                initial={{ width: 0 }}
+                animate={{ width: `${goalPct}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              />
             </div>
           </div>
-        </motion.div>
-      </section>
 
-      <div className="sticky top-0 z-20 border-b border-ink/[0.06] bg-[#f3f4f8]/90 px-4 py-2.5 backdrop-blur-lg">
-        <div className="mx-auto flex max-w-2xl gap-2 overflow-x-auto scrollbar-none">
-          {QUICK_NAV.map(({ to, label, Icon, active }) => (
-            <Link
-              key={to}
-              to={to}
-              className={`inline-flex shrink-0 items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition focus-ring ${
-                active
-                  ? "bg-ink text-white shadow-md"
-                  : "bg-white text-ink/75 ring-1 ring-ink/[0.08] hover:bg-ink/[0.03]"
-              }`}
-              aria-label={`Go to ${label}`}
-            >
-              <Icon size={16} strokeWidth={2.5} />
-              {label}
-            </Link>
-          ))}
-        </div>
-      </div>
+          <button
+            type="button"
+            onClick={() => navigate(nextAction ? nextAction.path : "/multiplication")}
+            className="home-cta mt-5 w-full focus-ring"
+          >
+            <span className="block text-xs font-bold uppercase tracking-wide text-white/90">
+              {nextAction ? "Continue learning" : "Start your adventure"}
+            </span>
+            <span className="mt-1 block font-display text-xl font-extrabold text-white">
+              {nextAction ? nextAction.lesson.title : "Jump into Math"}
+            </span>
+            <span className="mt-2 inline-flex items-center gap-1 text-sm font-bold text-white/95">
+              Let&apos;s go <ArrowRight size={16} />
+            </span>
+          </button>
+        </motion.section>
 
-      <main className="mx-auto flex w-full max-w-2xl flex-col gap-5 px-4 py-5">
-        <motion.section {...fadeUp(1, reduce)}>
-          <SectionTitle>What makes KidQuest special</SectionTitle>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {FEATURE_ORBITS.map(({ Icon, title, desc }) => (
-              <FeatureOrbit key={title} Icon={Icon} title={title} desc={desc} />
+        {/* Quick hubs */}
+        <motion.section className="home-panel w-full" {...pop(1, reduce)}>
+          <h2 className="text-center font-display text-base font-extrabold text-ink">Where to next?</h2>
+          <div className="mt-4 grid grid-cols-2 gap-2.5">
+            {HUB_LINKS.map(({ to, label, Icon, color }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`flex flex-col items-center gap-2 rounded-2xl px-3 py-4 transition hover:scale-[1.02] active:scale-[0.98] focus-ring ${color}`}
+              >
+                <Icon size={22} strokeWidth={2.5} />
+                <span className="font-display text-sm font-extrabold">{label}</span>
+              </Link>
             ))}
           </div>
         </motion.section>
 
-        <motion.section
-          className="home-card bg-gradient-to-br from-[#fff9e7] via-white to-[#f2f4ff] p-4 sm:p-5"
-          {...fadeUp(2, reduce)}
-        >
-          <SectionTitle>Growing learner community</SectionTitle>
-          <div className="grid gap-4 sm:grid-cols-[1.1fr_0.9fr]">
-            <div>
-              <p className="text-sm font-medium leading-relaxed text-ink/70">
-                Kids build confidence through short daily wins, while parents and teachers can track
-                healthy learning habits over time.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <TrustTag icon={<Users size={13} />} label="Family + classroom ready" />
-                <TrustTag icon={<ShieldCheck size={13} />} label="Safe, guided experience" />
-                <TrustTag icon={<BarChart3 size={13} />} label="Progress insights" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <ImpactStat label="Subjects" value={`${SUBJECTS.length}`} />
-              <ImpactStat label="XP Today" value={`${xpToday}`} />
-              <ImpactStat label="Reviews Due" value={`${dueReviews}`} />
-              <ImpactStat label="Current Streak" value={`${currentStreak}d`} />
-            </div>
+        {/* Subjects */}
+        <motion.section className="home-panel w-full" {...pop(2, reduce)}>
+          <div className="mb-4 text-center">
+            <h2 className="font-display text-base font-extrabold text-ink">Pick a subject</h2>
+            <p className="mt-1 text-xs font-semibold text-ink/50">Tap a world to explore</p>
           </div>
-        </motion.section>
-
-        <motion.section {...fadeUp(3, reduce)}>
-          <SectionTitle
-            action={
-              <button
-                type="button"
-                onClick={() => navigate("/explore")}
-                className="flex items-center gap-0.5 rounded-lg px-1 text-sm font-bold text-primary focus-ring"
-              >
-                See all <ChevronRight size={16} />
-              </button>
-            }
-          >
-            Discover your next adventure
-          </SectionTitle>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {SUBJECTS.map((s) => (
               <SubjectTile
                 key={s.id}
@@ -296,23 +231,16 @@ export default function Home() {
           </div>
         </motion.section>
 
-        <motion.section {...fadeUp(4, reduce)}>
-          <SectionTitle
-            action={
-              <Link to="/compete" className="flex items-center gap-0.5 rounded-lg px-1 text-sm font-bold text-primary focus-ring">
-                Open hub <ChevronRight size={16} />
-              </Link>
-            }
-          >
-            Spotlight challenges
-          </SectionTitle>
-          <div className="flex snap-x snap-mandatory gap-3 overflow-x-auto -mx-4 px-4 pb-1 scrollbar-none">
-            <SpotlightCard
+        {/* Play today */}
+        <motion.section className="home-panel w-full" {...pop(3, reduce)}>
+          <h2 className="text-center font-display text-base font-extrabold text-ink">Play today</h2>
+          <div className="mt-4 flex snap-x snap-mandatory gap-3 overflow-x-auto pb-1 scrollbar-none">
+            <MiniQuest
               to={daily.path}
-              icon={daily.emoji}
-              title={dailyDone ? "Daily challenge done" : daily.title}
-              sub={dailyDone ? "Come back tomorrow for a new quest" : `Earn +${daily.xpBonus} XP bonus`}
-              gradient="from-[#fff0bf] to-[#ffe8a1]"
+              emoji={daily.emoji}
+              title={dailyDone ? "Daily done!" : daily.title}
+              sub={dailyDone ? "See you tomorrow" : `+${daily.xpBonus} XP`}
+              tint="from-amber-100 to-yellow-50"
               onClick={() => {
                 if (!dailyDone) {
                   completeDailyChallenge(daily.dateKey);
@@ -320,76 +248,78 @@ export default function Home() {
                 }
               }}
             />
-            <SpotlightCard
+            <MiniQuest
               to="/multiplication/speed-run"
-              icon="⚡"
-              title="Speed Run"
-              sub={bestSpeedRun ? `Best ${formatMs(bestSpeedRun.totalTimeMs)}` : "50 questions against the clock"}
-              gradient="from-slate-900 to-slate-700"
+              emoji="⚡"
+              title="Speed run"
+              sub={bestSpeedRun ? formatMs(bestSpeedRun.totalTimeMs) : "Beat the clock"}
+              tint="from-slate-800 to-slate-600"
               dark
             />
-            <SpotlightCard
+            <MiniQuest
               to={dueReviews > 0 ? "/review" : "/explore"}
-              icon={dueReviews > 0 ? "🧠" : "🧭"}
-              title={dueReviews > 0 ? "Review mission" : "Explore mission"}
-              sub={dueReviews > 0 ? `${mulDue} math · ${geoDue} geo ready` : "Try maps, trivia, and more"}
-              gradient="from-[#ece6ff] to-[#e4ecff]"
-            />
-            <SpotlightCard
-              to="/create"
-              icon="🎨"
-              title="Create mode"
-              sub="Build your own quiz adventure"
-              gradient="from-[#dff9f4] to-[#dff1ff]"
+              emoji={dueReviews > 0 ? "🧠" : "🧭"}
+              title={dueReviews > 0 ? "Review time" : "Explore"}
+              sub={dueReviews > 0 ? `${dueReviews} ready` : "Discover more"}
+              tint="from-violet-100 to-indigo-50"
             />
           </div>
         </motion.section>
 
         {assignments.length > 0 && (
-          <motion.div {...fadeUp(5, reduce)}>
+          <motion.div className="home-panel w-full" {...pop(4, reduce)}>
             <AssignmentsBanner assignments={assignments} />
           </motion.div>
         )}
 
-        <motion.section {...fadeUp(6, reduce)} className="space-y-2">
+        {/* Grown-ups + thank you — centered */}
+        <motion.section className="w-full space-y-2 text-center" {...pop(5, reduce)}>
           {showAdmin && (
             <Link
               to="/admin"
-              className="flex items-center justify-between rounded-2xl bg-ink px-4 py-3.5 text-white transition focus-ring"
+              className="home-panel flex items-center justify-between px-4 py-3.5 text-left transition hover:scale-[1.01] focus-ring"
             >
               <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/15">
+                <span className="grid h-10 w-10 place-items-center rounded-2xl bg-ink text-white">
                   <Sparkles size={18} />
-                </div>
+                </span>
                 <div>
-                  <p className="font-display text-sm font-extrabold">Admin</p>
-                  <p className="text-xs font-medium text-white/70">Users, feedback & password help</p>
+                  <p className="font-display text-sm font-extrabold text-ink">Admin</p>
+                  <p className="text-xs font-medium text-ink/50">Approvals & feedback</p>
                 </div>
               </div>
-              <ChevronRight size={18} className="text-white/50" />
+              <ChevronRight size={18} className="text-ink/30" />
             </Link>
           )}
           <Link
             to="/settings"
-            className="flex items-center justify-between rounded-2xl bg-ink/[0.04] px-4 py-3.5 transition hover:bg-ink/[0.06] focus-ring"
+            className="home-panel flex items-center justify-between px-4 py-3.5 text-left transition hover:scale-[1.01] focus-ring"
           >
             <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 place-items-center rounded-xl bg-white ring-1 ring-ink/[0.08]">
-                <Settings size={18} className="text-ink/70" />
-              </div>
+              <span className="grid h-10 w-10 place-items-center rounded-2xl bg-primary/10 text-primary">
+                <Settings size={18} />
+              </span>
               <div>
                 <p className="font-display text-sm font-extrabold text-ink">
-                  {role === "teacher" ? "Teacher dashboard" : "Parent dashboard"}
+                  {role === "teacher" ? "Teacher space" : "Parent space"}
                 </p>
-                <p className="text-xs font-medium text-ink/50">Progress · PIN · classrooms</p>
+                <p className="text-xs font-medium text-ink/50">Progress & settings</p>
               </div>
             </div>
             <ChevronRight size={18} className="text-ink/30" />
           </Link>
-        </motion.section>
 
-        <footer className="pb-4 pt-1 text-center">
-          <div className="flex justify-center gap-4 text-xs font-semibold text-ink/40">
+          <div className="home-panel px-5 py-6">
+            <p className="font-display text-lg font-extrabold text-ink">Thanks for learning with us!</p>
+            <p className="mx-auto mt-2 max-w-[16rem] text-sm font-semibold leading-relaxed text-ink/55">
+              Every quest you finish helps KidQuest get better for kids and families everywhere.
+            </p>
+            <p className="mt-3 text-2xl" aria-hidden>
+              💛✨🎒
+            </p>
+          </div>
+
+          <footer className="flex justify-center gap-4 pb-2 pt-1 text-xs font-semibold text-ink/40">
             <Link to="/about" className="rounded hover:text-primary focus-ring">
               Our story
             </Link>
@@ -399,77 +329,19 @@ export default function Home() {
             <Link to="/privacy" className="rounded hover:text-primary focus-ring">
               Privacy
             </Link>
-          </div>
-        </footer>
-      </main>
-    </div>
-  );
-}
-
-function SectionTitle({ children, action }) {
-  return (
-    <div className="mb-3 flex items-center justify-between">
-      <h2 className="font-display text-lg font-extrabold tracking-tight text-ink">{children}</h2>
-      {action}
-    </div>
-  );
-}
-
-function Chip({ children }) {
-  return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-3 py-1.5 text-xs font-bold text-white backdrop-blur-sm">
-      {children}
-    </span>
-  );
-}
-
-function FeatureOrbit({ Icon, title, desc }) {
-  return (
-    <article className="text-center">
-      <div className="home-feature-orbit">
-        <Icon size={26} strokeWidth={2.25} />
+          </footer>
+        </motion.section>
       </div>
-      <h3 className="mt-3 font-display text-sm font-extrabold text-ink">{title}</h3>
-      <p className="mt-1 text-[11px] font-semibold leading-snug text-ink/60">{desc}</p>
-    </article>
-  );
-}
-
-function TrustTag({ icon, label }) {
-  return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-ink/[0.06] px-2.5 py-1 text-[11px] font-bold text-ink/75">
-      {icon}
-      {label}
-    </span>
-  );
-}
-
-function ImpactStat({ label, value }) {
-  return (
-    <div className="rounded-2xl bg-white p-3 text-center ring-1 ring-ink/[0.07]">
-      <p className="font-display text-lg font-extrabold text-ink">{value}</p>
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-ink/55">{label}</p>
     </div>
   );
 }
 
-function SpotlightCard({ to, icon, title, sub, gradient, onClick, dark }) {
+function StatBubble({ label, value }) {
   return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className={`snap-start shrink-0 w-[170px] rounded-3xl p-4 transition hover:scale-[1.02] active:scale-[0.98] focus-ring bg-gradient-to-br ${gradient} ${
-        dark ? "text-white" : "text-ink"
-      }`}
-    >
-      <span className="text-3xl leading-none" aria-hidden>
-        {icon}
-      </span>
-      <p className={`mt-2 font-display text-[15px] font-extrabold leading-tight ${dark ? "text-white" : "text-ink"}`}>
-        {title}
-      </p>
-      <p className={`mt-1 text-xs font-medium leading-snug ${dark ? "text-white/70" : "text-ink/60"}`}>{sub}</p>
-    </Link>
+    <div className="rounded-2xl bg-ink/[0.04] px-2 py-3">
+      <p className="font-display text-lg font-extrabold tabular-nums text-ink">{value}</p>
+      <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-ink/45">{label}</p>
+    </div>
   );
 }
 
@@ -478,52 +350,59 @@ function SubjectTile({ subject, ageGroup, lessonProgress, onClick }) {
     () => subjectProgress(subject.id, ageGroup, lessonProgress),
     [subject.id, ageGroup, lessonProgress]
   );
-  const next = useMemo(
-    () => findNextLesson(subject.id, ageGroup, lessonProgress),
-    [subject.id, ageGroup, lessonProgress]
-  );
-  const theme = SUBJECT_THEMES[subject.id] ?? {
-    gradient: "from-gray-100 to-white",
-    accent: "#2D3047",
-    emoji: "✨",
-  };
+  const theme = SUBJECT_THEMES[subject.id] ?? { bg: "#F5F5F5", accent: "#2D3047", emoji: "✨" };
   const pct = Math.round(stats.masteryPct * 100);
 
   return (
     <motion.button
       type="button"
       onClick={onClick}
-      whileTap={{ scale: 0.98 }}
-      className={`rounded-3xl bg-gradient-to-br ${theme.gradient} p-4 text-left ring-1 ring-ink/[0.06] transition-shadow hover:shadow-md focus-ring`}
+      whileTap={{ scale: 0.97 }}
+      className="flex flex-col items-center rounded-2xl p-3.5 text-center transition hover:scale-[1.02] focus-ring"
+      style={{ backgroundColor: theme.bg }}
       aria-label={`Open ${subject.name}`}
     >
-      <div className="flex items-center justify-between">
-        <span className="text-3xl" aria-hidden>
-          {theme.emoji}
-        </span>
-        <span
-          className="rounded-full bg-white/80 px-2 py-0.5 text-xs font-extrabold tabular-nums"
-          style={{ color: theme.accent }}
-        >
-          {pct}%
-        </span>
-      </div>
-      <p className="mt-2 font-display text-[15px] font-extrabold leading-tight" style={{ color: theme.accent }}>
+      <span className="text-3xl" aria-hidden>
+        {theme.emoji}
+      </span>
+      <p className="mt-2 font-display text-sm font-extrabold" style={{ color: theme.accent }}>
         {subject.name}
       </p>
-      <p className="mt-0.5 text-[11px] font-semibold text-ink/55">{subject.tagline}</p>
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-ink/[0.08]">
-        <div className="h-full rounded-full transition-all duration-500" style={{ width: `${pct}%`, backgroundColor: theme.accent }} />
-      </div>
-      {next && <p className="mt-2 line-clamp-1 text-[10px] font-medium text-ink/45">Next: {next.title}</p>}
+      <p className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/70">
+        <span
+          className="block h-full rounded-full transition-all"
+          style={{ width: `${pct}%`, backgroundColor: theme.accent }}
+        />
+      </p>
+      <p className="mt-1 text-[10px] font-bold text-ink/45">{pct}% mastered</p>
     </motion.button>
+  );
+}
+
+function MiniQuest({ to, emoji, title, sub, tint, onClick, dark }) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`snap-center shrink-0 w-[9.5rem] rounded-2xl bg-gradient-to-br ${tint} p-3.5 text-center transition hover:scale-[1.03] active:scale-[0.98] focus-ring ${
+        dark ? "text-white" : "text-ink"
+      }`}
+    >
+      <span className="text-2xl" aria-hidden>
+        {emoji}
+      </span>
+      <p className={`mt-2 font-display text-sm font-extrabold leading-tight ${dark ? "text-white" : "text-ink"}`}>
+        {title}
+      </p>
+      <p className={`mt-1 text-[11px] font-semibold ${dark ? "text-white/75" : "text-ink/55"}`}>{sub}</p>
+    </Link>
   );
 }
 
 function AssignmentsBanner({ assignments }) {
   return (
-    <div className="rounded-3xl bg-amber-50/90 px-4 py-3.5 ring-1 ring-amber-200/60">
-      <div className="mb-2 flex items-center gap-2">
+    <div className="text-left">
+      <div className="mb-2 flex items-center justify-center gap-2 sm:justify-start">
         <ClipboardList size={16} className="text-amber-700" />
         <span className="font-display text-sm font-extrabold text-amber-900">From your teacher</span>
       </div>

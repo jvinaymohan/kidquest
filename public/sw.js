@@ -1,4 +1,4 @@
-const CACHE = "kidquest-shell-v3";
+const CACHE = "kidquest-shell-v4";
 const SHELL = ["/", "/index.html", "/favicon.svg", "/manifest.json"];
 
 self.addEventListener("install", (e) => {
