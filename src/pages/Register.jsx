@@ -1,8 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Mascot } from "../components/mascots/Mascot";
-import { Button } from "../components/ui/Button";
 import { useAuthStore } from "../store/useAuthStore";
 import { useAppStore } from "../store/useAppStore";
 import { AGE_GROUPS } from "../data/subjects";
@@ -10,11 +7,19 @@ import { isSupabaseEnabled } from "../lib/supabaseClient";
 import { GoogleSignInButton } from "../components/auth/GoogleSignInButton";
 import { isGoogleOAuthEnabled } from "../lib/featureFlags";
 import { validateInviteCode } from "../lib/cloud/invites";
+import {
+  MarketingShell,
+  MarketingCard,
+  MarketingInput,
+  inputClass,
+  MarketingPrimaryButton,
+  MarketingError,
+} from "../components/marketing/MarketingShell";
 
 const ROLES = [
-  { id: "kid", label: "I'm a Kid", emoji: "🧒", description: "Learn, play, earn badges." },
-  { id: "parent", label: "I'm a Parent", emoji: "👨‍👩‍👧", description: "Track progress & guide kids." },
-  { id: "teacher", label: "I'm a Teacher", emoji: "🧑‍🏫", description: "Create classrooms & assignments." },
+  { id: "kid", label: "Kid", emoji: "🧒" },
+  { id: "parent", label: "Parent", emoji: "👨‍👩‍👧" },
+  { id: "teacher", label: "Teacher", emoji: "🧑‍🏫" },
 ];
 
 export default function Register() {
@@ -38,11 +43,11 @@ export default function Register() {
     e.preventDefault();
     setError(null);
     if (!isSupabaseEnabled) {
-      setError("Cloud sync is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.");
+      setError("Cloud sync is not configured.");
       return;
     }
     if (!acceptedTerms) {
-      setError("Please accept the Terms of Use and Privacy Policy.");
+      setError("Please accept the Terms and Privacy Policy.");
       return;
     }
     if (needsParentalConsent && !parentalConsent) {
@@ -78,208 +83,173 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-5 py-10">
-      <motion.div
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md"
-      >
-        <div className="text-center mb-5">
-          <Mascot kind="dino" size={72} />
-          <h1 className="font-display text-3xl font-extrabold mt-3">Start your adventure</h1>
-          <p className="text-sm font-bold text-ink/65 mt-1">
-            One free account, all subjects, every device.
-          </p>
-        </div>
-
-        <form
-          onSubmit={onSubmit}
-          className="chunky-card p-5 flex flex-col gap-4"
-        >
+    <MarketingShell
+      mascot="dino"
+      badge="You're invited"
+      title="Create account"
+      subtitle="Enter your invite code and set up your learner profile in under a minute."
+      backTo="/landing"
+      backLabel="Home"
+      wide
+    >
+      <MarketingCard>
+        <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <div>
-            <div className="text-xs font-extrabold uppercase tracking-wide text-ink/55 mb-1">
-              I am…
-            </div>
+            <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-ink/50">I am a…</p>
             <div className="grid grid-cols-3 gap-2">
               {ROLES.map((r) => (
                 <button
                   key={r.id}
                   type="button"
                   onClick={() => setRole(r.id)}
-                  className={`p-2 rounded-chunky border-[3px] text-center text-xs font-bold focus-ring transition ${
-                    role === r.id ? "bg-accent border-ink/30" : "bg-white border-ink/15"
+                  className={`rounded-xl border-2 py-2.5 text-center transition focus-ring ${
+                    role === r.id
+                      ? "border-primary bg-primary/10 shadow-sm"
+                      : "border-ink/10 bg-white"
                   }`}
                 >
-                  <div className="text-xl">{r.emoji}</div>
-                  <div>{r.label.replace("I'm a ", "")}</div>
+                  <span className="text-xl" aria-hidden>
+                    {r.emoji}
+                  </span>
+                  <span className="mt-0.5 block font-display text-xs font-extrabold">{r.label}</span>
                 </button>
               ))}
             </div>
-            <p className="text-[11px] text-ink/55 font-bold mt-1">
-              {ROLES.find((r) => r.id === role)?.description}
-            </p>
           </div>
 
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            {role === "kid" ? "Your name" : "Child's name (or yours)"}
+          <MarketingInput label={role === "kid" ? "Your name" : "Learner name"}>
             <input
               value={kidName}
               onChange={(e) => setKidName(e.target.value)}
               placeholder="e.g. Alex"
               maxLength={20}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
               required
             />
-          </label>
+          </MarketingInput>
 
           {role === "kid" && (
             <div>
-              <div className="text-xs font-extrabold uppercase tracking-wide text-ink/55 mb-1">
-                Age group
-              </div>
+              <p className="mb-2 text-xs font-extrabold uppercase tracking-wide text-ink/50">Age group</p>
               <div className="grid grid-cols-3 gap-2">
                 {AGE_GROUPS.map((g) => (
                   <button
                     key={g.id}
                     type="button"
                     onClick={() => setAgeGroup(g.id)}
-                    className={`p-2 rounded-chunky border-[3px] text-center text-xs font-bold focus-ring transition ${
-                      ageGroup === g.id ? "bg-accent border-ink/30" : "bg-white border-ink/15"
+                    className={`rounded-xl border-2 py-2 text-center text-xs font-bold focus-ring ${
+                      ageGroup === g.id ? "border-primary bg-primary/10" : "border-ink/10 bg-white"
                     }`}
                   >
-                    <div className="text-lg">{g.emoji}</div>
-                    <div>{g.label}</div>
-                    <div className="text-[10px] text-ink/55">{g.ageRange}</div>
+                    <span className="text-lg">{g.emoji}</span>
+                    <span className="block font-display font-extrabold">{g.label}</span>
                   </button>
                 ))}
               </div>
             </div>
           )}
 
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Email
+          <MarketingInput label="Email">
             <input
               type="email"
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@email.com"
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
               required
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Invite code
+          </MarketingInput>
+
+          <MarketingInput label="Invite code" hint="From your approval email.">
             <input
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-              placeholder="e.g. KQ-ABC123XYZ"
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base uppercase"
+              placeholder="KQ-XXXXXX"
+              className={`${inputClass} uppercase`}
               required
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Create a password
+          </MarketingInput>
+
+          <MarketingInput label="Password" hint="At least 6 characters.">
             <input
               type="password"
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="At least 6 characters"
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
               required
               minLength={6}
             />
-          </label>
+          </MarketingInput>
 
-          <fieldset className="rounded-chunky border-2 border-ink/12 p-3 flex flex-col gap-2">
-            <legend className="sr-only">Legal agreements</legend>
-            <label className="flex items-start gap-2 text-xs font-bold cursor-pointer">
+          <fieldset className="space-y-2 rounded-xl bg-ink/[0.03] p-3">
+            <label className="flex cursor-pointer items-start gap-2 text-xs font-semibold text-ink/70">
               <input
                 type="checkbox"
                 checked={acceptedTerms}
                 onChange={(e) => setAcceptedTerms(e.target.checked)}
-                className="mt-0.5 w-4 h-4 shrink-0"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded"
                 required
               />
               <span>
                 I agree to the{" "}
-                <Link to="/terms" target="_blank" className="text-primary underline">
-                  Terms of Use
+                <Link to="/terms" target="_blank" className="font-bold text-primary underline">
+                  Terms
                 </Link>{" "}
                 and{" "}
-                <Link to="/privacy" target="_blank" className="text-primary underline">
+                <Link to="/privacy" target="_blank" className="font-bold text-primary underline">
                   Privacy Policy
                 </Link>
                 .
               </span>
             </label>
             {needsParentalConsent && (
-              <label className="flex items-start gap-2 text-xs font-bold cursor-pointer">
+              <label className="flex cursor-pointer items-start gap-2 text-xs font-semibold text-ink/70">
                 <input
                   type="checkbox"
                   checked={parentalConsent}
                   onChange={(e) => setParentalConsent(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 shrink-0"
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded"
                 />
-                <span>
-                  I have permission from a parent or guardian to use KidQuest (required for kids under
-                  13).
-                </span>
+                <span>A parent or guardian approves this account (required under 13).</span>
               </label>
-            )}
-            {(role === "parent" || role === "teacher") && (
-              <p className="text-[11px] text-ink/55 pl-6">
-                As an adult account, you can manage child progress and must supervise learners you
-                invite.
-              </p>
             )}
           </fieldset>
 
-          {error && (
-            <p className="text-error font-bold text-sm bg-error/10 px-3 py-2 rounded-chunky">
-              {error}
-            </p>
-          )}
+          <MarketingError>{error}</MarketingError>
 
-          <Button
+          <MarketingPrimaryButton
             type="submit"
             disabled={busy || !acceptedTerms || (needsParentalConsent && !parentalConsent)}
-            fullWidth
           >
-            {busy ? "Creating account…" : "Create my account"}
-          </Button>
+            {busy ? "Creating…" : "Create my account"}
+          </MarketingPrimaryButton>
 
           {isGoogleOAuthEnabled && (
             <>
-              <div className="flex items-center gap-3 my-1">
-                <div className="flex-1 h-px bg-ink/15" />
-                <span className="text-[11px] font-bold text-ink/50">existing users</span>
-                <div className="flex-1 h-px bg-ink/15" />
+              <div className="flex items-center gap-3">
+                <div className="h-px flex-1 bg-ink/10" />
+                <span className="text-[10px] font-bold text-ink/40">OR</span>
+                <div className="h-px flex-1 bg-ink/10" />
               </div>
               <GoogleSignInButton label="Sign in with Google" />
             </>
           )}
 
-          <div className="text-center text-xs font-bold text-ink/55">
-            Already have one?{" "}
-            <Link to="/login" className="text-primary font-extrabold">
-              Sign in
-            </Link>
-          </div>
-          <div className="text-center text-xs font-bold text-ink/45">
+          <p className="text-center text-sm font-bold text-ink/50">
             Need an invite?{" "}
-            <Link to="/invite-request" className="text-primary font-extrabold">
+            <Link to="/invite-request" className="text-primary font-extrabold hover:underline">
               Request access
             </Link>
-          </div>
-          <div className="text-center text-xs font-bold text-ink/45">
-            <Link to="/landing" className="hover:text-ink/70">
-              ← Back to landing
+          </p>
+          <p className="text-center text-sm font-bold text-ink/50">
+            Have an account?{" "}
+            <Link to="/login" className="text-primary font-extrabold hover:underline">
+              Sign in
             </Link>
-          </div>
+          </p>
         </form>
-      </motion.div>
-    </div>
+      </MarketingCard>
+    </MarketingShell>
   );
 }

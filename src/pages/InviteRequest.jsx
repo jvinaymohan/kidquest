@@ -1,10 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Mascot } from "../components/mascots/Mascot";
-import { Button } from "../components/ui/Button";
 import { submitReferralRequest } from "../lib/cloud/invites";
 import { isSupabaseEnabled } from "../lib/supabaseClient";
+import {
+  MarketingShell,
+  MarketingCard,
+  MarketingInput,
+  inputClass,
+  MarketingPrimaryButton,
+  MarketingError,
+  MarketingSuccess,
+} from "../components/marketing/MarketingShell";
 
 export default function InviteRequest() {
   const [fullName, setFullName] = useState("");
@@ -19,6 +25,7 @@ export default function InviteRequest() {
   async function onSubmit(e) {
     e.preventDefault();
     setError(null);
+    setSuccess(false);
     if (!isSupabaseEnabled) {
       setError("Cloud sync is not configured yet.");
       return;
@@ -39,90 +46,84 @@ export default function InviteRequest() {
   }
 
   return (
-    <div className="min-h-screen bg-cream flex items-center justify-center px-5 py-10">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
-        <div className="text-center mb-5">
-          <Mascot kind="robot" size={72} />
-          <h1 className="font-display text-3xl font-extrabold mt-3">Request an invite</h1>
-          <p className="text-sm font-bold text-ink/65 mt-1">
-            KidQuest is currently invite-only. Tell us why you want in.
-          </p>
-        </div>
-
-        <form onSubmit={onSubmit} className="chunky-card p-5 flex flex-col gap-3">
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Your name
+    <MarketingShell
+      mascot="robot"
+      badge="Join the adventure"
+      title="Request an invite"
+      subtitle="KidQuest is invite-only. Tell us a bit about your family or class — we’ll review quickly."
+      backTo="/landing"
+      backLabel="Home"
+      wide
+    >
+      <MarketingCard>
+        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+          <MarketingInput label="Your name">
             <input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
+              placeholder="Parent or teacher name"
               required
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Email
+          </MarketingInput>
+          <MarketingInput label="Email">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
+              placeholder="Where we can reach you"
               required
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Why do you want to join?
+          </MarketingInput>
+          <MarketingInput label="Why KidQuest?" hint="A few sentences is perfect.">
             <textarea
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              rows={4}
+              rows={3}
               minLength={8}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-medium focus-ring text-sm resize-none"
-              placeholder="A short note about your learner/family/classroom."
+              className={`${inputClass} resize-none font-medium`}
+              placeholder="e.g. My 8-year-old loves geography and math games…"
               required
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Referrer name (optional)
+          </MarketingInput>
+          <MarketingInput label="Who referred you? (optional)">
             <input
               value={referrerName}
               onChange={(e) => setReferrerName(e.target.value)}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
+              placeholder="Name"
             />
-          </label>
-          <label className="flex flex-col gap-1 text-sm font-bold">
-            Referrer email (optional)
+          </MarketingInput>
+          <MarketingInput label="Their email (optional)">
             <input
               type="email"
               value={referrerEmail}
               onChange={(e) => setReferrerEmail(e.target.value)}
-              className="px-3 py-3 rounded-chunky border-[3px] border-ink/15 font-display font-bold focus-ring text-base"
+              className={inputClass}
+              placeholder="email@example.com"
             />
-          </label>
+          </MarketingInput>
 
-          {error && <p className="text-error font-bold text-sm bg-error/10 px-3 py-2 rounded-chunky">{error}</p>}
-          {success && (
-            <p className="text-primary font-bold text-sm bg-primary/10 px-3 py-2 rounded-chunky">
-              Request sent. If approved, an admin will share an invite code by email.
-            </p>
-          )}
+          <MarketingError>{error}</MarketingError>
+          <MarketingSuccess>
+            {success
+              ? "Request sent! If approved, you’ll get an invite code by email."
+              : null}
+          </MarketingSuccess>
 
-          <Button type="submit" disabled={busy} fullWidth>
-            {busy ? "Submitting…" : "Submit request"}
-          </Button>
+          <MarketingPrimaryButton type="submit" disabled={busy}>
+            {busy ? "Sending…" : "Submit request"}
+          </MarketingPrimaryButton>
 
-          <div className="text-center text-xs font-bold text-ink/55">
-            Have an invite code?{" "}
-            <Link to="/register" className="text-primary font-extrabold">
+          <p className="text-center text-sm font-bold text-ink/50">
+            Already have a code?{" "}
+            <Link to="/register" className="text-primary font-extrabold hover:underline">
               Create account
             </Link>
-          </div>
-          <div className="text-center text-xs font-bold text-ink/45">
-            <Link to="/landing" className="hover:text-ink/70">
-              ← Back to landing
-            </Link>
-          </div>
+          </p>
         </form>
-      </motion.div>
-    </div>
+      </MarketingCard>
+    </MarketingShell>
   );
 }

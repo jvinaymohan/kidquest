@@ -1,127 +1,184 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Rocket, Sparkles } from "lucide-react";
 import { Mascot } from "../components/mascots/Mascot";
 import { GoogleSignInButton } from "../components/auth/GoogleSignInButton";
 import { isGoogleOAuthEnabled } from "../lib/featureFlags";
+import {
+  MarketingPrimaryButton,
+  MarketingSecondaryButton,
+} from "../components/marketing/MarketingShell";
 
-const MASCOTS = [
-  { kind: "owl", bg: "rgba(42,157,143,0.18)" },
-  { kind: "robot", bg: "rgba(58,134,255,0.18)" },
-  { kind: "dino", bg: "rgba(155,93,229,0.18)" },
-  { kind: "cat", bg: "rgba(251,133,0,0.18)" },
-  { kind: "panda", bg: "rgba(230,57,70,0.18)" },
+const WORLDS = [
+  { emoji: "🌍", name: "Geography", from: "#34d399", to: "#0d9488" },
+  { emoji: "🔢", name: "Math", from: "#60a5fa", to: "#2563eb" },
+  { emoji: "🪐", name: "Space", from: "#fb923c", to: "#ea580c" },
+  { emoji: "📜", name: "History", from: "#fbbf24", to: "#d97706" },
+  { emoji: "🎵", name: "Music", from: "#c084fc", to: "#7c3aed" },
+  { emoji: "💡", name: "Knowledge", from: "#a3e635", to: "#65a30d" },
 ];
 
-const SUBJECT_TILES = [
-  { id: "geography", icon: "🌍", name: "Geography", bg: "#2A9D8F18", color: "#0F6E56" },
-  { id: "history", icon: "📜", name: "History", bg: "#D4A01718", color: "#633806" },
-  { id: "math", icon: "🔢", name: "Math", bg: "#3A86FF18", color: "#0C447C" },
-  { id: "music", icon: "🎵", name: "Music", bg: "#9B5DE518", color: "#3C3489" },
-  { id: "general-knowledge", icon: "💡", name: "Knowledge", bg: "#FB850018", color: "#633806" },
-  { id: "solar-system", icon: "🪐", name: "Solar System", bg: "#E6394618", color: "#791F1F" },
+const PILLARS = [
+  { emoji: "🎮", title: "Learn by playing", desc: "Short quests kids actually finish." },
+  { emoji: "👨‍👩‍👧", title: "Parents stay in the loop", desc: "Progress, streaks, and goals." },
+  { emoji: "🛡️", title: "Safe & ad-free", desc: "Built for families and classrooms." },
 ];
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-cream flex justify-center">
-      <div className="w-full max-w-md flex flex-col">
-        <section className="bg-mul-dark px-6 pt-10 pb-7 text-center">
-          <span className="inline-block bg-[#EEEDFE] text-[#534AB7] text-[11px] font-extrabold px-2.5 py-1 rounded-pill tracking-wide">
-            Free for every kid on Earth
-          </span>
-          <h1 className="font-display text-4xl font-extrabold text-mul-gold mt-3 leading-none">
-            KidQuest
-          </h1>
-          <p className="text-sm text-white/65 mt-2 font-bold">
-            Explore the world. Master everything. Have fun doing it.
-          </p>
+    <div className="marketing-page relative min-h-screen overflow-x-hidden">
+      <div className="marketing-blob marketing-blob-a" aria-hidden />
+      <div className="marketing-blob marketing-blob-b" aria-hidden />
+      <div className="marketing-stars" aria-hidden />
 
-          <div className="flex justify-center gap-2 mt-5">
-            {MASCOTS.map((m, i) => (
-              <motion.div
-                key={m.kind}
-                initial={{ y: -12, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: i * 0.08, type: "spring", stiffness: 220, damping: 18 }}
-                className="w-12 h-12 rounded-full grid place-items-center"
-                style={{ background: m.bg }}
-              >
-                <Mascot kind={m.kind} size={36} />
-              </motion.div>
+      <div className="relative mx-auto flex w-full max-w-lg flex-col items-center px-4 pb-10 pt-8">
+        {/* Hero */}
+        <motion.section
+          className="w-full text-center"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <p className="marketing-badge mx-auto">Free learning for curious kids</p>
+
+          <div className="relative mx-auto mt-6 flex h-32 w-32 items-center justify-center">
+            <motion.div
+              className="absolute inset-0 rounded-full bg-gradient-to-br from-[#ffe066] via-[#ff9f43] to-[#ff6b6b]"
+              animate={{ scale: [1, 1.05, 1], rotate: [0, 3, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <div className="relative z-10 grid h-24 w-24 place-items-center rounded-full bg-white shadow-xl ring-[5px] ring-white">
+              <Mascot kind="rocket" size={64} />
+            </div>
+          </div>
+
+          <h1 className="mt-6 font-display text-[2.5rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2.85rem]">
+            <span className="text-ink">Kid</span>
+            <span className="bg-gradient-to-r from-primary via-[#ff8f4a] to-[#3A86FF] bg-clip-text text-transparent">
+              Quest
+            </span>
+          </h1>
+          <p className="mx-auto mt-3 max-w-[22rem] text-base font-bold leading-snug text-ink/55">
+            Explore worlds, earn XP, and master skills — the fun way to learn at home or school.
+          </p>
+        </motion.section>
+
+        {/* CTAs — centered, simple */}
+        <motion.section
+          className="mt-8 w-full max-w-sm space-y-3"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15, duration: 0.45 }}
+        >
+          <MarketingSecondaryButton to="/invite-request">
+            ✨ Request an invite
+          </MarketingSecondaryButton>
+          <MarketingPrimaryButton as="link" to="/register">
+            🚀 I have an invite code
+          </MarketingPrimaryButton>
+          <p className="text-center text-sm font-bold text-ink/50">
+            Already in?{" "}
+            <Link to="/login" className="text-primary font-extrabold hover:underline focus-ring rounded">
+              Sign in
+            </Link>
+          </p>
+          {isGoogleOAuthEnabled && (
+            <div className="pt-2">
+              <div className="mb-3 flex items-center gap-3">
+                <div className="h-px flex-1 bg-ink/10" />
+                <span className="text-[10px] font-bold uppercase tracking-wide text-ink/40">or</span>
+                <div className="h-px flex-1 bg-ink/10" />
+              </div>
+              <GoogleSignInButton />
+            </div>
+          )}
+        </motion.section>
+
+        {/* Why KidQuest — 3 simple pillars */}
+        <motion.section
+          className="mt-10 w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.25 }}
+        >
+          <h2 className="text-center font-display text-lg font-extrabold text-ink">Why families love it</h2>
+          <div className="mt-4 space-y-3">
+            {PILLARS.map((p) => (
+              <div key={p.title} className="marketing-card flex items-start gap-3 py-4">
+                <span className="text-2xl" aria-hidden>
+                  {p.emoji}
+                </span>
+                <div className="text-left">
+                  <p className="font-display text-sm font-extrabold text-ink">{p.title}</p>
+                  <p className="text-xs font-semibold text-ink/55">{p.desc}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
-        <section className="px-5 pt-5">
-          <Link
-            to="/register"
-            className="w-full inline-flex items-center justify-center gap-2 bg-primary text-white font-display font-extrabold py-3.5 rounded-pill shadow-chunky focus-ring"
-          >
-            <Rocket size={18} /> Have an invite? Create account
-          </Link>
-          <Link
-            to="/invite-request"
-            className="mt-2 w-full inline-flex items-center justify-center gap-2 bg-white text-ink font-display font-extrabold py-3 rounded-pill ring-1 ring-ink/15 focus-ring"
-          >
-            <Sparkles size={16} /> Need access? Request invite
-          </Link>
+        {/* Worlds preview */}
+        <motion.section
+          className="mt-10 w-full"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.35 }}
+        >
+          <h2 className="text-center font-display text-lg font-extrabold text-ink">Adventures waiting for you</h2>
+          <p className="mt-1 text-center text-xs font-bold uppercase tracking-widest text-ink/40">
+            6 subjects · one app
+          </p>
+          <div className="mt-4 grid grid-cols-3 gap-2.5">
+            {WORLDS.map((w) => (
+              <div
+                key={w.name}
+                className="flex flex-col items-center justify-center rounded-2xl p-3 text-center shadow-md ring-2 ring-white"
+                style={{ background: `linear-gradient(145deg, ${w.from}, ${w.to})` }}
+              >
+                <span className="text-2xl" aria-hidden>
+                  {w.emoji}
+                </span>
+                <span className="mt-1 font-display text-[11px] font-extrabold text-white drop-shadow-sm">
+                  {w.name}
+                </span>
+              </div>
+            ))}
+          </div>
+        </motion.section>
 
-          {isGoogleOAuthEnabled && (
-            <>
-              <div className="flex items-center gap-3 mt-3 mb-1">
-                <div className="flex-1 h-px bg-ink/15" />
-                <span className="text-[11px] font-bold text-ink/50">existing users</span>
-                <div className="flex-1 h-px bg-ink/15" />
-              </div>
-              <div className="mt-2">
-                <GoogleSignInButton />
-              </div>
-            </>
-          )}
-          <p className="text-center text-[10px] font-bold text-ink/50 mt-3 px-2">
+        {/* Mascot friends */}
+        <motion.div
+          className="mt-8 flex justify-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+        >
+          {["owl", "robot", "dino", "cat", "panda"].map((kind) => (
+            <div
+              key={kind}
+              className="grid h-11 w-11 place-items-center rounded-full bg-white shadow-md ring-2 ring-white"
+            >
+              <Mascot kind={kind} size={28} animate={false} />
+            </div>
+          ))}
+        </motion.div>
+
+        <footer className="mt-10 text-center">
+          <p className="text-[11px] font-bold text-ink/40">
             By continuing you agree to our{" "}
             <Link to="/terms" className="text-primary underline">
               Terms
             </Link>{" "}
             and{" "}
             <Link to="/privacy" className="text-primary underline">
-              Privacy Policy
+              Privacy
             </Link>
             .
           </p>
-
-          <p className="text-center text-xs text-ink/55 font-bold mt-4">
-            Already exploring?{" "}
-            <Link to="/login" className="text-primary font-extrabold">
-              Sign in
-            </Link>
+          <p className="mt-3 text-[11px] font-semibold text-ink/35">
+            Invite-only beta · Knowledge should be free
           </p>
-        </section>
-
-        <p className="text-[11px] font-extrabold text-ink/45 px-5 mt-5 mb-2 tracking-wide uppercase">
-          What you'll explore
-        </p>
-        <section className="grid grid-cols-3 gap-2 px-4 pb-4">
-          {SUBJECT_TILES.map((s) => (
-            <div
-              key={s.id}
-              className="rounded-2xl py-3 text-center"
-              style={{ background: s.bg }}
-            >
-              <div className="text-2xl">{s.icon}</div>
-              <div className="text-xs font-extrabold mt-1" style={{ color: s.color }}>
-                {s.name}
-              </div>
-            </div>
-          ))}
-        </section>
-
-        <p className="text-center text-[11px] font-bold text-ink/40 px-5 py-4 flex items-center justify-center gap-2">
-          <Sparkles size={12} /> Designed by Vinay · Built with Cursor · Knowledge is free
-        </p>
+        </footer>
       </div>
     </div>
   );
 }
-

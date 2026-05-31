@@ -77,6 +77,19 @@ function PublicOnly({ children }) {
   return children;
 }
 
+function AuthEntryRedirect() {
+  const session = useAuthStore((s) => s.session);
+  const authReady = useAuthStore((s) => s.initialized);
+  if (isSupabaseEnabled && !authReady) {
+    return (
+      <div className="min-h-screen grid place-items-center marketing-page">
+        <p className="font-display text-lg font-extrabold text-ink/60">Loading KidQuest…</p>
+      </div>
+    );
+  }
+  return <Navigate to={session ? "/home" : "/landing"} replace />;
+}
+
 export default function App() {
   const initAuth = useAuthStore((s) => s.init);
 
@@ -176,7 +189,8 @@ export default function App() {
           <Route path="/multiplication/results" element={<MultiplicationResults />} />
         </Route>
 
-        <Route path="*" element={<Navigate to="/home" replace />} />
+        <Route path="/" element={<AuthEntryRedirect />} />
+        <Route path="*" element={<AuthEntryRedirect />} />
       </Routes>
     </BrowserRouter>
   );

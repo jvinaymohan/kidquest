@@ -179,6 +179,63 @@ button {
     @apply rounded-[2rem] bg-white/70 backdrop-blur-md ring-2 ring-white/80;
     box-shadow: 0 16px 48px rgba(45, 48, 71, 0.06);
   }
+
+  /* Marketing / pre-login pages */
+  .marketing-page {
+    background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 40%, #fef3ff 75%, #fff9f3 100%);
+  }
+
+  .marketing-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(56px);
+    pointer-events: none;
+  }
+
+  .marketing-blob-a {
+    width: 300px;
+    height: 300px;
+    top: -100px;
+    left: -80px;
+    background: rgba(255, 107, 53, 0.32);
+  }
+
+  .marketing-blob-b {
+    width: 260px;
+    height: 260px;
+    bottom: 10%;
+    right: -90px;
+    background: rgba(58, 134, 255, 0.28);
+  }
+
+  .marketing-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.4;
+    background-image: radial-gradient(circle, rgba(255, 230, 109, 0.85) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .marketing-badge {
+    @apply inline-flex rounded-full px-4 py-1.5 text-xs font-extrabold uppercase tracking-wider text-primary;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 20px rgba(45, 48, 71, 0.08);
+  }
+
+  .marketing-card {
+    @apply rounded-[1.5rem] bg-white/95 p-5 shadow-[0_16px_48px_rgba(45,48,71,0.1)] ring-2 ring-white backdrop-blur-sm;
+  }
+
+  .marketing-btn-primary {
+    @apply rounded-xl px-5 py-3.5 font-display text-base font-extrabold text-white;
+    background: linear-gradient(135deg, #ff6b35 0%, #ff9348 50%, #3a86ff 100%);
+    box-shadow: 0 8px 0 rgba(180, 70, 20, 0.3), 0 12px 28px rgba(255, 107, 53, 0.25);
+  }
+
+  .marketing-btn-secondary {
+    @apply block rounded-xl bg-white px-5 py-3.5 font-display text-base font-extrabold text-ink shadow-md ring-2 ring-ink/10 transition hover:scale-[1.01] active:scale-[0.99];
+  }
 }
 
 .scrollbar-none::-webkit-scrollbar {
