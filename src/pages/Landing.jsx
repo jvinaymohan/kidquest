@@ -1,67 +1,74 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Mascot } from "../components/mascots/Mascot";
 import { GoogleSignInButton } from "../components/auth/GoogleSignInButton";
 import { isGoogleOAuthEnabled } from "../lib/featureFlags";
-import {
-  MarketingPrimaryButton,
-  MarketingSecondaryButton,
-} from "../components/marketing/MarketingShell";
+import { SpaceBackground } from "../components/home/SpaceBackground";
 
 const LIVE_WORLDS = [
-  { emoji: "🌍", name: "Geography", from: "#34d399", to: "#0d9488" },
-  { emoji: "🔢", name: "Math", from: "#60a5fa", to: "#2563eb" },
-  { emoji: "🪐", name: "Space", from: "#fb923c", to: "#ea580c" },
+  { emoji: "🌍", name: "Geography", from: "#1a7a3c", to: "#27ae60", shadow: "0 10px 30px rgba(39,174,96,0.4)", xp: 50 },
+  { emoji: "🔢", name: "Math", from: "#1a5fa0", to: "#2980b9", shadow: "0 10px 30px rgba(41,128,185,0.4)", xp: 40 },
+  { emoji: "🪐", name: "Space", from: "#c0392b", to: "#e74c3c", shadow: "0 10px 30px rgba(231,76,60,0.4)", xp: 60 },
 ];
 
 const PILLARS = [
   { emoji: "🎮", title: "Play to learn" },
-  { emoji: "⭐", title: "Earn points & XP" },
+  { emoji: "⭐", title: "Earn XP & badges" },
   { emoji: "🛡️", title: "Safe for kids" },
 ];
 
 export default function Landing() {
-  return (
-    <div className="marketing-page marketing-fit relative flex h-[100dvh] flex-col overflow-hidden">
-      <div className="marketing-blob marketing-blob-a" aria-hidden />
-      <div className="marketing-blob marketing-blob-b" aria-hidden />
-      <div className="marketing-stars" aria-hidden />
+  const reduce = useReducedMotion();
 
-      <div className="relative mx-auto flex h-full w-full max-w-lg flex-col items-center justify-between px-4 py-[max(1rem,env(safe-area-inset-top))] pb-[max(1rem,env(safe-area-inset-bottom))]">
+  return (
+    <div className="home-v2 home-v2-scroll relative">
+      <SpaceBackground reduceMotion={reduce} />
+
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-lg flex-col items-center px-5 py-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <motion.section
           className="w-full shrink-0 text-center"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.45 }}
         >
-          <p className="marketing-badge mx-auto text-[10px]">Free learning for curious kids</p>
+          <p className="home-v2-badge mx-auto">🎮 Free Learning for Curious Kids</p>
 
-          <div className="relative mx-auto mt-3 flex h-24 w-24 items-center justify-center">
-            <motion.div
-              className="absolute inset-0 rounded-full bg-gradient-to-br from-[#ffe066] via-[#ff9f43] to-[#ff6b6b]"
-              animate={{ scale: [1, 1.04, 1] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <div className="relative z-10 grid h-[4.5rem] w-[4.5rem] place-items-center rounded-full bg-white shadow-xl ring-4 ring-white">
-              <Mascot kind="rocket" size={52} />
+          <div className="relative mx-auto mt-6">
+            <div className={reduce ? "" : "home-v2-logo-ring mx-auto grid place-items-center"}>
+              <div
+                className={`home-v2-logo-inner grid place-items-center ${reduce ? "mx-auto h-[5.5rem] w-[5.5rem] rounded-full bg-[#1a1060]" : ""}`}
+              >
+                <Mascot kind="rocket" size={48} animate={!reduce} />
+              </div>
             </div>
+            {!reduce && (
+              <>
+                <span className="absolute -right-2 -top-1 text-lg" aria-hidden>
+                  ⭐
+                </span>
+                <span className="absolute -left-3 bottom-0 text-sm" aria-hidden>
+                  ✨
+                </span>
+                <span className="absolute -left-4 top-5 text-xs" aria-hidden>
+                  💫
+                </span>
+              </>
+            )}
           </div>
 
-          <h1 className="mt-3 font-display text-[2.1rem] font-extrabold leading-[1.05] tracking-tight sm:text-[2.35rem]">
-            <span className="text-ink">Kid</span>
-            <span className="bg-gradient-to-r from-primary via-[#ff8f4a] to-[#3A86FF] bg-clip-text text-transparent">
-              Quest
-            </span>
+          <h1 className="mt-4 font-display text-[3.2rem] font-extrabold leading-none tracking-tight sm:text-[3.6rem]">
+            <span className="text-white">Kid</span>
+            <span className="home-v2-title-quest">Quest</span>
           </h1>
-          <p className="mx-auto mt-2 max-w-[20rem] text-sm font-bold leading-snug text-ink/55">
-            Explore worlds, earn points & XP, and master skills — the fun way to learn.
+          <p className="mx-auto mt-3 max-w-xs text-base font-bold leading-relaxed text-white/70">
+            Explore worlds, earn points & XP, and master skills — the fun way to learn!
           </p>
 
-          <div className="mt-3 flex justify-center gap-2">
+          <div className="mt-5 flex flex-wrap justify-center gap-2.5">
             {PILLARS.map((p) => (
               <span
                 key={p.title}
-                className="inline-flex items-center gap-1 rounded-full bg-white/85 px-2.5 py-1 text-[10px] font-extrabold text-ink/70 shadow-sm ring-1 ring-white"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md"
               >
                 <span aria-hidden>{p.emoji}</span>
                 {p.title}
@@ -71,27 +78,35 @@ export default function Landing() {
         </motion.section>
 
         <motion.section
-          className="w-full max-w-sm shrink-0 space-y-2.5"
+          className="mt-8 w-full max-w-[25rem] shrink-0 space-y-3.5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12, duration: 0.4 }}
         >
-          <MarketingSecondaryButton to="/invite-request">✨ Request an invite</MarketingSecondaryButton>
-          <MarketingPrimaryButton as="link" to="/register">
+          <Link
+            to="/invite-request"
+            className="flex w-full items-center justify-center gap-2 rounded-[1.25rem] bg-white/95 px-8 py-4 font-display text-[17px] font-extrabold text-[#1a1060] shadow-[0_8px_30px_rgba(255,255,255,0.2)] transition hover:-translate-y-0.5 hover:scale-[1.02] focus-ring active:scale-[0.98]"
+          >
+            ✨ Request an invite
+          </Link>
+          <Link
+            to="/register"
+            className="home-v2-play flex w-full max-w-none items-center justify-center gap-2 focus-ring"
+          >
             🚀 I have an invite code
-          </MarketingPrimaryButton>
-          <p className="text-center text-sm font-bold text-ink/50">
+          </Link>
+          <p className="text-center text-sm font-bold text-white/60">
             Already in?{" "}
-            <Link to="/login" className="font-extrabold text-primary hover:underline focus-ring rounded">
+            <Link to="/login" className="font-extrabold text-[#FFD700] hover:underline focus-ring rounded">
               Sign in
             </Link>
           </p>
           {isGoogleOAuthEnabled && (
             <div className="pt-1">
               <div className="mb-2 flex items-center gap-2">
-                <div className="h-px flex-1 bg-ink/10" />
-                <span className="text-[10px] font-bold uppercase text-ink/40">or</span>
-                <div className="h-px flex-1 bg-ink/10" />
+                <div className="h-px flex-1 bg-white/15" />
+                <span className="text-[10px] font-bold uppercase text-white/40">or</span>
+                <div className="h-px flex-1 bg-white/15" />
               </div>
               <GoogleSignInButton />
             </div>
@@ -99,40 +114,45 @@ export default function Landing() {
         </motion.section>
 
         <motion.section
-          className="w-full shrink-0"
+          className="mt-10 w-full shrink-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
-          <p className="text-center text-xs font-bold uppercase tracking-widest text-ink/40">Live now</p>
-          <div className="mt-2 grid grid-cols-3 gap-2">
+          <div className="mb-5 flex items-center justify-center gap-2">
+            <span className="home-v2-live-dot" aria-hidden />
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/50">Live now</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-4">
             {LIVE_WORLDS.map((w) => (
               <div
                 key={w.name}
-                className="flex flex-col items-center justify-center rounded-2xl p-2.5 text-center shadow-md ring-2 ring-white"
-                style={{ background: `linear-gradient(145deg, ${w.from}, ${w.to})` }}
+                className="home-v2-subject-card pointer-events-none"
+                style={{
+                  background: `linear-gradient(145deg, ${w.from}, ${w.to})`,
+                  boxShadow: w.shadow,
+                }}
               >
-                <span className="text-2xl" aria-hidden>
+                <span className="home-v2-card-emoji" aria-hidden>
                   {w.emoji}
                 </span>
-                <span className="mt-0.5 font-display text-[10px] font-extrabold text-white drop-shadow-sm">
-                  {w.name}
-                </span>
+                <span className="home-v2-card-name">{w.name}</span>
+                <span className="home-v2-card-xp">+{w.xp} XP</span>
               </div>
             ))}
           </div>
-          <p className="mt-2 text-center text-[11px] font-bold text-ink/45">
-            History, music, trivia & more — coming soon after sign-in
+          <p className="mt-5 text-center text-[13px] italic text-white/40">
+            History, music, trivia & more — coming soon after sign-in 🎉
           </p>
         </motion.section>
 
-        <footer className="w-full shrink-0 text-center">
-          <p className="text-[10px] font-bold text-ink/40">
-            <Link to="/terms" className="text-primary underline">
+        <footer className="mt-auto w-full shrink-0 pt-8 text-center">
+          <p className="text-[10px] font-bold text-white/40">
+            <Link to="/terms" className="text-[#FFD700] underline focus-ring">
               Terms
             </Link>
             {" · "}
-            <Link to="/privacy" className="text-primary underline">
+            <Link to="/privacy" className="text-[#FFD700] underline focus-ring">
               Privacy
             </Link>
           </p>

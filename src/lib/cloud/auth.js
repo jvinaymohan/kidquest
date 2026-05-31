@@ -59,8 +59,15 @@ export async function signInWithEmail({ email, password }) {
 export async function resetPasswordForEmail(email) {
   if (!isSupabaseEnabled) return { ok: false, reason: "supabase-disabled" };
   const redirectTo =
-    typeof window !== "undefined" ? `${window.location.origin}/login` : undefined;
+    typeof window !== "undefined" ? `${window.location.origin}/reset-password` : undefined;
   const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error) return { ok: false, reason: error.message };
+  return { ok: true };
+}
+
+export async function updatePassword(newPassword) {
+  if (!isSupabaseEnabled) return { ok: false, reason: "supabase-disabled" };
+  const { error } = await supabase.auth.updateUser({ password: newPassword });
   if (error) return { ok: false, reason: error.message };
   return { ok: true };
 }

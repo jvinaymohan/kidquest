@@ -87,7 +87,7 @@ export function buildSuggestedAction(item) {
 
   if (cat === "password") {
     return email
-      ? `Send password reset to ${email}. Confirm Supabase Auth → URL Configuration: Site URL + /auth/callback for production.`
+      ? `Send password reset to ${email}. Confirm Supabase Auth redirect URLs include /reset-password and /auth/callback.`
       : "Ask user for signup email via reply, then send reset from Users tab.";
   }
   if (cat === "bug" && (msg.includes("google") || msg.includes("oauth"))) {

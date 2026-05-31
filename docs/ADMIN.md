@@ -53,4 +53,4 @@ Encourage families: *“Tap the chat bubble anytime something is confusing or aw
 
 ## Local development
 
-With Supabase env vars set, feedback goes to `app_feedback`. Without Supabase, feedback is stored in `localStorage` only (`kidquest-local-feedback`) for UI testing.
+With Supabase env vars set, feedback goes to `app_feedback` via the `submit_app_feedback` RPC (security definer), so anonymous and signed-in users can submit without RLS blocking inserts. Without Supabase, feedback is stored in `localStorage` only (`kidquest-local-feedback`) for UI testing.

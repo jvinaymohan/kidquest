@@ -56,6 +56,7 @@ export default function ForgotPassword() {
           <p className="mt-2 font-display text-lg font-extrabold text-ink">Check your inbox</p>
           <p className="mt-2 text-sm font-semibold text-ink/55">
             If an account exists for <strong>{email}</strong>, you&apos;ll get a reset link shortly.
+            Open it to set a new password on the reset page.
           </p>
           <Link
             to="/login"

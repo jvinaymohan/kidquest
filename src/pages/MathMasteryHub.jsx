@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Lock, RotateCcw } from "lucide-react";
+import { ChevronLeft, RotateCcw } from "lucide-react";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { LEVELS, OPERATIONS, STREAK_TARGET } from "../utils/mathMastery/constants";
 import { Button } from "../components/ui/Button";

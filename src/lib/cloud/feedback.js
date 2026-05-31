@@ -22,20 +22,36 @@ export async function submitFeedback({
   if (!isSupabaseEnabled) {
     return { ok: false, reason: "Cloud is off — feedback saved locally only in this build." };
   }
+  const trimmedMessage = message.trim();
+  const { data, error } = await supabase.rpc("submit_app_feedback", {
+    p_contact_email: contactEmail?.trim()?.toLowerCase() || null,
+    p_contact_name: contactName?.trim() || null,
+    p_user_role: userRole ?? null,
+    p_page_path: pagePath ?? null,
+    p_category: category ?? "general",
+    p_message: trimmedMessage,
+    p_rating: rating ?? null,
+  });
+  if (!error) {
+    return { ok: true, id: data ?? null };
+  }
+  if (!/submit_app_feedback|schema cache|PGRST202/i.test(error.message)) {
+    return { ok: false, reason: error.message };
+  }
   const row = {
     user_id: userId ?? null,
-    contact_email: contactEmail?.trim() || null,
+    contact_email: contactEmail?.trim()?.toLowerCase() || null,
     contact_name: contactName?.trim() || null,
     user_role: userRole ?? null,
     page_path: pagePath ?? null,
     category: category ?? "general",
-    message: message.trim(),
+    message: trimmedMessage,
     rating: rating ?? null,
     status: "new",
   };
-  const { data, error } = await supabase.from("app_feedback").insert(row).select("id").single();
-  if (error) return { ok: false, reason: error.message };
-  return { ok: true, id: data.id };
+  const { error: insertError } = await supabase.from("app_feedback").insert(row);
+  if (insertError) return { ok: false, reason: insertError.message };
+  return { ok: true, id: null };
 }
 
 export async function fetchFeedbackForAdmin({ status, category, limit = 100 } = {}) {

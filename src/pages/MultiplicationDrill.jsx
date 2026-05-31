@@ -29,6 +29,7 @@ export default function MultiplicationDrill() {
   const [qIdx, setQIdx] = useState(0);
   const [value, setValue] = useState("");
   const [times, setTimes] = useState([]);
+  const [wrongCount, setWrongCount] = useState(0);
   const startRef = useRef(null);
   const fact = queue[qIdx % Math.max(queue.length, 1)];
 
@@ -56,6 +57,7 @@ export default function MultiplicationDrill() {
       if (ms < 4000) setTimes((t) => [...t, ms]);
     } else {
       sound.wrong();
+      setWrongCount((n) => n + 1);
     }
     setValue("");
     setQIdx((i) => i + 1);
@@ -67,21 +69,30 @@ export default function MultiplicationDrill() {
   const sessionAvg =
     times.length > 0 ? times.reduce((a, b) => a + b, 0) / times.length : null;
 
+  const learnPath = `/multiplication/table/${tableNumber}/learn`;
+  const perfectSession = wrongCount === 0;
+
   if (allDone) {
     return (
       <div className="min-h-screen bg-mul-dark">
         <SessionComplete
           emoji="⚡"
           title="Speed drill complete!"
-          subtitle="Boss Battle is unlocked — beat 18/20 to earn your table badge."
+          subtitle={
+            perfectSession
+              ? "Boss Battle is unlocked — beat 18/20 to earn your table badge."
+              : "Nice work! Review facts in Learn if any felt slow."
+          }
           stats={[
             { label: "Avg time", value: sessionAvg ? `${(sessionAvg / 1000).toFixed(1)}s` : "—" },
-            { label: "Facts", value: facts.length },
+            { label: "Misses", value: wrongCount },
           ]}
           primaryLabel="Boss Battle →"
           onPrimary={() => navigate(`/multiplication/table/${tableNumber}/boss`)}
-          secondaryLabel="Back to table"
-          onSecondary={() => navigate(`/multiplication/table/${tableNumber}`)}
+          secondaryLabel={!perfectSession ? "Try Learn phase" : "Back to table"}
+          onSecondary={() =>
+            navigate(!perfectSession ? learnPath : `/multiplication/table/${tableNumber}`)
+          }
         />
       </div>
     );
@@ -113,6 +124,15 @@ export default function MultiplicationDrill() {
         </div>
         <div className="text-3xl font-extrabold text-mul-gold min-h-[48px]">{value || "?"}</div>
         <AnswerKeypad value={value} onChange={setValue} onSubmit={submit} dark />
+        {wrongCount > 0 && (
+          <button
+            type="button"
+            onClick={() => navigate(learnPath)}
+            className="text-sm font-bold text-mul-electric underline"
+          >
+            Need help? Try Learn phase
+          </button>
+        )}
       </div>
     </div>
   );

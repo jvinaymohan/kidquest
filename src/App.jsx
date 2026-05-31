@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import InviteRequest from "./pages/InviteRequest";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 import AuthCallback from "./pages/AuthCallback";
 import ReviewHub from "./pages/ReviewHub";
 import GeographyReview from "./pages/GeographyReview";
@@ -131,6 +132,7 @@ export default function App() {
         />
         <Route path="/invite-request" element={<InviteRequest />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/auth/callback" element={<AuthCallback />} />

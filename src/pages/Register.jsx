@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useAppStore } from "../store/useAppStore";
 import { AGE_GROUPS } from "../data/subjects";
@@ -24,11 +24,15 @@ const ROLES = [
 
 export default function Register() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [role, setRole] = useState("kid");
   const [kidName, setKidName] = useState("");
   const [ageGroup, setAgeGroup] = useState("adventurer");
-  const [email, setEmail] = useState("");
-  const [inviteCode, setInviteCode] = useState("");
+  const [email, setEmail] = useState(() => searchParams.get("email")?.trim() ?? "");
+  const [inviteCode, setInviteCode] = useState(() => {
+    const fromQuery = searchParams.get("code") || searchParams.get("invite");
+    return fromQuery?.trim().toUpperCase() ?? "";
+  });
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
@@ -244,8 +248,15 @@ export default function Register() {
           </p>
           <p className="text-center text-sm font-bold text-ink/50">
             Have an account?{" "}
-            <Link to="/login" className="text-primary font-extrabold hover:underline">
+            <Link
+              to={email ? `/login?email=${encodeURIComponent(email)}` : "/login"}
+              className="text-primary font-extrabold hover:underline"
+            >
               Sign in
+            </Link>
+            {" · "}
+            <Link to="/forgot-password" className="text-primary font-extrabold hover:underline">
+              Forgot password?
             </Link>
           </p>
         </form>

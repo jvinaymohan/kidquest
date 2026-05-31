@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { isSupabaseEnabled } from "../lib/supabaseClient";
 import { GoogleSignInButton } from "../components/auth/GoogleSignInButton";
@@ -16,13 +16,16 @@ import {
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [email, setEmail] = useState("");
+  const [searchParams] = useSearchParams();
+  const [email, setEmail] = useState(() => searchParams.get("email")?.trim() ?? "");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const signIn = useAuthStore((s) => s.signIn);
 
   const redirectTo = location.state?.from || "/home";
+  const passwordUpdated = location.state?.passwordUpdated;
+  const fromRegister = location.state?.fromRegister;
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -55,6 +58,16 @@ export default function Login() {
       backLabel="Home"
     >
       <MarketingCard>
+        {passwordUpdated && (
+          <p className="mb-3 rounded-xl bg-success/10 px-3 py-2 text-center text-sm font-bold text-success">
+            Password updated. Sign in with your new password.
+          </p>
+        )}
+        {fromRegister && !passwordUpdated && (
+          <p className="mb-3 rounded-xl bg-primary/10 px-3 py-2 text-center text-sm font-bold text-primary">
+            Check your email to confirm your account, then sign in here.
+          </p>
+        )}
         <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <MarketingInput label="Email">
             <input

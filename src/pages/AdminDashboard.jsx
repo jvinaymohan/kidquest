@@ -27,6 +27,8 @@ import {
   fetchAdminInviteCodes,
   createInviteCodeAdmin,
   updateInviteCodeAdmin,
+  buildInviteRegisterUrl,
+  buildInviteEmailBody,
 } from "../lib/cloud/invites";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -203,7 +205,8 @@ export default function AdminDashboard() {
       return;
     }
     setReferrals((rows) => rows.map((r) => (r.id === item.id ? { ...r, ...patch } : r)));
-    showToast("Referral approved and invite issued");
+    await copyInviteEmail(invite, item.full_name);
+    showToast("Approved — invite email text copied to clipboard");
   }
 
   async function markInviteStatus(id, status) {
@@ -220,6 +223,33 @@ export default function AdminDashboard() {
   function applySuggestion(item) {
     const text = buildSuggestedAction(item);
     saveFeedbackRow(item.id, { suggested_action: text, status: "reviewing" });
+  }
+
+  async function copyInviteLink(invite) {
+    const url = buildInviteRegisterUrl({
+      code: invite.code,
+      email: invite.issued_to_email,
+    });
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("Register link copied");
+    } catch {
+      showToast(url);
+    }
+  }
+
+  async function copyInviteEmail(invite, fullName) {
+    const body = buildInviteEmailBody({
+      code: invite.code,
+      email: invite.issued_to_email,
+      fullName,
+    });
+    try {
+      await navigator.clipboard.writeText(body);
+      showToast("Invite email text copied");
+    } catch {
+      showToast("Could not copy — check browser permissions");
+    }
   }
 
   return (
@@ -436,6 +466,12 @@ export default function AdminDashboard() {
                     </button>
                   </div>
                 )}
+                {item.status === "approved" && item.approved_invite_id && (
+                  <p className="text-xs font-semibold text-ink/50">
+                    After approving, open the Invites tab to copy the register link or email text for{" "}
+                    {item.email}.
+                  </p>
+                )}
               </li>
             ))}
             {!loading && referrals.length === 0 && (
@@ -495,6 +531,24 @@ export default function AdminDashboard() {
                 </p>
                 {invite.note && <p className="text-xs text-ink/50">{invite.note}</p>}
                 <div className="flex flex-wrap gap-2 pt-1">
+                  {invite.status === "active" && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => copyInviteLink(invite)}
+                        className="px-2 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold focus-ring"
+                      >
+                        Copy register link
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => copyInviteEmail(invite)}
+                        className="px-2 py-1 rounded-lg bg-primary/15 text-primary text-[11px] font-bold focus-ring"
+                      >
+                        Copy email text
+                      </button>
+                    </>
+                  )}
                   {invite.status !== "used" && (
                     <button
                       type="button"

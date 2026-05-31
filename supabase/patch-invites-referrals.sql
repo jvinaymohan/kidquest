@@ -119,6 +119,52 @@ $$;
 revoke all on function public.validate_invite_code(text, text) from public;
 grant execute on function public.validate_invite_code(text, text) to anon, authenticated;
 
+-- Anonymous referral submissions (bypasses RLS; safe validation inside function).
+create or replace function public.submit_referral_request(
+  p_full_name text,
+  p_email text,
+  p_reason text,
+  p_referrer_name text default null,
+  p_referrer_email text default null
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+begin
+  if char_length(trim(coalesce(p_full_name, ''))) < 2 then
+    raise exception 'Name is required.';
+  end if;
+  if position('@' in trim(coalesce(p_email, ''))) < 2 then
+    raise exception 'Valid email is required.';
+  end if;
+  if char_length(trim(coalesce(p_reason, ''))) < 8 then
+    raise exception 'Please share a bit more about why you want access.';
+  end if;
+
+  insert into public.referral_requests (
+    full_name, email, reason, referrer_name, referrer_email, status
+  )
+  values (
+    trim(p_full_name),
+    lower(trim(p_email)),
+    trim(p_reason),
+    nullif(trim(coalesce(p_referrer_name, '')), ''),
+    nullif(lower(trim(coalesce(p_referrer_email, ''))), ''),
+    'pending'
+  )
+  returning id into v_id;
+
+  return v_id;
+end;
+$$;
+
+revoke all on function public.submit_referral_request(text, text, text, text, text) from public;
+grant execute on function public.submit_referral_request(text, text, text, text, text) to anon, authenticated;
+
 alter table public.referral_requests enable row level security;
 alter table public.invite_codes enable row level security;
 
@@ -145,6 +191,10 @@ create policy "invites admin all" on public.invite_codes
 grant select, insert, update, delete on public.referral_requests to authenticated;
 grant insert on public.referral_requests to anon;
 grant select, insert, update, delete on public.invite_codes to authenticated;
+
+-- Supabase Auth → URL Configuration: add redirect URLs for password reset:
+--   https://kidquest-indol.vercel.app/reset-password
+--   http://localhost:5173/reset-password
 
 -- Promote admin (edit email):
 -- update public.profiles set role = 'admin', email = 'jvinaymohan@gmail.com'

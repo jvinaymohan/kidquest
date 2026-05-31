@@ -8,12 +8,17 @@ import { computeTableProgress } from "../utils/multiplicationProgress";
 import { tablePatterns, MOTIVATIONAL } from "../data/multiplication/tables";
 import { ProgressRing } from "../components/ui/ProgressRing";
 
-const PHASE_ROUTES = {
-  1: "learn",
-  2: "practice",
-  3: "drill",
-  4: "boss",
-};
+const PHASES = [
+  { p: 2, route: "practice", title: "Practice", subtitle: "Start here" },
+  { p: 1, route: "learn", title: "Learn", subtitle: "Optional" },
+  { p: 3, route: "drill", title: "Speed Drill", subtitle: "Under 3 seconds" },
+  { p: 4, route: "boss", title: "Boss Battle", subtitle: "18/20 to pass" },
+];
+
+function isPhaseAvailable(p, phase) {
+  if (p === 1 || p === 2) return true;
+  return phase >= p;
+}
 
 export default function MultiplicationTable() {
   const { tableNumber: tn } = useParams();
@@ -94,10 +99,10 @@ export default function MultiplicationTable() {
         </Card>
       ) : (
         <div className="grid gap-2">
-          {[1, 2, 3, 4].map((p) => {
-            const route = PHASE_ROUTES[p];
-            const available = phase >= p || (p === 1);
-            const current = phase === p || (phase < p && p === phase);
+          {PHASES.map(({ p, route, title, subtitle }) => {
+            const available = isPhaseAvailable(p, phase);
+            const current = phase === p;
+            const highlight = p === 2 && phase <= 2;
             return (
               <Link
                 key={p}
@@ -105,14 +110,15 @@ export default function MultiplicationTable() {
                 className={!available ? "pointer-events-none opacity-40" : ""}
               >
                 <Card
-                  className={`flex justify-between items-center ${
-                    current ? "ring-2 ring-mul-electric" : ""
+                  className={`flex justify-between items-center gap-3 ${
+                    current || highlight ? "ring-2 ring-mul-electric" : ""
                   }`}
                 >
-                  <span className="font-display font-extrabold">
-                    Phase {p}: {["Learn", "Practice", "Speed Drill", "Boss Battle"][p - 1]}
-                  </span>
-                  <span className="text-math font-bold">→</span>
+                  <div className="min-w-0 text-left">
+                    <span className="font-display font-extrabold block">{title}</span>
+                    <span className="text-xs font-bold text-ink/55">{subtitle}</span>
+                  </div>
+                  <span className="text-math font-bold shrink-0">→</span>
                 </Card>
               </Link>
             );

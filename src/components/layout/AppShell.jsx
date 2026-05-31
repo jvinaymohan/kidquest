@@ -13,7 +13,7 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   const viewportLocked = isHome || isLanding;
 
   return (
-    <div className={`min-h-screen flex flex-col ${isHome ? "bg-transparent" : "bg-bg"}`}>
+    <div className={`min-h-screen flex flex-col ${isHome || isLanding ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
       {!hideTop && !isHome && <TopBar />}
       <main

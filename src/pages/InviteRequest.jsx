@@ -108,7 +108,7 @@ export default function InviteRequest() {
           <MarketingError>{error}</MarketingError>
           <MarketingSuccess>
             {success
-              ? "Request sent! If approved, you’ll get an invite code by email."
+              ? "Request sent! If approved, you’ll get an invite email with a link to create your account."
               : null}
           </MarketingSuccess>
 
@@ -120,6 +120,10 @@ export default function InviteRequest() {
             Already have a code?{" "}
             <Link to="/register" className="text-primary font-extrabold hover:underline">
               Create account
+            </Link>
+            {" · "}
+            <Link to="/login" className="text-primary font-extrabold hover:underline">
+              Sign in
             </Link>
           </p>
         </form>

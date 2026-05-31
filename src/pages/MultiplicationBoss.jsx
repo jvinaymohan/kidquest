@@ -40,6 +40,7 @@ export default function MultiplicationBoss() {
   const [remaining, setRemaining] = useState(COUNTDOWN_MS);
   const [finished, setFinished] = useState(false);
   const [passed, setPassed] = useState(false);
+  const [wrongCount, setWrongCount] = useState(0);
   const tickRef = useRef(null);
   const qStart = useRef(Date.now());
   const idxRef = useRef(0);
@@ -57,6 +58,8 @@ export default function MultiplicationBoss() {
     if (correct) {
       scoreRef.current += 1;
       setScore(scoreRef.current);
+    } else {
+      setWrongCount((n) => n + 1);
     }
     setValue("");
     const nextIdx = idxRef.current + 1;
@@ -102,8 +105,12 @@ export default function MultiplicationBoss() {
     advance(correct);
   }
 
+  const learnPath = `/multiplication/table/${tableNumber}/learn`;
+
   if (finished) {
     const finalScore = score;
+    const perfectRun = wrongCount === 0 && finalScore === BOSS_COUNT;
+    const showLearn = !passed || !perfectRun;
     return (
       <div className="min-h-screen bg-mul-dark text-white p-6 text-center flex flex-col items-center justify-center gap-4">
         {passed && <ConfettiBlast />}
@@ -117,10 +124,17 @@ export default function MultiplicationBoss() {
         {!passed && (
           <p className="text-sm font-bold text-white/70">Need 18/20 to unlock Legend path. Try again!</p>
         )}
+        {showLearn && (
+          <p className="text-sm font-bold text-white/60">
+            Stuck on facts? The Learn phase walks through each one.
+          </p>
+        )}
         <ButtonRow
           onRetry={() => navigate(`/multiplication/table/${tableNumber}/boss`)}
           onBack={() => navigate(`/multiplication/table/${tableNumber}`)}
+          onLearn={() => navigate(learnPath)}
           passed={passed}
+          showLearn={showLearn}
         />
       </div>
     );
@@ -158,9 +172,9 @@ export default function MultiplicationBoss() {
   );
 }
 
-function ButtonRow({ onRetry, onBack, passed }) {
+function ButtonRow({ onRetry, onBack, onLearn, passed, showLearn }) {
   return (
-    <div className="flex gap-2 mt-4">
+    <div className="flex flex-col sm:flex-row gap-2 mt-4">
       {!passed && (
         <button
           type="button"
@@ -168,6 +182,15 @@ function ButtonRow({ onRetry, onBack, passed }) {
           className="px-4 py-2 rounded-chunky bg-mul-electric text-mul-dark font-display font-extrabold"
         >
           Try Again
+        </button>
+      )}
+      {showLearn && (
+        <button
+          type="button"
+          onClick={onLearn}
+          className="px-4 py-2 rounded-chunky border-2 border-mul-electric text-mul-electric font-display font-extrabold"
+        >
+          Learn phase →
         </button>
       )}
       <button

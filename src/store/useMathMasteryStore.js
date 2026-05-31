@@ -22,6 +22,20 @@ function defaultProgress() {
   return progress;
 }
 
+function mergeProgress(persisted) {
+  const merged = defaultProgress();
+  if (!persisted || typeof persisted !== "object") return merged;
+  for (const op of OPERATIONS) {
+    const opRow = persisted[op.id];
+    if (!opRow || typeof opRow !== "object") continue;
+    for (const lvl of LEVELS) {
+      const row = opRow[lvl] ?? opRow[String(lvl)];
+      if (row) merged[op.id][lvl] = { ...defaultLevelRow(lvl), ...row };
+    }
+  }
+  return merged;
+}
+
 export const useMathMasteryStore = create(
   persist(
     (set, get) => ({
@@ -80,6 +94,13 @@ export const useMathMasteryStore = create(
           showHints: true,
         }),
     }),
-    { name: "kidquest-math-mastery-v1" }
+    {
+      name: "kidquest-math-mastery-v1",
+      merge: (persisted, current) => ({
+        ...current,
+        ...persisted,
+        progress: mergeProgress(persisted?.progress ?? current.progress),
+      }),
+    }
   )
 );

@@ -3,6 +3,41 @@ import { isSupabaseEnabled, supabase } from "../supabaseClient";
 export const REFERRAL_STATUSES = ["pending", "approved", "rejected"];
 export const INVITE_STATUSES = ["active", "used", "revoked", "expired"];
 
+const DEFAULT_APP_ORIGIN = "https://kidquest-indol.vercel.app";
+
+/** Register URL with invite code and email pre-filled (for approval emails). */
+export function buildInviteRegisterUrl({ code, email, origin } = {}) {
+  const base =
+    origin?.replace(/\/$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : DEFAULT_APP_ORIGIN);
+  const params = new URLSearchParams();
+  const normalizedCode = code?.trim()?.toUpperCase();
+  const normalizedEmail = email?.trim()?.toLowerCase();
+  if (normalizedCode) params.set("code", normalizedCode);
+  if (normalizedEmail) params.set("email", normalizedEmail);
+  const qs = params.toString();
+  return qs ? `${base}/register?${qs}` : `${base}/register`;
+}
+
+export function buildInviteEmailBody({ code, email, fullName, origin } = {}) {
+  const registerUrl = buildInviteRegisterUrl({ code, email, origin });
+  const loginUrl = `${(origin || (typeof window !== "undefined" ? window.location.origin : DEFAULT_APP_ORIGIN)).replace(/\/$/, "")}/login${email ? `?email=${encodeURIComponent(email.trim().toLowerCase())}` : ""}`;
+  const forgotUrl = `${(origin || (typeof window !== "undefined" ? window.location.origin : DEFAULT_APP_ORIGIN)).replace(/\/$/, "")}/forgot-password`;
+  const greeting = fullName?.trim() ? `Hi ${fullName.trim()},` : "Hi there,";
+  return `${greeting}
+
+You're approved for KidQuest! Use your invite to create an account:
+
+Invite code: ${code}
+Create account: ${registerUrl}
+
+Already signed up? Sign in: ${loginUrl}
+Forgot your password? Reset it: ${forgotUrl}
+
+Welcome aboard!
+— KidQuest`;
+}
+
 export async function submitReferralRequest({
   fullName,
   email,
@@ -11,6 +46,19 @@ export async function submitReferralRequest({
   referrerEmail,
 }) {
   if (!isSupabaseEnabled) return { ok: false, reason: "supabase-disabled" };
+  const { data, error } = await supabase.rpc("submit_referral_request", {
+    p_full_name: fullName?.trim(),
+    p_email: email?.trim()?.toLowerCase(),
+    p_reason: reason?.trim(),
+    p_referrer_name: referrerName?.trim() || null,
+    p_referrer_email: referrerEmail?.trim()?.toLowerCase() || null,
+  });
+  if (!error) {
+    return { ok: true, id: data ?? null };
+  }
+  if (!/submit_referral_request|schema cache|PGRST202/i.test(error.message)) {
+    return { ok: false, reason: error.message };
+  }
   const row = {
     full_name: fullName?.trim(),
     email: email?.trim()?.toLowerCase(),
@@ -19,9 +67,9 @@ export async function submitReferralRequest({
     referrer_email: referrerEmail?.trim()?.toLowerCase() || null,
     status: "pending",
   };
-  const { data, error } = await supabase.from("referral_requests").insert(row).select("id").single();
-  if (error) return { ok: false, reason: error.message };
-  return { ok: true, id: data?.id ?? null };
+  const { error: insertError } = await supabase.from("referral_requests").insert(row);
+  if (insertError) return { ok: false, reason: insertError.message };
+  return { ok: true, id: null };
 }
 
 export async function validateInviteCode({ code, email }) {
