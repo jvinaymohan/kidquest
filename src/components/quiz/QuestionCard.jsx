@@ -34,10 +34,11 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
     };
   }, [question]);
 
-  function commit(correct) {
+  function commit(correct, wrongDelayMs) {
     setIsCorrect(correct);
     setRevealed(true);
-    advanceTimer.current = setTimeout(() => onAnswered(correct), correct ? 900 : 1600);
+    const delay = correct ? 900 : wrongDelayMs ?? 1600;
+    advanceTimer.current = setTimeout(() => onAnswered(correct), delay);
   }
 
   function handleChoice(opt) {
@@ -201,12 +202,24 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
                 if (revealed) return;
                 setSelected(code);
                 const ok = String(code).toUpperCase() === correctCode;
-                commit(ok);
+                commit(ok, ok ? undefined : 3500);
               }}
             />
-            {revealed && country && (
-              <div className="chunky-card p-3 text-sm font-bold text-ink/80 bg-accent/30">
-                {country.funFact}
+            {revealed && !isCorrect && country && (
+              <div className="rounded-2xl bg-error/10 px-4 py-3 text-center ring-2 ring-error/30">
+                <p className="font-display text-lg font-extrabold text-error">
+                  Not quite — it&apos;s {country.name} {country.flag ?? "🌍"}
+                </p>
+                <p className="mt-1 text-sm font-bold text-ink/60">
+                  See it highlighted on the map above.
+                </p>
+              </div>
+            )}
+            {revealed && isCorrect && country && (
+              <div className="rounded-2xl bg-success/10 px-4 py-3 text-center ring-2 ring-success/30">
+                <p className="font-display text-lg font-extrabold text-success">
+                  Correct! {country.name} {country.flag ?? "🌍"}
+                </p>
               </div>
             )}
           </div>

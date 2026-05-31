@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { PhaseProgress } from "../components/multiplication/PhaseProgress";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { defaultTableRow, useMultiplicationStore } from "../store/useMultiplicationStore";
+import { computeTableProgress } from "../utils/multiplicationProgress";
 import { tablePatterns, MOTIVATIONAL } from "../data/multiplication/tables";
 import { ProgressRing } from "../components/ui/ProgressRing";
 
@@ -16,8 +18,13 @@ const PHASE_ROUTES = {
 export default function MultiplicationTable() {
   const { tableNumber: tn } = useParams();
   const tableNumber = Number(tn);
-  const table = useMultiplicationStore((s) => s.tables[tableNumber]);
-  const progress = useMultiplicationStore((s) => s.getTableProgress(tableNumber));
+  const stored = useMultiplicationStore((s) => s.tables[tableNumber]);
+  const facts = useMultiplicationStore((s) => s.facts);
+  const table = useMemo(() => stored ?? defaultTableRow(tableNumber), [stored, tableNumber]);
+  const progress = useMemo(
+    () => computeTableProgress(facts, tableNumber),
+    [facts, tableNumber]
+  );
   const unlockAll = useMultiplicationStore((s) => s.unlockAllTables);
 
   if (!tableNumber || tableNumber < 1 || tableNumber > 20) {

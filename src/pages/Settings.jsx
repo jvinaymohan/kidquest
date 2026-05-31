@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -18,6 +18,8 @@ import {
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { countLegendaryTables } from "../utils/multiplicationProgress";
+import { rankForLegendaryCount } from "../utils/multiplicationScoring";
 import { Button } from "../components/ui/Button";
 import { SUBJECTS, AGE_GROUPS } from "../data/subjects";
 import { isSupabaseEnabled } from "../lib/supabaseClient";
@@ -642,8 +644,8 @@ function MultiplicationParentSection() {
   const unlockAll = useMultiplicationStore((s) => s.unlockAllTables);
   const setUnlockAll = useMultiplicationStore((s) => s.setUnlockAll);
   const resetMul = useMultiplicationStore((s) => s.resetProgress);
-  const legendary = useMultiplicationStore((s) => s.getLegendaryCount());
-  const rank = useMultiplicationStore((s) => s.getRank());
+  const legendary = useMultiplicationStore((s) => countLegendaryTables(s.tables));
+  const rank = useMemo(() => rankForLegendaryCount(legendary), [legendary]);
 
   return (
     <section className="chunky-card p-4 border-mul-electric/30">

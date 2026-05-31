@@ -1,12 +1,24 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ProgressRing } from "../ui/ProgressRing";
 import { tablePhaseColor } from "../../utils/multiplicationScoring";
-import { useMultiplicationStore } from "../../store/useMultiplicationStore";
+import { getFactsForTable } from "../../data/multiplication/tables";
+import { defaultTableRow, useMultiplicationStore } from "../../store/useMultiplicationStore";
 
 export function TableCard({ tableNumber }) {
-  const table = useMultiplicationStore((s) => s.tables[tableNumber]);
+  const stored = useMultiplicationStore((s) => s.tables[tableNumber]);
   const unlockAll = useMultiplicationStore((s) => s.unlockAllTables);
-  const progress = useMultiplicationStore((s) => s.getTableProgress(tableNumber));
+  const facts = useMultiplicationStore((s) => s.facts);
+
+  const table = useMemo(() => stored ?? defaultTableRow(tableNumber), [stored, tableNumber]);
+
+  const progress = useMemo(() => {
+    const tableFacts = getFactsForTable(tableNumber);
+    const practiced = tableFacts.filter((f) => (facts[f.id]?.practiceHits ?? 0) >= 2).length;
+    const drilled = tableFacts.filter((f) => (facts[f.id]?.drillFastHits ?? 0) >= 2).length;
+    const pct = Math.round(((practiced + drilled) / (tableFacts.length * 2)) * 100);
+    return { practiced, drilled, total: tableFacts.length, pct: Math.min(100, pct) };
+  }, [facts, tableNumber]);
 
   const unlocked = unlockAll || table?.unlocked;
   const phase = table?.legendAt ? 5 : table?.bossPassed ? 4 : table?.currentPhase ?? 1;

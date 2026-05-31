@@ -20,7 +20,7 @@ import {
   upsertUserStats,
 } from "../lib/cloud/progress";
 import { useAppStore } from "./useAppStore";
-import { useMultiplicationStore } from "./useMultiplicationStore";
+import { mergeTables, useMultiplicationStore } from "./useMultiplicationStore";
 import { fetchLifeExplorerItems } from "../lib/cloud/lifeExplorer";
 import { useLifeExplorerStore } from "./useLifeExplorerStore";
 
@@ -113,7 +113,7 @@ export const useAuthStore = create((set, get) => ({
 
     if (mulTables) {
       useMultiplicationStore.setState({
-        tables: { ...mul.tables, ...mulTables },
+        tables: mergeTables({ ...mul.tables, ...mulTables }),
       });
     }
     if (mulFacts && Object.keys(mulFacts).length) {

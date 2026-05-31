@@ -1,18 +1,21 @@
 import { Link } from "react-router-dom";
 import { Brain, BookOpen, Globe, Orbit } from "lucide-react";
+import { countDueReviews } from "../utils/multiplicationProgress";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { useAppStore } from "../store/useAppStore";
 import { SUBJECTS } from "../data/subjects";
+import { isLiveSubject } from "../config/liveSubjects";
 import { subjectProgress } from "../utils/content";
 
 export default function ReviewHub() {
-  const mulDue = useMultiplicationStore((s) => s.getDueReviews().length);
+  const mulDue = useMultiplicationStore((s) => countDueReviews(s));
   const geoDue = useGeographyStore((s) => s.getDueReviews().length);
   const ageGroup = useAppStore((s) => s.ageGroup);
   const lessonProgress = useAppStore((s) => s.lessonProgress);
 
-  const weakSubjects = SUBJECTS.map((s) => {
+  const weakSubjects = SUBJECTS.filter((s) => isLiveSubject(s.id))
+    .map((s) => {
     const stats = subjectProgress(s.id, ageGroup, lessonProgress);
     return { ...s, masteryPct: stats.masteryPct, attempted: stats.attempted };
   })

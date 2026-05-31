@@ -113,6 +113,14 @@ button {
     background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 38%, #fef3ff 72%, #fff9f3 100%);
   }
 
+  .home-v2-fit {
+    max-height: 100dvh;
+  }
+
+  .home-v2-world-compact {
+    min-height: 0;
+  }
+
   .home-v2-blob {
     position: absolute;
     border-radius: 50%;
@@ -183,6 +191,10 @@ button {
   /* Marketing / pre-login pages */
   .marketing-page {
     background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 40%, #fef3ff 75%, #fff9f3 100%);
+  }
+
+  .marketing-fit {
+    max-height: 100dvh;
   }
 
   .marketing-blob {

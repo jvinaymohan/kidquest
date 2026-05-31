@@ -21,21 +21,44 @@ function defaultFact() {
   };
 }
 
+export function defaultTableRow(tableNumber) {
+  return {
+    unlocked: tableNumber <= 2,
+    currentPhase: 1,
+    learnComplete: false,
+    bossPassed: false,
+    bossBest: 0,
+    srPasses: 0,
+    legendAt: null,
+    bestDrillAvgMs: null,
+  };
+}
+
 function defaultTables() {
   const tables = {};
   for (let n = 1; n <= 20; n++) {
-    tables[n] = {
-      unlocked: n <= 2,
-      currentPhase: 1,
-      learnComplete: false,
-      bossPassed: false,
-      bossBest: 0,
-      srPasses: 0,
-      legendAt: null,
-      bestDrillAvgMs: null,
-    };
+    tables[n] = defaultTableRow(n);
   }
   return tables;
+}
+
+export function mergeTables(persisted) {
+  const merged = defaultTables();
+  if (!persisted || typeof persisted !== "object") return merged;
+  for (let n = 1; n <= 20; n++) {
+    const row = persisted[n] ?? persisted[String(n)];
+    if (row) merged[n] = { ...merged[n], ...row };
+  }
+  return merged;
+}
+
+function mergeFacts(persisted) {
+  const merged = defaultFacts();
+  if (!persisted || typeof persisted !== "object") return merged;
+  for (const [id, row] of Object.entries(persisted)) {
+    if (merged[id] && row) merged[id] = { ...merged[id], ...row };
+  }
+  return merged;
 }
 
 function defaultFacts() {
@@ -64,10 +87,11 @@ export const useMultiplicationStore = create(
 
       completeLearn: (tableNumber) => {
         set((s) => {
+          const prev = s.tables[tableNumber] ?? defaultTableRow(tableNumber);
           const next = {
-            ...s.tables[tableNumber],
+            ...prev,
             learnComplete: true,
-            currentPhase: Math.max(s.tables[tableNumber]?.currentPhase ?? 1, 2),
+            currentPhase: Math.max(prev.currentPhase ?? 1, 2),
           };
           queueMulTableUpsert(tableNumber, next);
           return { tables: { ...s.tables, [tableNumber]: next } };
@@ -87,6 +111,7 @@ export const useMultiplicationStore = create(
           const tableFacts = getFactsForTable(tableNumber);
           const allPracticed = tableFacts.every((tf) => (facts[tf.id]?.practiceHits ?? 0) >= 2);
           const tables = { ...s.tables };
+          if (!tables[tableNumber]) tables[tableNumber] = defaultTableRow(tableNumber);
           if (allPracticed && tables[tableNumber].currentPhase < 3) {
             tables[tableNumber] = { ...tables[tableNumber], currentPhase: 3 };
             queueMulTableUpsert(tableNumber, tables[tableNumber]);
@@ -117,6 +142,7 @@ export const useMultiplicationStore = create(
           const tableFacts = getFactsForTable(tableNumber);
           const allDrilled = tableFacts.every((tf) => (facts[tf.id]?.drillFastHits ?? 0) >= 2);
           const tables = { ...s.tables };
+          if (!tables[tableNumber]) tables[tableNumber] = defaultTableRow(tableNumber);
           if (allDrilled && tables[tableNumber].currentPhase < 4) {
             tables[tableNumber] = { ...tables[tableNumber], currentPhase: 4 };
             queueMulTableUpsert(tableNumber, tables[tableNumber]);
@@ -130,6 +156,7 @@ export const useMultiplicationStore = create(
         const passed = score >= 18;
         set((s) => {
           const tables = { ...s.tables };
+          if (!tables[tableNumber]) tables[tableNumber] = defaultTableRow(tableNumber);
           const t = { ...tables[tableNumber] };
           t.bossBest = Math.max(t.bossBest, score);
           if (passed) {
@@ -165,6 +192,7 @@ export const useMultiplicationStore = create(
       completeSRSession: (tableNumber) => {
         set((s) => {
           const tables = { ...s.tables };
+          if (!tables[tableNumber]) tables[tableNumber] = defaultTableRow(tableNumber);
           const t = { ...tables[tableNumber] };
           if (!t.bossPassed && t.currentPhase < 5) return s;
           t.srPasses = Math.min(2, (t.srPasses ?? 0) + 1);
@@ -217,6 +245,19 @@ export const useMultiplicationStore = create(
         });
       },
 
+      getTable: (tableNumber) => {
+        const n = Number(tableNumber);
+        const s = get();
+        return s.tables[n] ?? defaultTableRow(n);
+      },
+
+      ensureIntegrity: () => {
+        set((s) => ({
+          tables: mergeTables(s.tables),
+          facts: mergeFacts(s.facts),
+        }));
+      },
+
       getTableProgress: (tableNumber) => {
         const s = get();
         const tableFacts = getFactsForTable(tableNumber);
@@ -266,7 +307,15 @@ export const useMultiplicationStore = create(
           lastPracticeDate: null,
         }),
     }),
-    { name: "kidquest-multiplication-v1" }
+    {
+      name: "kidquest-multiplication-v1",
+      merge: (persisted, current) => ({
+        ...current,
+        ...persisted,
+        tables: mergeTables(persisted?.tables ?? current.tables),
+        facts: mergeFacts(persisted?.facts ?? current.facts),
+      }),
+    }
   )
 );
 

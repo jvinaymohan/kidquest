@@ -263,7 +263,11 @@ export const useAppStore = create(
         if (!amount || amount <= 0) return;
         set((s) => {
           const newXP = s.totalXP + amount;
-          return { totalXP: newXP, level: levelForXP(newXP) };
+          return {
+            totalXP: newXP,
+            totalPoints: (s.totalPoints ?? 0) + amount,
+            level: levelForXP(newXP),
+          };
         });
         get()._bumpStreak();
         const s = get();

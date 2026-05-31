@@ -1,8 +1,11 @@
+import { useMemo } from "react";
 import { useMultiplicationStore } from "../../store/useMultiplicationStore";
+import { rankForLegendaryCount } from "../../utils/multiplicationScoring";
+import { countLegendaryTables } from "../../utils/multiplicationProgress";
 
 export function RankBadge({ compact }) {
-  const rank = useMultiplicationStore((s) => s.getRank());
-  const legendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const legendary = useMultiplicationStore((s) => countLegendaryTables(s.tables));
+  const rank = useMemo(() => rankForLegendaryCount(legendary), [legendary]);
 
   if (compact) {
     return (

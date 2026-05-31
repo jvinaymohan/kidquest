@@ -10,15 +10,20 @@ import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useAppStore } from "../store/useAppStore";
 import { formatMs, medalForRun } from "../utils/multiplicationScoring";
 import { MOTIVATIONAL } from "../data/multiplication/tables";
+import {
+  countDueReviews,
+  countLegendaryTables,
+  countTablesAtPhase3Plus,
+} from "../utils/multiplicationProgress";
 
 export default function MultiplicationHub() {
-  const due = useMultiplicationStore((s) => s.getDueReviews());
-  const phase3Count = useMultiplicationStore((s) => s.tablesAtPhase3Plus());
+  const dueCount = useMultiplicationStore((s) => countDueReviews(s));
+  const phase3Count = useMultiplicationStore((s) => countTablesAtPhase3Plus(s.tables, s.unlockAllTables));
   const speedRuns = useMultiplicationStore((s) => s.speedRuns);
   const best = useMultiplicationStore((s) => s.bestSpeedRun);
   const streak = useMultiplicationStore((s) => s.practiceStreakDays);
   const tableOfDay = useMultiplicationStore((s) => s.tableOfTheDay);
-  const legendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const legendary = useMultiplicationStore((s) => countLegendaryTables(s.tables));
   const grantBadge = useAppStore((s) => s.grantBadge);
 
   useEffect(() => {
@@ -50,12 +55,12 @@ export default function MultiplicationHub() {
 
       <RankBadge />
 
-      {due.length > 0 && (
+      {dueCount > 0 && (
         <Link
           to="/multiplication/review"
           className="chunky-card p-4 flex items-center justify-between bg-accent border-[3px] border-ink/15 focus-ring"
         >
-          <span className="font-display font-extrabold">Review Due ({due.length})</span>
+          <span className="font-display font-extrabold">Review Due ({dueCount})</span>
           <span className="text-xs font-bold bg-error/20 px-2 py-1 rounded-pill">Quick 10</span>
         </Link>
       )}

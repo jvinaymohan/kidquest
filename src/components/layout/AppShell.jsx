@@ -9,12 +9,16 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   useTeslaMode();
   const location = useLocation();
   const isHome = location.pathname === "/home";
+  const isLanding = location.pathname === "/landing";
+  const viewportLocked = isHome || isLanding;
 
   return (
     <div className={`min-h-screen flex flex-col ${isHome ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
       {!hideTop && !isHome && <TopBar />}
-      <main className="flex-1 overflow-x-hidden overflow-y-auto">
+      <main
+        className={`flex-1 overflow-x-hidden ${viewportLocked ? "overflow-hidden" : "overflow-y-auto"}`}
+      >
         <div
           className={
             flush || isHome

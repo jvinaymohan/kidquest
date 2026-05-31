@@ -15,6 +15,8 @@ import { MathLearn } from "../components/math/MathLearn";
 import { GenericSubjectLearn } from "../components/learn/GenericSubjectLearn";
 import { GeographyHub } from "./GeographyHub";
 import { isLessonUnlocked, subjectProgress, subjectRankFor } from "../utils/content";
+import { isLiveSubject } from "../config/liveSubjects";
+import { Button } from "../components/ui/Button";
 
 export default function Subject() {
   const { subjectId } = useParams();
@@ -30,6 +32,16 @@ export default function Subject() {
   const stats = useMemo(() => subjectProgress(subjectId, ageGroup, lessonProgress), [subjectId, ageGroup, lessonProgress]);
 
   if (!subject) return <div>Subject not found.</div>;
+
+  if (!isLiveSubject(subjectId)) {
+    return (
+      <ComingSoonSubject
+        subject={subject}
+        onBack={() => navigate("/home")}
+      />
+    );
+  }
+
   const Icon = Icons[subject.icon] ?? Icons.Sparkles;
 
   const setTab = (next) => {
@@ -126,6 +138,33 @@ export default function Subject() {
           navigate={navigate}
         />
       )}
+    </div>
+  );
+}
+
+function ComingSoonSubject({ subject, onBack }) {
+  return (
+    <div className="flex flex-col gap-4 py-6 text-center">
+      <button
+        type="button"
+        onClick={onBack}
+        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
+      >
+        <ChevronLeft size={20} /> Home
+      </button>
+      <div className="chunky-card p-8">
+        <p className="text-4xl" aria-hidden>
+          🚧
+        </p>
+        <h1 className="mt-3 font-display text-2xl font-extrabold">{subject.name}</h1>
+        <p className="mt-2 text-sm font-bold text-ink/60">Coming soon — we&apos;re building this world!</p>
+        <p className="mt-4 text-xs font-semibold text-ink/50">
+          Play Geography, Multiplication Camp, or Solar System from home today.
+        </p>
+        <Button className="mt-6 w-full" onClick={onBack}>
+          Back to Home
+        </Button>
+      </div>
     </div>
   );
 }

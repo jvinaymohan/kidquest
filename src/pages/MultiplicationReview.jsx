@@ -4,18 +4,21 @@ import { AnswerKeypad } from "../components/multiplication/AnswerKeypad";
 import { getFact } from "../data/multiplication/tables";
 import { shuffle } from "../utils/multiplicationScoring";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { getDueReviewIds } from "../utils/multiplicationProgress";
 import { MOTIVATIONAL } from "../data/multiplication/tables";
 
 export default function MultiplicationReview() {
-  const due = useMultiplicationStore((s) => s.getDueReviews());
+  const facts = useMultiplicationStore((s) => s.facts);
+  const tables = useMultiplicationStore((s) => s.tables);
+  const dueIds = useMemo(() => getDueReviewIds({ facts, tables }), [facts, tables]);
   const recordSRReview = useMultiplicationStore((s) => s.recordSRReview);
   const completeSRSession = useMultiplicationStore((s) => s.completeSRSession);
   const navigate = useNavigate();
 
   const questions = useMemo(() => {
-    const ids = shuffle(due).slice(0, 10);
+    const ids = shuffle(dueIds).slice(0, 10);
     return ids.map((id) => getFact(id)).filter(Boolean);
-  }, [due]);
+  }, [dueIds]);
 
   const [idx, setIdx] = useState(0);
   const [value, setValue] = useState("");
