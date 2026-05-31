@@ -84,10 +84,10 @@ export default function Subject() {
                   Times tables you&apos;ll use for life — and at school.
                 </p>
                 <Link
-                  to="/multiplication"
+                  to="/math"
                   className="inline-block mt-2 text-xs font-display font-extrabold text-math underline focus-ring"
                 >
-                  Enter Multiplication Training Camp →
+                  Open Math Zone →
                 </Link>
               </>
             )}

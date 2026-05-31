@@ -21,6 +21,10 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import About from "./pages/About";
 import Impact from "./pages/Impact";
+import MathHub from "./pages/MathHub";
+import MathMasteryHub from "./pages/MathMasteryHub";
+import MathMasteryLevels from "./pages/MathMasteryLevels";
+import MathMasterySession from "./pages/MathMasterySession";
 import MultiplicationHub from "./pages/MultiplicationHub";
 import MultiplicationTable from "./pages/MultiplicationTable";
 import MultiplicationLearn from "./pages/MultiplicationLearn";
@@ -167,6 +171,10 @@ export default function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/about" element={<About />} />
           <Route path="/impact" element={<Impact />} />
+          <Route path="/math" element={<MathHub />} />
+          <Route path="/math-master" element={<MathMasteryHub />} />
+          <Route path="/math-master/:operationId" element={<MathMasteryLevels />} />
+          <Route path="/math-master/:operationId/level/:level" element={<MathMasterySession />} />
           <Route path="/multiplication" element={<MultiplicationHub />} />
           <Route path="/multiplication/review" element={<MultiplicationReview />} />
           <Route path="/multiplication/table/:tableNumber" element={<MultiplicationTable />} />

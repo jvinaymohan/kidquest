@@ -6,7 +6,7 @@ export function isLiveSubject(subjectId) {
 }
 
 export function pathForSubject(subjectId) {
-  if (subjectId === "math") return "/multiplication";
+  if (subjectId === "math") return "/math";
   if (subjectId === "solar-system") return "/subject/solar-system?tab=learn";
   if (subjectId === "geography") return "/subject/geography";
   return null;

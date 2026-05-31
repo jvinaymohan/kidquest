@@ -5,7 +5,7 @@ import { isLiveSubject } from "../config/liveSubjects";
 const CHALLENGES = [
   { id: "geo-capitals", subjectId: "geography", title: "Capital Sprint", path: "/subject/geography", emoji: "🌍" },
   { id: "solar-facts", subjectId: "solar-system", title: "Planet Facts Quiz", path: "/subject/solar-system", emoji: "🪐" },
-  { id: "mul-speed", subjectId: "math", title: "Training Camp", path: "/multiplication", emoji: "⚡" },
+  { id: "mul-speed", subjectId: "math", title: "Math Zone", path: "/math", emoji: "⚡" },
   { id: "mul-review", subjectId: "math", title: "Spaced Review", path: "/multiplication/review", emoji: "🧠" },
   { id: "trivia-blitz", subjectId: "trivia", title: "Trivia Blitz", path: "/subject/trivia", emoji: "⭐" },
   { id: "history-timeline", subjectId: "history", title: "Timeline Challenge", path: "/subject/history", emoji: "📜" },

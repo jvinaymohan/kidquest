@@ -10,6 +10,7 @@ import { isLiveSubject, pathForSubject } from "../config/liveSubjects";
 import { getMonthlyTheme } from "../utils/theme";
 import { countDueReviews } from "../utils/multiplicationProgress";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { countGeoDueReviews } from "../utils/geographyProgress";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { getDailyChallenge } from "../utils/dailyChallenge";
 import { xpToNextLevel } from "../utils/scoring";
@@ -56,7 +57,7 @@ export default function Home() {
   } = useAppStore();
 
   const mulDue = useMultiplicationStore((s) => countDueReviews(s));
-  const geoDue = useGeographyStore((s) => s.getDueReviews().length);
+  const geoDue = useGeographyStore((s) => countGeoDueReviews(s.countries));
   const theme = getMonthlyTheme();
   const daily = useMemo(() => getDailyChallenge(), []);
   const dailyDone = dailyChallengeDone === daily.dateKey;
@@ -68,8 +69,8 @@ export default function Home() {
   const liveSubjects = SUBJECTS.filter((s) => isLiveSubject(s.id));
   const soonSubjects = SUBJECTS.filter((s) => !isLiveSubject(s.id));
 
-  const playPath = pathForSubject("math") ?? DEFAULT_PLAY.path;
-  const playTitle = "Multiplication Camp";
+  const playPath = pathForSubject("math") ?? "/math";
+  const playTitle = "Math Zone";
 
   function openSubject(subject) {
     const path = pathForSubject(subject.id);
