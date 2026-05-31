@@ -75,18 +75,50 @@ export default function AdminDashboard() {
     setLoading(true);
     setError(null);
     try {
-      const [s, u, f, r, i] = await Promise.all([
+      const [sRes, uRes, fRes, rRes, iRes] = await Promise.allSettled([
         fetchAdminUserStats(),
         fetchAdminUsers({ search: userSearch }),
         fetchFeedbackForAdmin({ status: fbStatus, category: fbCategory }),
         fetchAdminReferralRequests({ status: referralStatus }),
         fetchAdminInviteCodes({ status: inviteStatus }),
       ]);
-      setStats(s);
-      setUsers(u);
-      setFeedback(f);
-      setReferrals(r);
-      setInvites(i);
+
+      const schemaHint =
+        "Run supabase/patch-invites-referrals.sql in Supabase → SQL Editor (or npm run db:apply).";
+
+      if (sRes.status === "fulfilled") setStats(sRes.value);
+      else setStats(null);
+
+      if (uRes.status === "fulfilled") setUsers(uRes.value);
+      else setUsers([]);
+
+      if (fRes.status === "fulfilled") setFeedback(fRes.value);
+      else setFeedback([]);
+
+      if (rRes.status === "fulfilled") {
+        setReferrals(rRes.value);
+      } else {
+        setReferrals([]);
+        const msg = rRes.reason?.message ?? String(rRes.reason);
+        if (/referral_requests|schema cache/i.test(msg)) {
+          setError(`${msg} — ${schemaHint}`);
+        }
+      }
+
+      if (iRes.status === "fulfilled") {
+        setInvites(iRes.value);
+      } else {
+        setInvites([]);
+        const msg = iRes.reason?.message ?? String(iRes.reason);
+        if (/invite_codes|schema cache/i.test(msg)) {
+          setError((prev) => prev ?? `${msg} — ${schemaHint}`);
+        }
+      }
+
+      const hardFail = [sRes, uRes, fRes].find((r) => r.status === "rejected");
+      if (hardFail && hardFail.status === "rejected") {
+        throw hardFail.reason;
+      }
     } catch (e) {
       setError(e.message ?? "Failed to load admin data");
     } finally {
