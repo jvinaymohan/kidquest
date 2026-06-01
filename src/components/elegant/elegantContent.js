@@ -65,7 +65,7 @@ export const BEYOND_SCHOOL_CARDS = [
     glow: "bc-6",
     iconWrap: "ci-aqua",
     tagClass: "ct-aqua",
-    to: "/trivia",
+    to: "/curiosity",
   },
 ];
 
@@ -100,6 +100,7 @@ export const WORLD_STYLES = {
   "solar-system": { emoji: "🪐", gradient: "wc-space", xp: 60, displayName: "Space" },
   science: { emoji: "🔬", gradient: "wc-sci", xp: 45, displayName: "Science" },
   trivia: { emoji: "⭐", gradient: "wc-trivia", xp: 35, displayName: "Trivia" },
+  curiosity: { emoji: "🔭", gradient: "wc-sci", xp: 30, displayName: "Curiosity" },
   history: { emoji: "🏛️", gradient: "wc-hist", xp: 0, displayName: "History" },
   music: { emoji: "🎵", gradient: "wc-music", xp: 0, displayName: "Music" },
   "general-knowledge": { emoji: "💡", gradient: "wc-gk", xp: 0, displayName: "GK" },

@@ -5,6 +5,7 @@ export const LIVE_SUBJECT_IDS = new Set([
   "solar-system",
   "science",
   "trivia",
+  "curiosity",
 ]);
 
 export function isLiveSubject(subjectId) {
@@ -17,5 +18,6 @@ export function pathForSubject(subjectId) {
   if (subjectId === "geography") return "/subject/geography";
   if (subjectId === "science") return "/science";
   if (subjectId === "trivia") return "/trivia";
+  if (subjectId === "curiosity") return "/curiosity";
   return null;
 }

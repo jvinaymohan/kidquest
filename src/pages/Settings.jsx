@@ -42,6 +42,9 @@ import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { suggestedMathLevel, suggestedMulTable } from "../utils/placement";
 import { DEFAULT_PARENT_PIN, isDefaultParentPin } from "../constants/parentPin";
 import { isAdminUser } from "../lib/adminAccess";
+import { useCuriosityPreferencesStore } from "../store/useCuriosityPreferencesStore";
+import { getAllCuriosityCards } from "../data/curiosity";
+import { filterCards } from "../utils/curiosity";
 
 export default function Settings() {
   const {
@@ -82,6 +85,37 @@ export default function Settings() {
   const teslaMode = usePreferencesStore((s) => s.teslaMode);
   const setTeslaMode = usePreferencesStore((s) => s.setTeslaMode);
   const geoCountries = useGeographyStore((s) => s.countries);
+
+  const curiosityRegion = useCuriosityPreferencesStore((s) => s.region);
+  const curiositySensitivity = useCuriosityPreferencesStore((s) => s.maxSensitivity);
+  const curiosityTopics = useCuriosityPreferencesStore((s) => s.topics);
+  const curiosityShowDaily = useCuriosityPreferencesStore((s) => s.showDaily);
+  const curiosityShowWeekly = useCuriosityPreferencesStore((s) => s.showWeekly);
+  const curiosityShowMonthly = useCuriosityPreferencesStore((s) => s.showMonthly);
+  const curiosityRequireApproval = useCuriosityPreferencesStore((s) => s.requireTopicApproval);
+  const curiosityApproved = useCuriosityPreferencesStore((s) => s.approvedTopicIds);
+  const setCuriosityRegion = useCuriosityPreferencesStore((s) => s.setRegion);
+  const setCuriositySensitivity = useCuriosityPreferencesStore((s) => s.setMaxSensitivity);
+  const setCuriosityTopic = useCuriosityPreferencesStore((s) => s.setTopicEnabled);
+  const setCuriosityCadence = useCuriosityPreferencesStore((s) => s.setCadence);
+  const setCuriosityRequireApproval = useCuriosityPreferencesStore((s) => s.setRequireTopicApproval);
+  const approveCuriosityTopic = useCuriosityPreferencesStore((s) => s.approveTopic);
+  const revokeCuriosityTopic = useCuriosityPreferencesStore((s) => s.revokeTopic);
+
+  const pendingCuriosityTopics = useMemo(() => {
+    const prefs = {
+      region: curiosityRegion,
+      maxSensitivity: curiositySensitivity,
+      topics: curiosityTopics,
+      requireTopicApproval: false,
+      approvedTopicIds: curiosityApproved,
+    };
+    return filterCards(
+      getAllCuriosityCards().filter((c) => c.sensitivity === "standard"),
+      prefs,
+      { ageGroup }
+    ).filter((c) => !curiosityApproved.includes(c.id));
+  }, [curiosityRegion, curiositySensitivity, curiosityTopics, curiosityApproved, ageGroup]);
 
   const [classrooms, setClassrooms] = useState([]);
   const [cloudAssignments, setCloudAssignments] = useState([]);
@@ -389,6 +423,85 @@ export default function Settings() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="chunky-card p-4 border-[3px] border-[#7B68EE]/30 bg-[#f8f4ff]">
+        <h2 className="font-display font-extrabold text-lg mb-1">Curiosity Hub</h2>
+        <p className="text-xs font-bold text-ink/60 mb-3">
+          Kid-safe discovery — no news feed. Rule-based topics only.
+        </p>
+        <label className="text-sm font-bold block mb-2">
+          Region
+          <select
+            value={curiosityRegion}
+            onChange={(e) => setCuriosityRegion(e.target.value)}
+            className="w-full mt-1 px-3 py-2 rounded-chunky border-2 border-ink/15 font-bold"
+          >
+            <option value="US">United States</option>
+            <option value="global">Global</option>
+          </select>
+        </label>
+        <p className="text-sm font-bold mb-1">Sensitivity</p>
+        <div className="flex gap-2 mb-3">
+          {["gentle", "standard"].map((level) => (
+            <button
+              key={level}
+              type="button"
+              onClick={() => setCuriositySensitivity(level)}
+              className={`flex-1 py-2 rounded-chunky border-[3px] font-display font-extrabold text-sm focus-ring ${
+                curiositySensitivity === level ? "bg-accent border-ink/30" : "bg-white border-ink/15"
+              }`}
+            >
+              {level === "gentle" ? "Gentle only" : "Standard OK"}
+            </button>
+          ))}
+        </div>
+        <p className="text-sm font-bold mb-1">Topic categories</p>
+        <div className="flex flex-wrap gap-2 mb-3">
+          {Object.keys(curiosityTopics).map((topic) => (
+            <button
+              key={topic}
+              type="button"
+              onClick={() => setCuriosityTopic(topic, !curiosityTopics[topic])}
+              className={`px-3 py-1.5 rounded-full border-2 text-xs font-extrabold focus-ring ${
+                curiosityTopics[topic]
+                  ? "bg-primary/15 border-primary/40"
+                  : "bg-white border-ink/15 text-ink/50"
+              }`}
+            >
+              {topic}
+            </button>
+          ))}
+        </div>
+        <p className="text-sm font-bold mb-1">Cadence</p>
+        <div className="flex flex-col gap-2 mb-3">
+          <Toggle label="Daily spark" on={curiosityShowDaily} onChange={(v) => setCuriosityCadence({ showDaily: v })} />
+          <Toggle label="Weekly spotlight" on={curiosityShowWeekly} onChange={(v) => setCuriosityCadence({ showWeekly: v })} />
+          <Toggle label="Monthly theme" on={curiosityShowMonthly} onChange={(v) => setCuriosityCadence({ showMonthly: v })} />
+        </div>
+        <Toggle
+          label="Approve standard topics before showing"
+          on={curiosityRequireApproval}
+          onChange={setCuriosityRequireApproval}
+        />
+        {curiosityRequireApproval && pendingCuriosityTopics.length > 0 && (
+          <ul className="mt-3 space-y-2 max-h-40 overflow-y-auto">
+            {pendingCuriosityTopics.slice(0, 8).map((card) => (
+              <li key={card.id} className="flex items-center justify-between gap-2 text-xs font-bold">
+                <span className="truncate">{card.visual?.emoji} {card.title}</span>
+                <Button size="sm" onClick={() => approveCuriosityTopic(card.id)}>Approve</Button>
+              </li>
+            ))}
+          </ul>
+        )}
+        {curiosityApproved.length > 0 && (
+          <p className="text-[10px] font-bold text-ink/50 mt-2">
+            Approved: {curiosityApproved.length} topic(s).{" "}
+            <button type="button" className="underline" onClick={() => curiosityApproved.forEach(revokeCuriosityTopic)}>
+              Clear all
+            </button>
+          </p>
+        )}
       </section>
 
       <section className="chunky-card p-4 border-[3px] border-primary/15">

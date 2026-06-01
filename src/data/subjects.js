@@ -74,6 +74,17 @@ export const SUBJECTS = [
     learnSurface: true,
   },
   {
+    id: "curiosity",
+    name: "Curiosity Hub",
+    tagline: "Daily wonders — safe discovery, not news",
+    color: "#7B68EE",
+    accent: "#EDE9FE",
+    mascotKey: "owl",
+    mascotName: "Professor Owl",
+    icon: "Compass",
+    learnSurface: false,
+  },
+  {
     id: "science",
     name: "Science",
     tagline: "Everyday curiosity — sky, plants, body & more",

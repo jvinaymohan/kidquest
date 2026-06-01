@@ -46,6 +46,8 @@ import ScienceTopic from "./pages/ScienceTopic";
 import TriviaHub from "./pages/TriviaHub";
 import TriviaCategory from "./pages/TriviaCategory";
 import MyJourney from "./pages/MyJourney";
+import CuriosityHub from "./pages/CuriosityHub";
+import CuriosityDetail from "./pages/CuriosityDetail";
 import DailyDuel from "./pages/DailyDuel";
 import Friends from "./pages/Friends";
 import LifeExplorer from "./pages/LifeExplorer";
@@ -186,6 +188,10 @@ export default function App() {
           <Route path="/science/:topicId" element={<ScienceTopic />} />
           <Route path="/trivia" element={<TriviaHub />} />
           <Route path="/trivia/:categoryId" element={<TriviaCategory />} />
+          <Route path="/curiosity" element={<CuriosityHub />} />
+          <Route path="/curiosity/spark/:id" element={<CuriosityDetail variant="spark" />} />
+          <Route path="/curiosity/weekly/:id" element={<CuriosityDetail variant="weekly" />} />
+          <Route path="/curiosity/theme/:month" element={<CuriosityDetail variant="theme" />} />
           <Route path="/geography/mastery" element={<GeographyMastery />} />
           <Route path="/geography/mastery/:tierId" element={<GeographyMastery />} />
           <Route path="/geography/mastery/:tierId/session" element={<GeographyMasterySession />} />

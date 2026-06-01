@@ -5,6 +5,7 @@ import { useAppStore } from "../store/useAppStore";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { useScienceStore } from "../store/useScienceStore";
 import { useTriviaStore } from "../store/useTriviaStore";
+import { useCuriosityStore } from "../store/useCuriosityStore";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { SCIENCE_TOPICS } from "../data/science/topics";
@@ -93,6 +94,15 @@ export default function MyJourney() {
       detail: `${triviaDone}/${TRIVIA_CATEGORIES.length} categories · 1000s of facts`,
       path: "/trivia",
       color: "var(--trivia)",
+    },
+    {
+      id: "curiosity",
+      emoji: "🔭",
+      title: "Curiosity Hub",
+      pct: Math.min(1, curiosityCompleted / 12),
+      detail: `${curiosityCompleted} explored · ${curiositySaved} saved · ${curiosityStreak}-day streak`,
+      path: "/curiosity",
+      color: "#7B68EE",
     },
   ];
 

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Play, Settings, Sparkles, Zap, Target, Trophy, Brain } from "lucide-react";
+import { Play, Settings, Sparkles, Zap, Target, Trophy, Brain, Compass } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { isAdminUser } from "../lib/adminAccess";
@@ -278,6 +278,14 @@ export default function Home() {
                   onClick={() => (reviewsDue > 0 ? navigate("/review") : navigate(daily.path))}
                   reduce={reduce}
                   pulse={reviewsDue > 0}
+                />
+                <QuickAction
+                  icon={<Compass size={18} />}
+                  title="Curiosity Hub"
+                  sub="Today's spark ✨"
+                  accent="from-[#7B68EE] to-[#5f27cd]"
+                  onClick={() => navigate("/curiosity")}
+                  reduce={reduce}
                 />
               </div>
             </section>
