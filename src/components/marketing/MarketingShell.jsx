@@ -81,6 +81,9 @@ export function MarketingShell({
             <Link to="/terms" className="hover:text-primary focus-ring">
               Terms
             </Link>
+            <Link to="/about" className="hover:text-primary focus-ring">
+              About us
+            </Link>
           </div>
         </footer>
       </div>

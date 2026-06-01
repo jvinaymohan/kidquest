@@ -14,9 +14,12 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   const location = useLocation();
   const isHome = location.pathname === "/home";
   const isLanding = location.pathname === "/landing";
+  const isAbout = location.pathname === "/about";
+  const isCuriosityHub = location.pathname === "/curiosity";
   const cosmicRoute = isHome || isLanding;
   const viewportLocked = isLanding;
-  const showQuestHome = !isHome && !isLanding;
+  const showQuestHome = !isHome && !isLanding && !isAbout && !isCuriosityHub;
+  const showTopBar = !hideTop && !isHome && !isCuriosityHub;
 
   useEffect(() => {
     document.body.classList.toggle("cosmic-route", cosmicRoute);
@@ -30,7 +33,7 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   return (
     <div className={`min-h-screen flex flex-col ${cosmicRoute ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
-      {!hideTop && !isHome && <TopBar />}
+      {showTopBar && <TopBar />}
       <main
         className={`flex-1 overflow-x-hidden ${viewportLocked ? "overflow-hidden" : "overflow-y-auto"}`}
       >

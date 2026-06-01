@@ -16,7 +16,6 @@ import { Avatar } from "../components/mascots/Avatar";
 import { Mascot } from "../components/mascots/Mascot";
 import { ElegantBackground } from "../components/elegant/ElegantBackground";
 import { WorldsShowcase } from "../components/elegant/ElegantSections";
-import { DiscoverMore } from "../components/home/DiscoverMore";
 import { DailyTreasure } from "../components/home/DailyTreasure";
 import { ShareStreakButton } from "../components/home/ShareStreakButton";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
@@ -227,7 +226,11 @@ export default function Home() {
           {liveWorldCount} worlds live · {totalPoints ?? 0} pts · {totalXP} XP
         </p>
 
-        <DiscoverMore kidName={kidName} onComingSoon={setComingSoonName} />
+        <footer className="home-about-footer mt-4 text-center">
+          <Link to="/about" className="home-about-link focus-ring">
+            About us
+          </Link>
+        </footer>
 
         {showAdmin && (
           <Link

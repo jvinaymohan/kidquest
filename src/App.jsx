@@ -144,6 +144,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/about" element={<About />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route
           path="/admin"
@@ -181,7 +182,6 @@ export default function App() {
           <Route path="/subject/:subjectId" element={<Subject />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
-          <Route path="/about" element={<About />} />
           <Route path="/impact" element={<Impact />} />
           <Route path="/math" element={<MathHub />} />
           <Route path="/science" element={<ScienceHub />} />

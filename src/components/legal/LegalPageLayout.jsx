@@ -19,6 +19,7 @@ export function LegalPageLayout({ title, children }) {
       <nav className="flex flex-wrap gap-4 mt-6 text-xs font-bold text-primary">
         <Link to="/privacy">Privacy Policy</Link>
         <Link to="/terms">Terms of Use</Link>
+        <Link to="/about">About us</Link>
         <Link to="/register">Create account</Link>
       </nav>
     </div>

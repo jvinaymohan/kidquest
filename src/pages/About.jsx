@@ -1,110 +1,165 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { ChevronLeft, Heart, Sparkles, Car, Globe2 } from "lucide-react";
-import { Mascot } from "../components/mascots/Mascot";
-import { Button } from "../components/ui/Button";
+import { motion, useReducedMotion } from "framer-motion";
+import { ChevronLeft, Shield, Sparkles, Lightbulb, Compass } from "lucide-react";
+import { useAuthStore } from "../store/useAuthStore";
+import { useAppStore } from "../store/useAppStore";
+import { isSupabaseEnabled } from "../lib/supabaseClient";
+import { ElegantBackground } from "../components/elegant/ElegantBackground";
+import { ElegantLogo } from "../components/elegant/ElegantLogo";
+import { HeroEyebrow } from "../components/elegant/ElegantSections";
+
+const SECTIONS = [
+  {
+    id: "spark",
+    icon: Lightbulb,
+    title: "The spark",
+    body: [
+      "A parent on a long car ride noticed something familiar: kids could recite answers fast — capitals, formulas, fun facts — but rarely asked why.",
+      "The best moments weren't worksheets. They were questions out the window, silly debates, and \"wait, how does that work?\" KidQuest started there — with curiosity, not memorization.",
+    ],
+  },
+  {
+    id: "quest",
+    icon: Compass,
+    title: "The quest",
+    body: [
+      "We built worlds where questions are celebrated: geography you can explore, math you can feel, science that sparks wonder, and a Curiosity Hub that's discovery — not a news feed.",
+      "Every quest earns real progress — streaks, badges, and levels — because knowing things should feel like an adventure, not a chore.",
+    ],
+  },
+  {
+    id: "safe",
+    icon: Shield,
+    title: "Safe by design",
+    body: [
+      "KidQuest is invite-only for families we know. No scary headlines, no open kid-to-kid chat, and no ads chasing attention.",
+      "Parents stay in control — screen time, PIN-protected settings, and learning you can trust after school.",
+    ],
+  },
+  {
+    id: "join",
+    icon: Sparkles,
+    title: "Join us",
+    body: [
+      "We're growing carefully with families who care about raising thinkers, not just test-takers.",
+      "Request an invite for your crew, or sign in if you're already on the quest.",
+    ],
+  },
+];
 
 export default function About() {
+  const reduce = useReducedMotion();
+  const session = useAuthStore((s) => s.session);
+  const onboarded = useAppStore((s) => s.onboarded);
+  const loggedIn = isSupabaseEnabled ? Boolean(session) : onboarded;
+
+  const backTo = loggedIn ? "/home" : "/landing";
+  const backLabel = loggedIn ? "Quest Home" : "Back";
+
   return (
-    <div className="flex flex-col gap-5">
-      <Link
-        to="/home"
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Home
-      </Link>
+    <div className="elegant-page about-page relative min-h-[100dvh] w-full">
+      <ElegantBackground reduceMotion={reduce} />
+      <div className="about-page-inner relative z-10 mx-auto w-full max-w-2xl px-4 py-8 pb-12 sm:px-6">
+        <header className="flex items-center justify-between gap-3">
+          <Link
+            to={backTo}
+            className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-extrabold text-white/80 focus-ring"
+          >
+            <ChevronLeft size={16} aria-hidden />
+            {backLabel}
+          </Link>
+          <ElegantLogo size={32} reduceMotion={reduce} mascotSize={16} />
+        </header>
 
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="chunky-card p-6 text-center relative overflow-hidden bg-gradient-to-br from-accent to-white"
-      >
-        <div className="text-xs uppercase tracking-wide font-display font-extrabold text-ink/60">
-          Our story
+        <motion.div
+          className="about-hero mt-6 text-center"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+        >
+          <HeroEyebrow />
+          <h1 className="mt-3 font-display text-[clamp(1.75rem,5vw,2.5rem)] font-extrabold leading-tight text-white">
+            How it all started
+          </h1>
+          <p className="about-hero-lead mx-auto mt-3 max-w-md text-sm font-semibold leading-relaxed text-white/60">
+            KidQuest exists for kids who ask why — and parents who want learning beyond the
+            classroom, done safely.
+          </p>
+        </motion.div>
+
+        <div className="mt-8 flex flex-col gap-4">
+          {SECTIONS.map((section, i) => (
+            <AboutSection key={section.id} section={section} index={i} reduce={reduce} />
+          ))}
         </div>
-        <h1 className="font-display text-4xl font-extrabold mt-1">KidQuest was born in a car.</h1>
-        <div className="absolute -bottom-2 -right-2 opacity-80">
-          <Mascot kind="compass" size={88} />
-        </div>
-      </motion.section>
 
-      <motion.article
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="chunky-card p-6 leading-relaxed text-ink font-body text-base sm:text-lg space-y-4"
-      >
-        <p>
-          <strong>Vinay</strong> was on a weekend road trip with his child when he
-          realized something: the best classroom had always been right there — in
-          the questions kids ask, in the world rushing past the window, in
-          conversation between a parent and a curious mind.
-        </p>
-        <p>
-          He started writing down everything he taught his own kid. The flags. The
-          capitals. The planets. The things you need to know just to feel at home
-          in this world. Not for an exam. Just because the world is endlessly
-          fascinating.
-        </p>
-        <p>That weekend, KidQuest was born.</p>
-        <p>
-          The idea is simple: knowledge should be free. And learning should feel
-          like an adventure, not a chore. Everything you earn here — XP, badges,
-          ranks — comes from actually knowing things. And every dollar this app
-          earns goes toward making that possible for more kids, everywhere.
-        </p>
-        <p>
-          One more dream: to put KidQuest on the Tesla screen. So every road trip
-          becomes a classroom.
-        </p>
-        <p className="text-ink/70 italic">
-          Idea by Vinay for Ram, who also contributes to make it easier for kids.
-          Built with Cursor. Made for every curious kid on the planet.
-        </p>
-      </motion.article>
+        <motion.div
+          className="about-cta mt-8 rounded-3xl border border-white/15 bg-white/10 p-6 text-center backdrop-blur-md"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+        >
+          <p className="font-display text-lg font-extrabold text-white">Ready to quest?</p>
+          <p className="mt-1 text-sm font-bold text-white/55">
+            Free for invited families · Ages 6–14 · No ads
+          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-center">
+            {loggedIn ? (
+              <Link
+                to="/home"
+                className="about-cta-primary focus-ring"
+              >
+                Back to learning
+              </Link>
+            ) : (
+              <>
+                <Link to="/invite-request" className="about-cta-primary focus-ring">
+                  Request an invite
+                </Link>
+                <Link to="/login" className="about-cta-secondary focus-ring">
+                  Sign in
+                </Link>
+              </>
+            )}
+          </div>
+        </motion.div>
 
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Pillar icon={<Heart className="text-error" />} title="Knowledge is free" body="Core learning is always free. Always." />
-        <Pillar icon={<Globe2 className="text-secondary" />} title="Built for the world" body="195 countries, multiple languages, everywhere." />
-        <Pillar icon={<Car className="text-primary" />} title="On every screen" body="Phone, tablet, and yes — even Tesla." />
-      </section>
-
-      <motion.section
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="chunky-card p-5 text-center"
-      >
-        <Sparkles className="text-primary mx-auto" />
-        <h2 className="font-display text-2xl font-extrabold mt-2">Want to help shape KidQuest?</h2>
-        <p className="text-ink/70 font-bold mt-1">Kids can submit ideas, fun facts, and questions. If we use them, they get a permanent credit in the app.</p>
-        <p className="text-xs text-ink/50 font-bold mt-2">(Coming soon in the next release.)</p>
-      </motion.section>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Link to="/impact" className="block">
-          <Button variant="ghost" fullWidth>See our mission →</Button>
-        </Link>
-        <Link to="/home" className="block">
-          <Button fullWidth>Back to learning</Button>
-        </Link>
+        <footer className="about-footer mt-8 text-center text-[11px] font-bold text-white/40">
+          <Link to="/terms" className="about-footer-link focus-ring">
+            Terms
+          </Link>
+          {" · "}
+          <Link to="/privacy" className="about-footer-link focus-ring">
+            Privacy
+          </Link>
+          {" · "}
+          <Link to={backTo} className="about-footer-link focus-ring">
+            {loggedIn ? "Quest Home" : "Landing"}
+          </Link>
+        </footer>
       </div>
-
-      <footer className="text-center text-xs font-bold text-ink/50 py-2">
-        Designed by Vinay. Built with Cursor.
-      </footer>
     </div>
   );
 }
 
-function Pillar({ icon, title, body }) {
+function AboutSection({ section, index, reduce }) {
+  const Icon = section.icon;
   return (
-    <div className="chunky-card p-4 flex flex-col items-start gap-2">
-      <div className="w-10 h-10 grid place-items-center rounded-full bg-bg border-[2.5px] border-ink/15">
-        {icon}
+    <motion.article
+      className="about-section-card"
+      initial={reduce ? false : { opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.08 + index * 0.06 }}
+    >
+      <div className="about-section-icon" aria-hidden>
+        <Icon size={22} className="text-[#ffd700]" />
       </div>
-      <h3 className="font-display font-extrabold text-lg leading-tight">{title}</h3>
-      <p className="text-sm font-bold text-ink/70">{body}</p>
-    </div>
+      <h2 className="font-display text-xl font-extrabold text-white">{section.title}</h2>
+      {section.body.map((paragraph) => (
+        <p key={paragraph.slice(0, 24)} className="mt-2 text-sm font-semibold leading-relaxed text-white/65">
+          {paragraph}
+        </p>
+      ))}
+    </motion.article>
   );
 }

@@ -2484,6 +2484,46 @@ button {
     letter-spacing: 0.02em;
   }
 
+  .home-about-footer {
+    padding-bottom: 0.25rem;
+  }
+
+  .home-about-link {
+    @apply text-[11px] font-extrabold text-white/40 underline-offset-2 hover:text-white/65;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .about-page-inner {
+    max-width: 40rem;
+  }
+
+  .about-hero-lead {
+    font-family: var(--font-body);
+  }
+
+  .about-section-card {
+    @apply rounded-3xl border border-white/15 p-5 backdrop-blur-md;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .about-section-icon {
+    @apply mb-2 grid h-10 w-10 place-items-center rounded-2xl bg-white/10;
+  }
+
+  .about-cta-primary {
+    @apply inline-flex items-center justify-center rounded-2xl px-5 py-3 font-display text-sm font-extrabold text-[#1a1060];
+    background: linear-gradient(135deg, #ffd700, #ff9a56);
+  }
+
+  .about-cta-secondary {
+    @apply inline-flex items-center justify-center rounded-2xl border border-white/25 bg-white/10 px-5 py-3 font-display text-sm font-extrabold text-white;
+  }
+
+  .about-footer-link {
+    @apply text-white/45 hover:text-white/70;
+  }
+
   /* Marketing / pre-login pages */
   .marketing-page {
     background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 40%, #fef3ff 75%, #fff9f3 100%);

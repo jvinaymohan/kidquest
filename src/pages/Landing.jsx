@@ -48,6 +48,10 @@ export default function Landing() {
             <Link to="/privacy" className="landing-footer-link focus-ring">
               Privacy
             </Link>
+            {" · "}
+            <Link to="/about" className="landing-footer-link focus-ring">
+              About us
+            </Link>
           </p>
         </footer>
       </div>
