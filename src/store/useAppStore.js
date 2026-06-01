@@ -54,6 +54,7 @@ const initialState = {
   parentDigestLog: [],
 
   dailyChallengeDone: null,
+  dailyTreasureClaimed: null,
 };
 
 export const useAppStore = create(
@@ -84,6 +85,9 @@ export const useAppStore = create(
 
       completeDailyChallenge: (dateKey) =>
         set({ dailyChallengeDone: dateKey ?? todayISO() }),
+
+      claimDailyTreasure: (dateKey) =>
+        set({ dailyTreasureClaimed: dateKey ?? todayISO() }),
 
       addTeacherAssignment: ({ title, dueDate, subjectId = "math" }) => {
         if (!title || !dueDate) return;

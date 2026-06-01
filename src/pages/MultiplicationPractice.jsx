@@ -6,6 +6,7 @@ import { pickWrongOptions, shuffle } from "../utils/multiplicationScoring";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useAppStore } from "../store/useAppStore";
 import { useSound } from "../hooks/useSound";
+import { buildSessionShareText } from "../utils/shareAchievement";
 import { SessionComplete } from "../components/multiplication/SessionComplete";
 
 const initialSession = () => ({ correct: 0, total: 0, wrong: 0 });
@@ -18,6 +19,7 @@ export default function MultiplicationPractice() {
   const recordPractice = useMultiplicationStore((s) => s.recordPractice);
   const touchPracticeDay = useMultiplicationStore((s) => s.touchPracticeDay);
   const grantXP = useAppStore((s) => s.grantXP);
+  const kidName = useAppStore((s) => s.kidName);
   const navigate = useNavigate();
   const sound = useSound();
 
@@ -109,6 +111,11 @@ export default function MultiplicationPractice() {
         onPrimary={() => navigate(`/multiplication/table/${tableNumber}`)}
         secondaryLabel={sessionHadWrong ? "Review with Learn phase" : undefined}
         onSecondary={sessionHadWrong ? () => navigate(learnPath) : undefined}
+        shareText={buildSessionShareText({
+          kidName,
+          title: `mastered the ×${tableNumber} table`,
+          detail: `${sessionPct}% accuracy this session`,
+        })}
       />
     );
   }

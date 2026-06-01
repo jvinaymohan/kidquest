@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { TopBar } from "./TopBar";
 import { BottomNav } from "./BottomNav";
@@ -10,28 +11,32 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   const location = useLocation();
   const isHome = location.pathname === "/home";
   const isLanding = location.pathname === "/landing";
-  const viewportLocked = isHome || isLanding;
+  const cosmicRoute = isHome || isLanding;
+  const viewportLocked = cosmicRoute;
+
+  useEffect(() => {
+    document.body.classList.toggle("cosmic-route", cosmicRoute);
+    return () => document.body.classList.remove("cosmic-route");
+  }, [cosmicRoute]);
+
+  const mainWrapClass = flush || isHome
+    ? "w-full"
+    : "w-full max-w-2xl mx-auto px-4 py-5 md:max-w-3xl lg:max-w-4xl";
 
   return (
-    <div className={`min-h-screen flex flex-col ${isHome || isLanding ? "bg-transparent" : "bg-bg"}`}>
+    <div className={`min-h-screen flex flex-col ${cosmicRoute ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
       {!hideTop && !isHome && <TopBar />}
       <main
         className={`flex-1 overflow-x-hidden ${viewportLocked ? "overflow-hidden" : "overflow-y-auto"}`}
       >
-        <div
-          className={
-            flush || isHome
-              ? "w-full max-w-2xl mx-auto"
-              : "w-full max-w-2xl mx-auto px-4 py-5"
-          }
-        >
+        <div className={mainWrapClass}>
           <RouteErrorBoundary label={location.pathname}>
             <Outlet />
           </RouteErrorBoundary>
         </div>
       </main>
-      {!hideBottom && <BottomNav />}
+      {!hideBottom && <BottomNav cosmic={isHome} />}
     </div>
   );
 }

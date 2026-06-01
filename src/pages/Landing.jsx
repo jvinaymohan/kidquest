@@ -24,7 +24,7 @@ export default function Landing() {
     <div className="home-v2 home-v2-scroll relative">
       <SpaceBackground reduceMotion={reduce} />
 
-      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-lg flex-col items-center px-5 py-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col items-center px-5 py-[max(1.5rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))] lg:px-10">
         <motion.section
           className="w-full shrink-0 text-center"
           initial={{ opacity: 0, y: 16 }}
@@ -123,7 +123,7 @@ export default function Landing() {
             <span className="home-v2-live-dot" aria-hidden />
             <p className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/50">Live now</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex flex-wrap justify-center gap-4 lg:gap-8">
             {LIVE_WORLDS.map((w) => (
               <div
                 key={w.name}

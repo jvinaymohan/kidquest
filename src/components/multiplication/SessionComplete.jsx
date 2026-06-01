@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { Share2 } from "lucide-react";
 import { Button } from "../ui/Button";
+import { shareAchievement } from "../../utils/shareAchievement";
 
 export function SessionComplete({
   emoji = "🎉",
@@ -10,7 +13,20 @@ export function SessionComplete({
   onPrimary,
   secondaryLabel,
   onSecondary,
+  shareText,
+  shareTitle = "KidQuest",
 }) {
+  const [shareFeedback, setShareFeedback] = useState(null);
+
+  async function handleShare() {
+    if (!shareText) return;
+    const result = await shareAchievement({ text: shareText, title: shareTitle });
+    if (result.ok) {
+      setShareFeedback(result.method === "copy" ? "Copied!" : "Shared!");
+      setTimeout(() => setShareFeedback(null), 2500);
+    }
+  }
+
   return (
     <div className="min-h-[70vh] flex flex-col items-center justify-center p-6 text-center gap-4">
       <motion.div
@@ -38,6 +54,12 @@ export function SessionComplete({
         <Button size="lg" fullWidth onClick={onPrimary}>
           {primaryLabel}
         </Button>
+        {shareText && (
+          <Button variant="secondary" fullWidth onClick={handleShare}>
+            <Share2 size={18} aria-hidden />
+            {shareFeedback ?? "Challenge a friend"}
+          </Button>
+        )}
         {secondaryLabel && onSecondary && (
           <Button variant="ghost" fullWidth onClick={onSecondary}>
             {secondaryLabel}
