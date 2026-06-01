@@ -83,9 +83,9 @@ export function LifeSkillsStrip() {
   );
 }
 
-export function WonderQuote() {
+export function WonderQuote({ compact = false }) {
   return (
-    <section className="elegant-wonder">
+    <section className={`elegant-wonder ${compact ? "elegant-wonder-compact" : ""}`}>
       <p className="elegant-wonder-quote">
         &ldquo;The important thing is <strong>not to stop questioning.</strong> Curiosity has its
         own reason for existing.&rdquo;
@@ -111,7 +111,13 @@ export function StatsRow({ stats = PLATFORM_STATS }) {
   );
 }
 
-export function WorldsShowcase({ onWorldClick, onComingSoon, interactive = true }) {
+export function WorldsShowcase({
+  onWorldClick,
+  onComingSoon,
+  interactive = true,
+  compact = false,
+  liveOnly = false,
+}) {
   const navigate = useNavigate();
   const live = SUBJECTS.filter((s) => isLiveSubject(s.id));
   const soonFromSubjects = SUBJECTS.filter((s) => !isLiveSubject(s.id));
@@ -125,14 +131,23 @@ export function WorldsShowcase({ onWorldClick, onComingSoon, interactive = true 
     if (path) navigate(path);
   }
 
+  const showComingSoon = !liveOnly;
+
   return (
-    <section className="elegant-worlds-section">
-      <p className="elegant-worlds-label">Live worlds</p>
-      <h2 className="elegant-section-headline">Pick a world, start a quest</h2>
-      <p className="elegant-section-body elegant-worlds-sub">
-        {live.length} worlds live now — dozens more unlocking as you quest.
-      </p>
-      <div className="elegant-worlds-grid">
+    <section className={`elegant-worlds-section ${compact ? "elegant-worlds-compact" : ""}`}>
+      {!compact && (
+        <>
+          <p className="elegant-worlds-label">Live worlds</p>
+          <h2 className="elegant-section-headline">Pick a world, start a quest</h2>
+          <p className="elegant-section-body elegant-worlds-sub">
+            {live.length} worlds live now — dozens more unlocking as you quest.
+          </p>
+        </>
+      )}
+      {compact && (
+        <h2 className="home-worlds-heading">Pick a world</h2>
+      )}
+      <div className={`elegant-worlds-grid ${compact ? "elegant-worlds-grid-compact" : ""}`}>
         {live.map((subject) => {
           const style = WORLD_STYLES[subject.id] ?? {
             emoji: "✨",
@@ -156,7 +171,8 @@ export function WorldsShowcase({ onWorldClick, onComingSoon, interactive = true 
             </Tag>
           );
         })}
-        {soonFromSubjects.map((subject) => {
+        {showComingSoon &&
+          soonFromSubjects.map((subject) => {
           const style = WORLD_STYLES[subject.id] ?? { emoji: "🔒", gradient: "wc-hist" };
           return (
             <button
@@ -170,10 +186,9 @@ export function WorldsShowcase({ onWorldClick, onComingSoon, interactive = true 
               <div className="elegant-world-xp">Coming soon</div>
             </button>
           );
-        })}
-        {COMING_SOON_WORLDS.filter(
-          (w) => !soonFromSubjects.some((s) => s.id === w.id)
-        ).map((w) => (
+          })}
+        {showComingSoon &&
+          COMING_SOON_WORLDS.filter((w) => !soonFromSubjects.some((s) => s.id === w.id)).map((w) => (
           <button
             key={w.id}
             type="button"

@@ -1,51 +1,38 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Play, Settings, Sparkles, Zap, Target, Trophy, Brain, Compass } from "lucide-react";
+import { Play, Settings, Sparkles, Compass } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { isAdminUser } from "../lib/adminAccess";
-import { pathForSubject } from "../config/liveSubjects";
-import { getMonthlyTheme } from "../utils/theme";
+import { pathForSubject, LIVE_SUBJECT_IDS } from "../config/liveSubjects";
 import { countDueReviews } from "../utils/multiplicationProgress";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { countGeoDueReviews } from "../utils/geographyProgress";
 import { useGeographyStore } from "../store/useGeographyStore";
-import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { getDailyChallenge } from "../utils/dailyChallenge";
 import { xpToNextLevel } from "../utils/scoring";
-import { LEVELS, OPERATIONS } from "../utils/mathMastery/constants";
-import { BADGE_BY_ID } from "../data/badges";
-import { dailySpaceFact } from "../data/spaceFacts";
-import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
+import { Mascot } from "../components/mascots/Mascot";
 import { ElegantBackground } from "../components/elegant/ElegantBackground";
-import { ElegantLogo } from "../components/elegant/ElegantLogo";
 import { WorldsShowcase } from "../components/elegant/ElegantSections";
 import { DiscoverMore } from "../components/home/DiscoverMore";
-import { ParentPeekBanner } from "../components/home/ParentPeekBanner";
-import { useScreenTimeStore, formatScreenMinutes } from "../store/useScreenTimeStore";
 import { DailyTreasure } from "../components/home/DailyTreasure";
-import { StreakCalendar } from "../components/home/StreakCalendar";
 import { ShareStreakButton } from "../components/home/ShareStreakButton";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
-
-const MASCOT_MESSAGES = [
-  "You're a star explorer — pick a world and go!",
-  "Every quest makes your brain stronger!",
-  "Can you beat yesterday's score?",
-  "The treasure chest has a surprise for you!",
-  "Share your streak — dare a friend to join!",
-  "Legendary tables = super speed-run powers!",
-  "Come back tomorrow for a new space fact!",
-  "Finish today's goal to keep your streak glowing!",
-];
 
 const STREAK_MILESTONES = [3, 7, 14, 30];
 
 function todayKey() {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function guidanceSubtitle({ reviewsDue, dailyDone, daily, goalPct, lessonsDone, dailyGoal }) {
+  if (reviewsDue > 0) return `${reviewsDue} reviews ready — quick win first!`;
+  if (!dailyDone) return `Today's quest: ${daily.title}`;
+  if (goalPct < 100) return `Quest progress today: ${lessonsDone}/${dailyGoal}`;
+  return "Pick a world below — your adventure awaits!";
 }
 
 export default function Home() {
@@ -61,51 +48,47 @@ export default function Home() {
     kidName,
     avatarConfig,
     dailyChallengeDone,
-    completeDailyChallenge,
-    grantXP,
-    lessonsToday,
-    dailyGoal,
     currentStreak,
     totalXP,
     totalPoints,
-    badges,
-    ageGroup,
+    lessonsToday,
+    dailyGoal,
   } = useAppStore();
 
   const mulDue = useMultiplicationStore((s) => countDueReviews(s));
-  const mulRank = useMultiplicationStore((s) => s.getRank());
-  const mulLegendary = useMultiplicationStore((s) => s.getLegendaryCount());
-  const mathProgress = useMathMasteryStore((s) => s.progress);
   const geoDue = useGeographyStore((s) => countGeoDueReviews(s.countries));
-  const theme = getMonthlyTheme();
   const daily = useMemo(() => getDailyChallenge(), []);
   const dailyDone = dailyChallengeDone === daily.dateKey;
   const level = xpToNextLevel(totalXP);
   const lessonsDone = lessonsToday?.date === todayKey() ? lessonsToday.count : 0;
   const goalPct = Math.min(100, Math.round((lessonsDone / Math.max(1, dailyGoal)) * 100));
   const reviewsDue = mulDue + geoDue;
-  const spaceFact = useMemo(() => dailySpaceFact(), []);
-  const mascotMsg = useMemo(
-    () => MASCOT_MESSAGES[Math.floor(Math.random() * MASCOT_MESSAGES.length)],
-    []
-  );
-  const todayExploreSeconds = useScreenTimeStore((s) => s.getTodayTotalSeconds());
-  const exploreHint =
-    todayExploreSeconds >= 60 ? formatScreenMinutes(todayExploreSeconds) : null;
+  const liveWorldCount = LIVE_SUBJECT_IDS.size;
 
-  const mathMastered = useMemo(
-    () =>
-      OPERATIONS.reduce(
-        (sum, op) => sum + LEVELS.filter((l) => mathProgress[op.id]?.[l]?.mastered).length,
-        0
-      ),
-    [mathProgress]
-  );
-  const mathTotal = OPERATIONS.length * LEVELS.length;
-  const recentBadge = useMemo(() => {
-    const last = badges?.[badges.length - 1];
-    return last ? BADGE_BY_ID[last] : null;
-  }, [badges]);
+  const playPath = reviewsDue > 0
+    ? "/review"
+    : !dailyDone
+      ? daily.path
+      : goalPct < 100
+        ? "/math"
+        : "/explore";
+
+  const todayMission = reviewsDue > 0
+    ? { emoji: "🧠", title: "Review time", sub: `${reviewsDue} facts ready`, path: "/review" }
+    : !dailyDone
+      ? { emoji: daily.emoji, title: daily.title, sub: `+${daily.xpBonus} XP bonus`, path: daily.path }
+      : goalPct < 100
+        ? { emoji: "🎯", title: "Daily goal", sub: `${lessonsDone}/${dailyGoal} quests`, path: "/math" }
+        : { emoji: "🌟", title: "Free play", sub: "Explore any world", path: "/explore" };
+
+  const subtitle = guidanceSubtitle({
+    reviewsDue,
+    dailyDone,
+    daily,
+    goalPct,
+    lessonsDone,
+    dailyGoal,
+  });
 
   useEffect(() => {
     if (reduce || currentStreak < 3) return;
@@ -125,20 +108,12 @@ export default function Home() {
     else setComingSoonName(subject.name);
   }
 
-  const todayMission = reviewsDue > 0
-    ? { emoji: "🧠", title: "Review time!", sub: `${reviewsDue} facts ready — quick win!`, path: "/review" }
-    : !dailyDone
-      ? { emoji: daily.emoji, title: daily.title, sub: `+${daily.xpBonus} XP bonus`, path: daily.path }
-      : goalPct < 100
-        ? { emoji: "🎯", title: "Daily goal", sub: `${lessonsDone}/${dailyGoal} quests done`, path: "/math" }
-        : { emoji: "🌟", title: "Free play!", sub: "Explore any world you like", path: "/explore" };
-
   return (
-    <div className="elegant-page home-v2 home-v2-scroll relative min-h-[100dvh] w-full">
+    <div className="elegant-page home-simple relative min-h-[100dvh] w-full">
       <ElegantBackground reduceMotion={reduce} />
       {showConfetti && !reduce && <ConfettiBlast count={60} duration={2} />}
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] lg:px-8">
+      <div className="home-simple-inner relative z-10 mx-auto w-full max-w-4xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[max(0.5rem,env(safe-area-inset-top))] lg:px-6">
         <header className="flex shrink-0 items-center gap-2">
           <Link to="/profile" className="home-v2-hud-profile focus-ring">
             <span className="grid h-9 w-9 place-items-center overflow-hidden rounded-xl bg-white/15">
@@ -158,18 +133,7 @@ export default function Home() {
             </span>
           </Link>
 
-          <div className="flex min-w-0 flex-1 justify-center gap-1.5 sm:gap-2">
-            <HudPill emoji="🔥" value={currentStreak} label="streak" />
-            <HudPill emoji="⭐" value={totalPoints ?? 0} label="pts" />
-            <HudPill emoji="⚡" value={totalXP} label="XP" />
-          </div>
-
-          <div className="flex shrink-0 flex-col items-end gap-1">
-            {exploreHint && (
-              <p className="hidden max-w-[8rem] truncate text-right text-[9px] font-bold text-white/55 sm:block">
-                You&apos;ve explored {exploreHint} today ✨
-              </p>
-            )}
+          <div className="flex min-w-0 flex-1 justify-end">
             <Link
               to="/settings"
               className="grid h-10 w-10 place-items-center rounded-2xl text-white/70 home-v2-hud-pill focus-ring"
@@ -180,251 +144,99 @@ export default function Home() {
           </div>
         </header>
 
-        {exploreHint && (
-          <p className="mt-2 text-center text-[10px] font-bold text-white/50 sm:hidden">
-            You&apos;ve explored {exploreHint} today ✨
+        <section className="home-hero mt-3">
+          <p className="elegant-eyebrow inline-flex text-[10px] tracking-[0.15em]">
+            <span className="elegant-eyebrow-dot" aria-hidden />
+            Quest Home
           </p>
-        )}
+          <h1 className="home-hero-title mt-1 font-display text-[1.65rem] font-extrabold text-white sm:text-[1.85rem]">
+            Hey {kidName || "friend"}!
+          </h1>
+          <p className="home-hero-sub mt-0.5 text-sm font-bold text-white/55">{subtitle}</p>
 
-        <div className="home-v2-mobile-strip mt-4">
+          <motion.button
+            type="button"
+            onClick={() => navigate(playPath)}
+            whileTap={{ scale: 0.97 }}
+            className="home-v2-play home-hero-play focus-ring mt-3"
+          >
+            <Play size={22} fill="currentColor" className="inline-block" aria-hidden />
+            <span>Play</span>
+          </motion.button>
+
+          <Link to={todayMission.path} className="home-mission-line focus-ring">
+            <span aria-hidden>{todayMission.emoji}</span>
+            <span className="min-w-0 flex-1 truncate">
+              <span className="font-extrabold text-white">{todayMission.title}</span>
+              <span className="text-white/50"> · {todayMission.sub}</span>
+            </span>
+            <span className="text-[10px] font-extrabold text-[#ffd700]">Go →</span>
+          </Link>
+
+          <div className="home-progress-strip mt-3">
+            <ProgressChip emoji="🔥" label="Streak" value={currentStreak} />
+            <GoalRing pct={goalPct} done={lessonsDone} goal={dailyGoal} />
+            <ProgressChip emoji={level.emoji} label="Level" value={level.level} sub={level.isMax ? "Max!" : `${level.current}/${level.needed}`} />
+            <div className="home-progress-share">
+              <ShareStreakButton className="!h-full !min-h-[3.25rem] !w-full !rounded-xl !px-2 !py-2" />
+            </div>
+          </div>
+
+          <p className="home-quest-copy mt-2 text-center text-[11px] font-bold text-white/45">
+            Quest progress today — finish {dailyGoal} quests to keep your streak glowing
+          </p>
+
+          <Link to="/journey" className="home-journey-btn focus-ring mt-2">
+            <Sparkles size={16} className="text-[#ffd700]" aria-hidden />
+            See everything I learned
+          </Link>
+        </section>
+
+        <section className="home-today-row mt-3">
           <DailyTreasure compact />
-          <div className="home-v2-panel home-v2-panel-compact">
-            <p className="home-v2-panel-label">Did you know?</p>
-            <p className="home-v2-fact">{spaceFact}</p>
-          </div>
-        </div>
+        </section>
 
-        <div className="home-v2-bento mt-4">
-          <aside className="hidden flex-col gap-3 md:flex">
-            <DailyTreasure />
-            <StreakCalendar />
-            <div className="home-v2-panel">
-              <p className="home-v2-panel-label">Did you know?</p>
-              <p className="home-v2-fact">{spaceFact}</p>
-            </div>
-          </aside>
+        <section className="home-worlds-block mt-3">
+          <WorldsShowcase
+            compact
+            liveOnly
+            onWorldClick={(s) => openSubject(s)}
+            onComingSoon={setComingSoonName}
+          />
+        </section>
 
-          <div className="flex min-w-0 flex-col gap-4">
-            <section className="grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
-              <Link to="/home" className="relative mx-auto sm:mx-0 focus-ring rounded-2xl" aria-label="Quest Home">
-                <ElegantLogo size={88} reduceMotion={reduce} mascotSize={36} />
-              </Link>
+        <section className="home-quick-row mt-3">
+          <QuickTile
+            icon={<Play size={16} fill="currentColor" />}
+            label="Play"
+            onClick={() => navigate(playPath)}
+          />
+          <QuickTile
+            icon={<span className="text-base">🔢</span>}
+            label="Math"
+            onClick={() => navigate("/math")}
+          />
+          <QuickTile
+            icon={<Compass size={16} />}
+            label="Curiosity"
+            onClick={() => navigate("/curiosity")}
+          />
+        </section>
 
-              <div className="min-w-0 text-center sm:text-left">
-                <p className="elegant-eyebrow inline-flex text-[10px] tracking-[0.15em]">
-                  <span className="elegant-eyebrow-dot" aria-hidden />
-                  {theme.emoji} {theme.name}
-                </p>
-                <h1 className="elegant-hero-title mt-3 text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem]">
-                  Hey {kidName || "friend"}!
-                </h1>
-                <p className="elegant-hero-sub mt-1 text-base sm:text-lg">
-                  Pick a world and start your quest!
-                </p>
-                <p className="home-v2-mascot-tip mt-2">{mascotMsg}</p>
-              </div>
-            </section>
+        <p className="home-stats-hint mt-2 text-center text-[10px] font-bold text-white/40">
+          {liveWorldCount} worlds live · {totalPoints ?? 0} pts · {totalXP} XP
+        </p>
 
-            <ParentPeekBanner kidName={kidName} />
+        <DiscoverMore kidName={kidName} onComingSoon={setComingSoonName} />
 
-            <section className="home-v2-stat-row">
-              <StatTile emoji="🎯" label="Today's goal" value={`${lessonsDone}/${dailyGoal}`} sub={`${goalPct}% done`} />
-              <StatTile emoji="🧮" label="Math Master" value={`${mathMastered}/${mathTotal}`} sub="levels ⭐" />
-              <StatTile emoji="✖️" label="Tables" value={`${mulLegendary}/20`} sub="legendary" />
-              <StatTile emoji={level.emoji} label="Rank" value={`Lvl ${level.level}`} sub={level.isMax ? "Max!" : `${level.current}/${level.needed} XP`} />
-            </section>
-
-            {!level.isMax && (
-              <div className="home-v2-xp-bar">
-                <div className="flex justify-between text-[10px] font-extrabold text-white/60">
-                  <span>{level.title}</span>
-                  <span>Next level</span>
-                </div>
-                <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/10">
-                  <motion.div
-                    className="h-full rounded-full bg-gradient-to-r from-[#ffd700] to-[#ff6b6b]"
-                    initial={false}
-                    animate={{ width: `${Math.round(level.pct * 100)}%` }}
-                  />
-                </div>
-              </div>
-            )}
-
-            <section>
-              <h2 className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/45">
-                Quick launch
-              </h2>
-              <div className="home-v2-quick-grid grid grid-cols-2 gap-2">
-                <QuickAction
-                  icon={<Play size={18} fill="currentColor" />}
-                  title="Play now"
-                  sub="Math Zone"
-                  accent="from-[#ff6b6b] to-[#ffd700]"
-                  onClick={() => navigate("/math")}
-                  reduce={reduce}
-                />
-                <QuickAction
-                  icon={<Target size={18} />}
-                  title="Math Master"
-                  sub={`${mathMastered} levels done`}
-                  accent="from-[#2980b9] to-[#54a0ff]"
-                  onClick={() => navigate("/math-master")}
-                  reduce={reduce}
-                />
-                <QuickAction
-                  icon={<Zap size={18} />}
-                  title="Times Tables"
-                  sub={mulRank?.label ?? "Training camp"}
-                  accent="from-[#9b5de5] to-[#5f27cd]"
-                  onClick={() => navigate("/multiplication")}
-                  reduce={reduce}
-                />
-                <QuickAction
-                  icon={<Brain size={18} />}
-                  title={reviewsDue > 0 ? "Reviews!" : "Daily bonus"}
-                  sub={reviewsDue > 0 ? `${reviewsDue} ready` : dailyDone ? "Done ✅" : daily.title}
-                  accent="from-[#2ecc71] to-[#27ae60]"
-                  onClick={() => (reviewsDue > 0 ? navigate("/review") : navigate(daily.path))}
-                  reduce={reduce}
-                  pulse={reviewsDue > 0}
-                />
-                <QuickAction
-                  icon={<Compass size={18} />}
-                  title="Curiosity Hub"
-                  sub="Today's spark ✨"
-                  accent="from-[#7B68EE] to-[#5f27cd]"
-                  onClick={() => navigate("/curiosity")}
-                  reduce={reduce}
-                />
-              </div>
-            </section>
-
-            {(currentStreak >= 3 || recentBadge) && (
-              <motion.div
-                initial={reduce ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="home-v2-celebrate flex items-center gap-3 px-3 py-2.5"
-              >
-                <span className="text-2xl" aria-hidden>
-                  {currentStreak >= 7 ? "💎" : currentStreak >= 3 ? "🔥" : recentBadge?.emoji ?? "🏆"}
-                </span>
-                <p className="flex-1 text-left text-xs font-bold text-white/85">
-                  {currentStreak >= 3 ? (
-                    <>
-                      <span className="font-display font-extrabold text-[#ffd700]">{currentStreak}-day streak!</span>
-                      {" "}You're on fire — keep it going!
-                    </>
-                  ) : (
-                    <>
-                      New badge: <span className="font-display font-extrabold text-[#ffd700]">{recentBadge?.name}</span>
-                    </>
-                  )}
-                </p>
-                {currentStreak >= 1 && <ShareStreakButton className="shrink-0 !w-auto px-2.5 py-1.5" />}
-              </motion.div>
-            )}
-
-            <div className="home-v2-marketing-block px-1">
-              <h2 className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/45">
-                Your worlds
-              </h2>
-              <WorldsShowcase
-                onWorldClick={(s) => openSubject(s)}
-                onComingSoon={setComingSoonName}
-              />
-            </div>
-
-            <footer className="flex flex-col gap-2">
-              <Link
-                to={daily.path}
-                onClick={() => {
-                  if (!dailyDone) {
-                    completeDailyChallenge(daily.dateKey);
-                    grantXP(daily.xpBonus);
-                  }
-                }}
-                className="home-v2-daily focus-ring"
-              >
-                <span className="text-2xl" aria-hidden>
-                  {dailyDone ? "✅" : daily.emoji}
-                </span>
-                <div className="min-w-0 flex-1 text-left">
-                  <p className="truncate font-display text-sm font-extrabold text-white">
-                    {dailyDone ? "Daily bonus collected!" : `Daily quest: ${daily.title}`}
-                  </p>
-                  <p className="text-[11px] font-bold text-white/50">
-                    {dailyDone ? "Come back tomorrow for a new quest!" : `+${daily.xpBonus} XP if you finish`}
-                  </p>
-                </div>
-                {!dailyDone && (
-                  <span className="shrink-0 rounded-full bg-gradient-to-r from-[#ff6b6b] to-[#ffd700] px-2.5 py-1 text-[10px] font-extrabold text-white">
-                    Go!
-                  </span>
-                )}
-              </Link>
-
-              <Link to="/journey" className="home-v2-daily focus-ring border-white/20">
-                <Sparkles size={22} className="text-[#ffd700]" />
-                <div className="min-w-0 flex-1 text-left">
-                  <p className="font-display text-sm font-extrabold text-white">My journey</p>
-                  <p className="text-[11px] font-bold text-white/50">Look what you discovered!</p>
-                </div>
-              </Link>
-
-              {ageGroup === "champion" && (
-                <Link to="/compete" className="home-v2-daily focus-ring border-[#ffd700]/30">
-                  <Trophy size={22} className="text-[#ffd700]" />
-                  <div className="min-w-0 flex-1 text-left">
-                    <p className="font-display text-sm font-extrabold text-white">Compete hub</p>
-                    <p className="text-[11px] font-bold text-white/50">Duels & leaderboards</p>
-                  </div>
-                </Link>
-              )}
-
-              {showAdmin && (
-                <Link
-                  to="/admin"
-                  className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-extrabold text-white focus-ring"
-                >
-                  <Sparkles size={12} /> Admin
-                </Link>
-              )}
-            </footer>
-
-            <DiscoverMore kidName={kidName} onComingSoon={setComingSoonName} />
-          </div>
-
-          <aside className="hidden flex-col gap-3 lg:flex">
-            <div className="home-v2-panel">
-              <p className="home-v2-panel-label">Today's mission</p>
-              <Link to={todayMission.path} className="home-v2-mission block focus-ring">
-                <p className="font-display text-sm font-extrabold text-white">
-                  {todayMission.emoji} {todayMission.title}
-                </p>
-                <p className="mt-0.5 text-[11px] font-bold text-white/60">{todayMission.sub}</p>
-              </Link>
-            </div>
-
-            <div className="flex flex-col items-center gap-2">
-              <Mascot kind="owl" size={48} animate={!reduce} />
-              <p className="home-v2-speech text-center">{mascotMsg}</p>
-            </div>
-
-            <ShareStreakButton />
-
-            <div className="home-v2-secret-world">
-              <p className="relative z-10 text-2xl" aria-hidden>
-                🌌
-              </p>
-              <p className="relative z-10 mt-1 font-display text-xs font-extrabold text-white">
-                Mystery World
-              </p>
-              <p className="relative z-10 mt-0.5 text-[10px] font-bold text-white/50">
-                Keep questing to unlock…
-              </p>
-            </div>
-          </aside>
-        </div>
+        {showAdmin && (
+          <Link
+            to="/admin"
+            className="mx-auto mt-3 flex w-fit items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 text-[10px] font-extrabold text-white focus-ring"
+          >
+            <Sparkles size={12} /> Admin
+          </Link>
+        )}
       </div>
 
       {comingSoonName && (
@@ -434,43 +246,41 @@ export default function Home() {
   );
 }
 
-function HudPill({ emoji, value, label }) {
+function ProgressChip({ emoji, label, value, sub }) {
   return (
-    <div className="home-v2-hud-pill">
-      <span className="text-sm" aria-hidden>
+    <div className="home-progress-chip">
+      <span className="text-lg" aria-hidden>
         {emoji}
       </span>
-      <div className="text-left leading-none">
-        <p className="font-display text-xs font-extrabold tabular-nums text-white">{value}</p>
-        <p className="text-[8px] font-bold uppercase tracking-wide text-white/40">{label}</p>
-      </div>
-    </div>
-  );
-}
-
-function StatTile({ emoji, label, value, sub }) {
-  return (
-    <div className="home-v2-stat-tile">
-      <span className="text-lg" aria-hidden>{emoji}</span>
-      <p className="text-[9px] font-extrabold uppercase tracking-wide text-white/45">{label}</p>
+      <p className="text-[8px] font-extrabold uppercase tracking-wide text-white/40">{label}</p>
       <p className="font-display text-sm font-extrabold tabular-nums text-white">{value}</p>
-      <p className="text-[9px] font-bold text-white/50">{sub}</p>
+      {sub && <p className="text-[9px] font-bold text-white/45">{sub}</p>}
     </div>
   );
 }
 
-function QuickAction({ icon, title, sub, accent, onClick, reduce, pulse }) {
+function GoalRing({ pct, done, goal }) {
+  const ringStyle = {
+    background: `conic-gradient(#ffd700 ${pct * 3.6}deg, rgba(255,255,255,0.12) 0deg)`,
+  };
   return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileTap={{ scale: 0.97 }}
-      className={`home-v2-quick-action bg-gradient-to-br ${accent} focus-ring ${pulse ? "home-v2-pulse" : ""}`}
-    >
-      <span className="opacity-90">{icon}</span>
-      <span className="font-display text-sm font-extrabold text-white">{title}</span>
-      <span className="text-[10px] font-bold text-white/85">{sub}</span>
-    </motion.button>
+    <div className="home-progress-chip home-progress-goal">
+      <div className="home-goal-ring" style={ringStyle} aria-hidden>
+        <span className="home-goal-ring-inner font-display text-xs font-extrabold text-white">
+          {done}/{goal}
+        </span>
+      </div>
+      <p className="text-[8px] font-extrabold uppercase tracking-wide text-white/40">Today</p>
+    </div>
+  );
+}
+
+function QuickTile({ icon, label, onClick }) {
+  return (
+    <button type="button" onClick={onClick} className="home-quick-tile focus-ring">
+      {icon}
+      <span className="font-display text-xs font-extrabold text-white">{label}</span>
+    </button>
   );
 }
 

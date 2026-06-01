@@ -3,7 +3,6 @@ import {
   CuriosityTeaser,
   LandingBottomCta,
   LifeSkillsStrip,
-  WonderQuote,
   WorldsShowcase,
 } from "./ElegantSections";
 import { LandingPickAreas } from "./LandingPickAreas";
@@ -13,13 +12,12 @@ export function LandingMarketingSections({ onGetStarted }) {
   return (
     <div className="landing-marketing" aria-label="Why families choose KidQuest">
       <section id="what-is-kidquest" className="landing-marketing-section">
-        <CuriosityTeaser />
+        <CuriosityTeaser compact />
         <BeyondSchoolGrid onComingSoon={() => {}} />
       </section>
 
       <section id="life-skills" className="landing-marketing-section">
         <LifeSkillsStrip />
-        <WonderQuote />
       </section>
 
       <section className="landing-marketing-section">
