@@ -15,7 +15,7 @@ export function BottomNav({ cosmic = false }) {
       className={clsx(
         "sticky bottom-0 z-30 px-2 py-2 safe-bottom border-t",
         cosmic
-          ? "bg-[#0d0b2e]/95 backdrop-blur-md border-white/10"
+          ? "bg-[#07061a]/95 backdrop-blur-md border-white/10"
           : "bg-bg/90 backdrop-blur border-ink/10"
       )}
     >

@@ -12,7 +12,7 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
   const isHome = location.pathname === "/home";
   const isLanding = location.pathname === "/landing";
   const cosmicRoute = isHome || isLanding;
-  const viewportLocked = cosmicRoute;
+  const viewportLocked = isLanding;
 
   useEffect(() => {
     document.body.classList.toggle("cosmic-route", cosmicRoute);

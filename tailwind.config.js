@@ -23,8 +23,10 @@ export default {
         "mul-gold": "#FFD700",
       },
       fontFamily: {
-        display: ["'Baloo 2'", "system-ui", "sans-serif"],
+        display: ["'Space Grotesk'", "'Baloo 2'", "system-ui", "sans-serif"],
         body: ["Nunito", "system-ui", "sans-serif"],
+        serif: ["'Playfair Display'", "Georgia", "serif"],
+        elegant: ["'Space Grotesk'", "system-ui", "sans-serif"],
       },
       borderRadius: {
         chunky: "1.25rem",

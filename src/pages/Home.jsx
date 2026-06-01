@@ -5,8 +5,7 @@ import { Play, Settings, Sparkles, Zap, Target, Trophy, Brain } from "lucide-rea
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { isAdminUser } from "../lib/adminAccess";
-import { SUBJECTS } from "../data/subjects";
-import { isLiveSubject, pathForSubject } from "../config/liveSubjects";
+import { pathForSubject } from "../config/liveSubjects";
 import { getMonthlyTheme } from "../utils/theme";
 import { countDueReviews } from "../utils/multiplicationProgress";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
@@ -20,57 +19,21 @@ import { BADGE_BY_ID } from "../data/badges";
 import { dailySpaceFact } from "../data/spaceFacts";
 import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
-import { SpaceBackground } from "../components/home/SpaceBackground";
+import { ElegantBackground } from "../components/elegant/ElegantBackground";
+import { ElegantLogo } from "../components/elegant/ElegantLogo";
+import {
+  BeyondSchoolGrid,
+  CuriosityTeaser,
+  HomeBottomCta,
+  LifeSkillsStrip,
+  StatsRow,
+  WonderQuote,
+  WorldsShowcase,
+} from "../components/elegant/ElegantSections";
 import { DailyTreasure } from "../components/home/DailyTreasure";
 import { StreakCalendar } from "../components/home/StreakCalendar";
 import { ShareStreakButton } from "../components/home/ShareStreakButton";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
-
-const WORLD = {
-  geography: {
-    emoji: "🌍",
-    from: "#1a7a3c",
-    to: "#27ae60",
-    shadow: "0 10px 30px rgba(39,174,96,0.4)",
-    xp: 50,
-    tag: "Explore countries!",
-  },
-  math: {
-    emoji: "🔢",
-    from: "#1a5fa0",
-    to: "#2980b9",
-    shadow: "0 10px 30px rgba(41,128,185,0.4)",
-    xp: 40,
-    tag: "Numbers & tables",
-  },
-  "solar-system": {
-    emoji: "🪐",
-    from: "#c0392b",
-    to: "#e74c3c",
-    shadow: "0 10px 30px rgba(231,76,60,0.4)",
-    xp: 60,
-    tag: "Blast off!",
-  },
-  science: {
-    emoji: "🧪",
-    from: "#6b3fa0",
-    to: "#9b5de5",
-    shadow: "0 10px 30px rgba(155,93,229,0.4)",
-    xp: 45,
-    tag: "Everyday science",
-  },
-  history: { emoji: "📜", from: "#8e6b14", to: "#d4a017", shadow: undefined, xp: 0, tag: "Soon" },
-  music: { emoji: "🎵", from: "#6b3fa0", to: "#9b5de5", shadow: undefined, xp: 0, tag: "Soon" },
-  "general-knowledge": { emoji: "💡", from: "#b45309", to: "#fb8500", shadow: undefined, xp: 0, tag: "Soon" },
-  trivia: {
-    emoji: "⭐",
-    from: "#c1121f",
-    to: "#e63946",
-    shadow: "0 10px 30px rgba(230,57,70,0.4)",
-    xp: 35,
-    tag: "1000s of facts",
-  },
-};
 
 const MASCOT_MESSAGES = [
   "You're a star explorer — pick a world and go!",
@@ -146,9 +109,6 @@ export default function Home() {
     return last ? BADGE_BY_ID[last] : null;
   }, [badges]);
 
-  const liveSubjects = SUBJECTS.filter((s) => isLiveSubject(s.id));
-  const soonSubjects = SUBJECTS.filter((s) => !isLiveSubject(s.id));
-
   useEffect(() => {
     if (reduce || currentStreak < 3) return;
     const hit = STREAK_MILESTONES.find((m) => currentStreak === m);
@@ -176,8 +136,8 @@ export default function Home() {
         : { emoji: "🌟", title: "Free play!", sub: "Explore any world you like", path: "/explore" };
 
   return (
-    <div className="home-v2 home-v2-scroll relative min-h-[100dvh] w-full">
-      <SpaceBackground reduceMotion={reduce} />
+    <div className="elegant-page home-v2 home-v2-scroll relative min-h-[100dvh] w-full">
+      <ElegantBackground reduceMotion={reduce} />
       {showConfetti && !reduce && <ConfettiBlast count={60} duration={2} />}
 
       <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))] lg:px-8">
@@ -236,24 +196,27 @@ export default function Home() {
           <div className="flex min-w-0 flex-col gap-4">
             <section className="grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
               <div className="relative mx-auto sm:mx-0">
-                <div className={reduce ? "" : "home-v2-logo-ring grid place-items-center"}>
-                  <div
-                    className={`home-v2-logo-inner grid place-items-center ${reduce ? "h-[4.5rem] w-[4.5rem] rounded-full bg-[#1a1060]" : ""}`}
-                  >
-                    <Mascot kind="rocket" size={40} animate={!reduce} />
-                  </div>
-                </div>
+                <ElegantLogo size={88} reduceMotion={reduce} mascotSize={36} />
               </div>
 
               <div className="min-w-0 text-center sm:text-left">
-                <p className="home-v2-badge inline-flex">{theme.emoji} {theme.name}</p>
-                <h1 className="mt-2 font-display text-2xl font-extrabold leading-tight text-white sm:text-3xl lg:text-4xl">
-                  Hey {kidName || "friend"}!{" "}
-                  <span className="home-v2-title-quest">Ready to quest?</span>
+                <p className="elegant-eyebrow inline-flex text-[10px] tracking-[0.15em]">
+                  <span className="elegant-eyebrow-dot" aria-hidden />
+                  {theme.emoji} {theme.name}
+                </p>
+                <h1 className="elegant-hero-title mt-3 text-[1.75rem] sm:text-[2rem] lg:text-[2.25rem]">
+                  Hey {kidName || "friend"}!
                 </h1>
+                <p className="elegant-hero-sub mt-1 text-base sm:text-lg">
+                  School teaches answers — we teach you to love questions.
+                </p>
                 <p className="home-v2-mascot-tip mt-2">{mascotMsg}</p>
               </div>
             </section>
+
+            <div className="home-v2-marketing-block">
+              <CuriosityTeaser compact />
+            </div>
 
             <section className="home-v2-stat-row">
               <StatTile emoji="🎯" label="Today's goal" value={`${lessonsDone}/${dailyGoal}`} sub={`${goalPct}% done`} />
@@ -344,65 +307,21 @@ export default function Home() {
               </motion.div>
             )}
 
-            <section>
-              <div className="mb-3 flex items-center gap-2">
-                <span className="home-v2-live-dot" aria-hidden />
-                <h2 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/50">
-                  Pick your world
-                </h2>
-              </div>
+            <div className="home-v2-marketing-block">
+              <BeyondSchoolGrid onComingSoon={setComingSoonName} />
+            </div>
 
-              <div className="home-v2-worlds-grid">
-                {liveSubjects.map((s, i) => {
-                  const w = WORLD[s.id] ?? WORLD.trivia;
-                  return (
-                    <SubjectCard
-                      key={s.id}
-                      name={s.name}
-                      tag={w.tag}
-                      emoji={w.emoji}
-                      from={w.from}
-                      to={w.to}
-                      shadow={w.shadow}
-                      xp={w.xp}
-                      delay={i * 0.04}
-                      reduce={reduce}
-                      onClick={() => openSubject(s)}
-                    />
-                  );
-                })}
-              </div>
+            <LifeSkillsStrip />
 
-              <p className="mt-5 text-[11px] font-bold uppercase tracking-widest text-white/35">
-                Secret worlds unlocking soon…
-              </p>
-              <div className="mt-2 grid grid-cols-4 gap-2 sm:grid-cols-4 lg:grid-cols-4">
-                {soonSubjects.map((s) => {
-                  const w = WORLD[s.id] ?? WORLD.trivia;
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setComingSoonName(s.name)}
-                      className="home-v2-subject-compact home-v2-secret-world w-full focus-ring"
-                      style={{
-                        background: `linear-gradient(145deg, ${w.from}88, ${w.to}66)`,
-                      }}
-                    >
-                      <span className="relative z-10 text-lg" aria-hidden>
-                        {w.emoji}
-                      </span>
-                      <span className="relative z-10 mt-0.5 text-center font-display text-[8px] font-extrabold leading-tight text-white">
-                        {s.name}
-                      </span>
-                      <span className="relative z-10 mt-0.5 rounded-full bg-black/30 px-1.5 py-0.5 text-[7px] font-extrabold uppercase text-[#ffd700]">
-                        🔒 Secret
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </section>
+            <WonderQuote />
+            <StatsRow />
+
+            <div className="home-v2-marketing-block px-1">
+              <WorldsShowcase
+                onWorldClick={(s) => openSubject(s)}
+                onComingSoon={setComingSoonName}
+              />
+            </div>
 
             <footer className="flex flex-col gap-2">
               <Link
@@ -460,6 +379,8 @@ export default function Home() {
                 </Link>
               )}
             </footer>
+
+            <HomeBottomCta kidName={kidName} />
           </div>
 
           <aside className="hidden flex-col gap-3 lg:flex">
@@ -538,31 +459,6 @@ function QuickAction({ icon, title, sub, accent, onClick, reduce, pulse }) {
       <span className="opacity-90">{icon}</span>
       <span className="font-display text-sm font-extrabold text-white">{title}</span>
       <span className="text-[10px] font-bold text-white/85">{sub}</span>
-    </motion.button>
-  );
-}
-
-function SubjectCard({ name, tag, emoji, from, to, shadow, xp, delay, reduce, onClick }) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      initial={reduce ? false : { opacity: 0, scale: 0.92 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay, duration: 0.3 }}
-      whileTap={{ scale: 0.96 }}
-      className="home-v2-subject-card home-v2-subject-card-dense focus-ring"
-      style={{
-        background: `linear-gradient(145deg, ${from}, ${to})`,
-        boxShadow: shadow,
-      }}
-    >
-      <span className="home-v2-card-emoji" aria-hidden>
-        {emoji}
-      </span>
-      <span className="home-v2-card-name text-sm">{name}</span>
-      <span className="text-[9px] font-bold text-white/75">{tag}</span>
-      {xp > 0 && <span className="home-v2-card-xp">+{xp} XP</span>}
     </motion.button>
   );
 }
