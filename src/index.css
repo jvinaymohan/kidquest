@@ -1115,55 +1115,57 @@ button {
     padding-top: 24px;
   }
 
-  .landing-sticky-bar {
+  .landing-top-bar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    z-index: 40;
+    z-index: 45;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px max(1rem, env(safe-area-inset-right)) 10px max(1rem, env(safe-area-inset-left));
-    padding-top: max(10px, env(safe-area-inset-top));
-    background: rgba(7, 6, 26, 0.92);
+    padding: 8px max(1rem, env(safe-area-inset-right)) 8px max(1rem, env(safe-area-inset-left));
+    padding-top: max(8px, env(safe-area-inset-top));
+    background: rgba(7, 6, 26, 0.94);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(12px);
-    animation: landing-sticky-in 0.25s ease-out;
   }
 
-  @keyframes landing-sticky-in {
-    from {
-      opacity: 0;
-      transform: translateY(-8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .landing-top-bar-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
   }
 
-  .landing-sticky-brand {
+  .landing-top-bar-wordmark {
     font-family: "Fredoka", system-ui, sans-serif;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 800;
+    white-space: nowrap;
   }
 
-  .landing-sticky-cta {
-    padding: 6px 14px;
-    font-size: 12px;
+  .landing-get-started-pill {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 7px 12px;
+    font-size: 11px;
     font-weight: 800;
     color: #07061a;
     border: none;
-    border-radius: 20px;
+    border-radius: 999px;
     cursor: pointer;
     background: linear-gradient(135deg, #f5c842, #ffb347);
-    transition: transform 0.2s;
+    box-shadow: 0 2px 12px rgba(245, 200, 66, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
   }
 
-  .landing-sticky-cta:hover {
+  .landing-get-started-pill:hover {
     transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(245, 200, 66, 0.4);
   }
 
   .landing-hero {
@@ -1258,37 +1260,166 @@ button {
     overflow: hidden;
   }
 
-  .landing-get-started-fab {
-    position: fixed;
-    z-index: 45;
-    right: max(0.75rem, env(safe-area-inset-right));
-    bottom: max(0.85rem, env(safe-area-inset-bottom));
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 14px;
-    font-size: 12px;
-    font-weight: 800;
-    color: #07061a;
-    border: none;
-    border-radius: 999px;
-    cursor: pointer;
-    background: linear-gradient(135deg, #f5c842, #ffb347);
-    box-shadow:
-      0 4px 20px rgba(245, 200, 66, 0.35),
-      0 2px 8px rgba(0, 0, 0, 0.25);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .landing-get-started-fab:hover {
-    transform: translateY(-2px);
-    box-shadow:
-      0 6px 24px rgba(245, 200, 66, 0.45),
-      0 2px 10px rgba(0, 0, 0, 0.3);
-  }
-
   .landing-get-started-fab-icon {
     flex-shrink: 0;
+  }
+
+  .feedback-fab {
+    /* Bottom-left globally — clear of top-right getting-started pill */
+  }
+
+  .landing-pick-areas {
+    padding: 8px 0 24px;
+    text-align: center;
+  }
+
+  .landing-pick-sub {
+    margin-bottom: 1rem;
+  }
+
+  .landing-pick-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    text-align: left;
+  }
+
+  @media (min-width: 640px) {
+    .landing-pick-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .landing-pick-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.04);
+    cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    text-align: left;
+  }
+
+  .landing-pick-tile:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+
+  .landing-pick-tile-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .landing-pick-tile-tag {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--elegant-aqua, #38efc3);
+  }
+
+  .landing-pick-tile-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.92);
+    line-height: 1.3;
+  }
+
+  .landing-area-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: grid;
+    align-items: end;
+    padding: 0 12px max(12px, env(safe-area-inset-bottom));
+    background: rgba(4, 3, 18, 0.72);
+    backdrop-filter: blur(4px);
+  }
+
+  @media (min-width: 640px) {
+    .landing-area-backdrop {
+      align-items: center;
+      justify-items: center;
+      padding: 24px;
+    }
+  }
+
+  .landing-area-panel {
+    width: 100%;
+    max-width: 420px;
+    max-height: min(85dvh, 560px);
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    background: linear-gradient(165deg, #12102e 0%, #0a091f 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.45);
+  }
+
+  @media (min-width: 640px) {
+    .landing-area-panel {
+      border-radius: 20px;
+    }
+  }
+
+  .landing-area-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .landing-area-emoji {
+    font-size: 1.75rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .landing-area-title {
+    font-family: "Fredoka", system-ui, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.25;
+  }
+
+  .landing-area-intro {
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--elegant-aqua, #38efc3);
+    margin-bottom: 8px;
+  }
+
+  .landing-area-facts {
+    margin: 0 0 16px;
+    padding-left: 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .landing-area-facts li {
+    padding-left: 2px;
+  }
+
+  .landing-area-actions {
+    display: flex;
+    justify-content: stretch;
+  }
+
+  .landing-area-actions .elegant-btn-primary {
+    width: 100%;
+    justify-content: center;
   }
 
   .landing-gs-backdrop {
@@ -1739,7 +1870,7 @@ button {
       font-size: 8px;
     }
 
-    .landing-get-started-fab span {
+    .landing-get-started-pill span {
       max-width: 7.5rem;
       line-height: 1.2;
       text-align: left;

@@ -2,17 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { ElegantBackground } from "../components/elegant/ElegantBackground";
-import { ElegantLogo } from "../components/elegant/ElegantLogo";
-import {
-  GettingStartedModal,
-  LetsGetStartedFab,
-} from "../components/elegant/GettingStartedModal";
-import {
-  LandingAboveFoldValue,
-  LandingMarketingSections,
-  LandingScrollCue,
-  LandingStickyBar,
-} from "../components/elegant/LandingPeek";
+import { GettingStartedModal } from "../components/elegant/GettingStartedModal";
+import { LandingTopBar } from "../components/elegant/LandingTopBar";
+import { LandingMarketingSections } from "../components/elegant/LandingPeek";
 import { HeroEyebrow } from "../components/elegant/ElegantSections";
 import { LANDING_HOOK } from "../components/elegant/elegantContent";
 
@@ -26,32 +18,19 @@ export default function Landing() {
   return (
     <div className="elegant-page landing-page relative min-h-[100dvh] w-full">
       <ElegantBackground reduceMotion={reduce} />
-      <LandingStickyBar onOpenGettingStarted={openGettingStarted} />
-      <LetsGetStartedFab onClick={openGettingStarted} />
+      <LandingTopBar onOpenGettingStarted={openGettingStarted} reduceMotion={reduce} />
       <GettingStartedModal open={gettingStartedOpen} onClose={closeGettingStarted} />
 
-      <div className="landing-page-inner relative z-10 mx-auto w-full max-w-5xl px-4 sm:px-6">
-        <section className="landing-above-fold flex min-h-[100dvh] flex-col">
-          <motion.header
-            className="landing-hero landing-hero-compact flex flex-shrink-0 flex-col items-center text-center"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-          >
-            <HeroEyebrow />
-            <div className="landing-hero-logo-wrap">
-              <ElegantLogo size={64} reduceMotion={reduce} mascotSize={28} />
-            </div>
-            <h1 className="elegant-hero-title landing-hero-title">
-              <span className="text-white">Kid</span>
-              <span className="elegant-title-grad">Quest</span>
-            </h1>
-            <p className="landing-hook">{LANDING_HOOK}</p>
-          </motion.header>
-
-          <LandingAboveFoldValue />
-          <LandingScrollCue />
-        </section>
+      <div className="landing-page-inner relative z-10 mx-auto w-full max-w-5xl px-4 pb-8 pt-[4.25rem] sm:px-6 sm:pt-[4.5rem]">
+        <motion.header
+          className="landing-hero landing-hero-compact mb-6 flex flex-col items-center text-center"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
+        >
+          <HeroEyebrow />
+          <p className="landing-hook mt-2">{LANDING_HOOK}</p>
+        </motion.header>
 
         <LandingMarketingSections onGetStarted={openGettingStarted} />
 

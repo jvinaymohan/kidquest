@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   BeyondSchoolGrid,
   CuriosityTeaser,
@@ -7,61 +6,24 @@ import {
   WonderQuote,
   WorldsShowcase,
 } from "./ElegantSections";
-import { BEYOND_SCHOOL_CARDS, LANDING_MINI_WORLDS } from "./elegantContent";
+import { LandingPickAreas } from "./LandingPickAreas";
 
-/** Value-first content visible above the fold (no auth CTAs). */
-export function LandingAboveFoldValue() {
-  const peekCards = BEYOND_SCHOOL_CARDS.slice(0, 3);
-
-  return (
-    <div className="landing-fold-value" aria-label="What makes KidQuest special">
-      <CuriosityTeaser compact />
-
-      <div className="landing-beyond-peek">
-        <p className="landing-section-label">Beyond school</p>
-        <div className="landing-beyond-peek-grid">
-          {peekCards.map((card) => (
-            <div key={card.id} className={`landing-beyond-peek-card ${card.glow}`}>
-              <span className="landing-beyond-peek-icon" aria-hidden>
-                {card.icon}
-              </span>
-              <span className="landing-beyond-peek-tag">{card.tag}</span>
-              <span className="landing-beyond-peek-title">{card.title}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="landing-worlds-mini">
-        <p className="landing-section-label landing-worlds-mini-label">6 live worlds</p>
-        <div className="landing-worlds-row">
-          {LANDING_MINI_WORLDS.map((w) => (
-            <div key={w.id} className={`landing-world-chip ${w.gradient}`}>
-              <span className="landing-world-chip-emoji" aria-hidden>
-                {w.emoji}
-              </span>
-              <span className="landing-world-chip-name">{w.name}</span>
-            </div>
-          ))}
-        </div>
-        <p className="landing-worlds-tease">50+ worlds unlocking as you quest</p>
-      </div>
-    </div>
-  );
-}
-
-/** Full marketing story — visible on scroll (not behind a toggle). */
+/** Full marketing story — scroll order matches product spec. */
 export function LandingMarketingSections({ onGetStarted }) {
   return (
     <div className="landing-marketing" aria-label="Why families choose KidQuest">
-      <section id="why-kidquest" className="landing-marketing-section">
+      <section id="what-is-kidquest" className="landing-marketing-section">
         <CuriosityTeaser />
-        <BeyondSchoolGrid />
+        <BeyondSchoolGrid onComingSoon={() => {}} />
       </section>
 
       <section id="life-skills" className="landing-marketing-section">
         <LifeSkillsStrip />
         <WonderQuote />
+      </section>
+
+      <section className="landing-marketing-section">
+        <LandingPickAreas onGetStarted={onGetStarted} />
       </section>
 
       <section id="worlds" className="landing-marketing-section">
@@ -72,44 +34,5 @@ export function LandingMarketingSections({ onGetStarted }) {
 
       <LandingBottomCta onGetStarted={onGetStarted} />
     </div>
-  );
-}
-
-/** Appears after scrolling past the hero — opens getting-started modal. */
-export function LandingStickyBar({ onOpenGettingStarted }) {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 320);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  if (!visible) return null;
-
-  return (
-    <div className="landing-sticky-bar" role="navigation" aria-label="Get started">
-      <span className="landing-sticky-brand">
-        <span className="text-white">Kid</span>
-        <span className="elegant-title-grad">Quest</span>
-      </span>
-      <button
-        type="button"
-        className="landing-sticky-cta focus-ring"
-        onClick={onOpenGettingStarted}
-      >
-        Let&apos;s get started
-      </button>
-    </div>
-  );
-}
-
-export function LandingScrollCue() {
-  return (
-    <p className="landing-scroll-cue" aria-hidden>
-      Scroll to see what&apos;s inside
-      <span className="landing-scroll-cue-arrow">↓</span>
-    </p>
   );
 }

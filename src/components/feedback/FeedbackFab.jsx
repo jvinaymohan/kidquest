@@ -12,7 +12,7 @@ export function FeedbackFab() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed z-50 right-4 bottom-[5.5rem] sm:bottom-6 w-12 h-12 rounded-full bg-ink text-white shadow-lg grid place-items-center focus-ring safe-bottom border-2 border-white/20"
+        className="feedback-fab fixed z-40 left-4 bottom-[max(1rem,env(safe-area-inset-bottom))] w-12 h-12 rounded-full bg-ink text-white shadow-lg grid place-items-center focus-ring border-2 border-white/20"
         aria-label="Send feedback"
         title="Send feedback"
       >

@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X } from "lucide-react";
+import { X } from "lucide-react";
 import { GoogleSignInButton } from "../auth/GoogleSignInButton";
 import { isGoogleOAuthEnabled } from "../../lib/featureFlags";
 import { GETTING_STARTED_ITEMS } from "./elegantContent";
@@ -24,20 +24,6 @@ function trapFocus(container, e) {
     e.preventDefault();
     first.focus();
   }
-}
-
-export function LetsGetStartedFab({ onClick }) {
-  return (
-    <button
-      type="button"
-      className="landing-get-started-fab focus-ring"
-      onClick={onClick}
-      aria-haspopup="dialog"
-    >
-      <Sparkles size={16} aria-hidden className="landing-get-started-fab-icon" />
-      <span>Let&apos;s get started</span>
-    </button>
-  );
 }
 
 export function GettingStartedModal({ open, onClose }) {
