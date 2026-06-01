@@ -103,6 +103,30 @@ button {
            bg-white/20 text-white backdrop-blur-md ring-1 ring-white/25;
   }
 
+  /* Hub pages — cosmic play routes (Curiosity, Science, Math, …) */
+  .hub-glass-header {
+    @apply rounded-3xl border border-white/15 bg-white/10 backdrop-blur-md p-5;
+  }
+
+  .hub-topic-card {
+    @apply rounded-3xl p-4 flex items-center gap-3 focus-ring
+           ring-1 ring-white/15 bg-white/10 backdrop-blur-md
+           hover:bg-white/15 transition shadow-sm;
+  }
+
+  .hub-journey-link {
+    @apply flex items-center gap-2 rounded-2xl border border-white/20 px-4 py-3
+           text-sm font-extrabold text-white focus-ring;
+  }
+
+  .hub-glass-panel {
+    @apply rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md;
+  }
+
+  .hub-muted {
+    @apply text-white/55;
+  }
+
   .home-page {
     background-color: #f3f4f8;
     background-image:

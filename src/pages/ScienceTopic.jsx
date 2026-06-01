@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { getScienceTopic } from "../data/science/topics";
 import { useAppStore } from "../store/useAppStore";
 import { useScienceStore } from "../store/useScienceStore";
@@ -77,14 +76,6 @@ export default function ScienceTopic() {
 
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <button
-        type="button"
-        onClick={() => navigate("/science")}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Science
-      </button>
-
       {phase === "lesson" ? (
         <div
           className="chunky-card p-5 text-center"

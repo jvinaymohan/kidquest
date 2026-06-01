@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { useAppStore } from "../store/useAppStore";
 import { LEVELS, OPERATIONS, STREAK_TARGET } from "../utils/mathMastery/constants";
@@ -38,14 +38,6 @@ export default function MathMasteryHub() {
 
   return (
     <div className="flex flex-col gap-5 pb-8">
-      <button
-        type="button"
-        onClick={() => navigate("/math")}
-        className="self-start flex items-center gap-1 rounded-pill px-2 py-1 font-display font-extrabold text-ink/70 focus-ring"
-      >
-        <ChevronLeft size={20} /> Math Zone
-      </button>
-
       <motion.header
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

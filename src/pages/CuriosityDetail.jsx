@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, Share2 } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
+import { Share2 } from "lucide-react";
 import { getCuriosityCard, getAllCuriosityCards } from "../data/curiosity";
 import { useAppStore } from "../store/useAppStore";
 import { useCuriosityStore } from "../store/useCuriosityStore";
@@ -17,10 +17,10 @@ import {
 } from "../components/curiosity/CuriosityDetailModules";
 import { buildSessionShareText, shareAchievement } from "../utils/shareAchievement";
 import { Button } from "../components/ui/Button";
+import { PlayCosmicShell } from "../components/layout/PlayCosmicShell";
 
 export default function CuriosityDetail({ variant = "spark" }) {
   const { id, month } = useParams();
-  const navigate = useNavigate();
   const ageGroup = useAppStore((s) => s.ageGroup);
   const kidName = useAppStore((s) => s.kidName);
   const band = ageGroupToBand(ageGroup);
@@ -50,17 +50,17 @@ export default function CuriosityDetail({ variant = "spark" }) {
 
   if (!card) {
     return (
-      <div className="p-6 text-center">
-        <p className="font-display font-extrabold">This curiosity card isn&apos;t available.</p>
-        <Link to="/curiosity" className="text-primary font-bold mt-2 inline-block">
+      <PlayCosmicShell className="pb-8">
+        <p className="font-display font-extrabold text-white text-center">This curiosity card isn&apos;t available.</p>
+        <Link to="/curiosity" className="text-[#ffd700] font-bold mt-2 inline-block text-center">
           Back to hub
         </Link>
-      </div>
+      </PlayCosmicShell>
     );
   }
 
   const content = contentForBand(card, band);
-  const gradient = card.visual?.gradient ?? "from-[#667eea] to-[#764ba2]";
+  const gradient = card.visual?.gradient ?? "from-[#667eea]/90 to-[#764ba2]/90";
   const backLabel = variant === "weekly" ? "Weekly" : variant === "theme" ? "Theme" : "Spark";
 
   async function onShare() {
@@ -75,30 +75,22 @@ export default function CuriosityDetail({ variant = "spark" }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
-      <button
-        type="button"
-        onClick={() => navigate("/curiosity")}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Curiosity Hub
-      </button>
-
-      <header className={`rounded-3xl p-5 bg-gradient-to-br ${gradient} text-white`}>
+    <PlayCosmicShell className="pb-8">
+      <header className={`rounded-3xl p-5 bg-gradient-to-br ${gradient} text-white border border-white/20`}>
         <p className="text-[10px] font-extrabold uppercase tracking-widest text-white/70">
           {backLabel}
         </p>
         <span className="text-5xl mt-2 block" aria-hidden>
           {card.visual?.emoji}
         </span>
-        <h1 className="mt-2 font-display text-2xl font-extrabold leading-tight">{card.title}</h1>
+        <h1 className="mt-2 elegant-serif text-2xl font-bold leading-tight">{card.title}</h1>
         <p className="mt-2 text-sm font-bold text-white/85">{card.hook}</p>
       </header>
 
       {content ? (
         <CuriositySummary content={content} />
       ) : (
-        <p className="rounded-2xl bg-white/80 p-4 text-sm font-bold text-ink/70 ring-1 ring-ink/[0.08]">
+        <p className="hub-glass-panel p-4 text-sm font-bold text-white/70">
           This card is still being prepared for your age band. Check back soon or try another spark!
         </p>
       )}
@@ -120,6 +112,6 @@ export default function CuriosityDetail({ variant = "spark" }) {
         </Button>
         {shareMsg && <p className="text-xs font-bold text-center text-success">{shareMsg}</p>}
       </div>
-    </div>
+    </PlayCosmicShell>
   );
 }

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
 import { getTriviaCategory } from "../data/trivia/categories";
 import { useAppStore } from "../store/useAppStore";
 import { useTriviaStore } from "../store/useTriviaStore";
@@ -89,14 +88,6 @@ export default function TriviaCategory() {
 
   return (
     <div className="flex flex-col gap-4 pb-8">
-      <button
-        type="button"
-        onClick={() => navigate("/trivia")}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Trivia
-      </button>
-
       <div className="text-center">
         <span className="text-4xl">{category.emoji}</span>
         <h1 className="font-display text-xl font-extrabold mt-1">{category.title}</h1>

@@ -7,33 +7,32 @@ import { OfflineBanner } from "./OfflineBanner";
 import { RouteErrorBoundary } from "./RouteErrorBoundary";
 import { useTeslaMode } from "../../hooks/useTeslaMode";
 import { useRouteScreenTime } from "../../hooks/useRouteScreenTime";
+import { routeChrome } from "../../utils/playRoutes";
 
 export function AppShell({ hideTop = false, hideBottom = false, flush = false }) {
   useTeslaMode();
   useRouteScreenTime();
   const location = useLocation();
-  const isHome = location.pathname === "/home";
-  const isLanding = location.pathname === "/landing";
-  const isAbout = location.pathname === "/about";
-  const isCuriosityHub = location.pathname === "/curiosity";
-  const cosmicRoute = isHome || isLanding;
-  const viewportLocked = isLanding;
-  const showQuestHome = !isHome && !isLanding && !isAbout && !isCuriosityHub;
-  const showTopBar = !hideTop && !isHome && !isCuriosityHub;
+  const { isHome, cosmic, showTopBar, showQuestHomeFab } = routeChrome(location.pathname);
+  const viewportLocked = location.pathname === "/landing";
+
+  const effectiveShowTopBar = !hideTop && showTopBar;
+  const effectiveCosmicNav = cosmic && !hideBottom;
+  const effectiveShowQuestHome = showQuestHomeFab && !hideBottom;
 
   useEffect(() => {
-    document.body.classList.toggle("cosmic-route", cosmicRoute);
+    document.body.classList.toggle("cosmic-route", cosmic);
     return () => document.body.classList.remove("cosmic-route");
-  }, [cosmicRoute]);
+  }, [cosmic]);
 
   const mainWrapClass = flush || isHome
     ? "w-full"
     : "w-full max-w-2xl mx-auto px-4 py-5 md:max-w-3xl lg:max-w-4xl";
 
   return (
-    <div className={`min-h-screen flex flex-col ${cosmicRoute ? "bg-transparent" : "bg-bg"}`}>
+    <div className={`min-h-screen flex flex-col ${cosmic ? "bg-transparent" : "bg-bg"}`}>
       <OfflineBanner />
-      {showTopBar && <TopBar />}
+      {effectiveShowTopBar && <TopBar />}
       <main
         className={`flex-1 overflow-x-hidden ${viewportLocked ? "overflow-hidden" : "overflow-y-auto"}`}
       >
@@ -43,13 +42,13 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
           </RouteErrorBoundary>
         </div>
       </main>
-      {!hideBottom && <BottomNav cosmic={isHome} />}
+      {!hideBottom && <BottomNav cosmic={effectiveCosmicNav} />}
 
-      {showQuestHome && (
+      {effectiveShowQuestHome && (
         <Link
           to="/home"
           className="fixed right-3 z-40 flex items-center gap-1.5 rounded-full border-2 border-white/25 bg-[#1a1060]/95 px-3 py-2 font-display text-[11px] font-extrabold text-white shadow-lg backdrop-blur-md focus-ring safe-bottom"
-          style={{ bottom: hideBottom ? "calc(0.75rem + env(safe-area-inset-bottom))" : "calc(4.75rem + env(safe-area-inset-bottom))" }}
+          style={{ bottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
           aria-label="Quest Home"
         >
           <Home size={16} strokeWidth={2.5} />

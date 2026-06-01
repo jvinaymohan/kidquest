@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { useMemo } from "react";
 import { motion } from "framer-motion";
 import * as Icons from "lucide-react";
-import { ChevronLeft, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { getLessonsFor, getSubject } from "../data/subjects";
 import { Mascot } from "../components/mascots/Mascot";
@@ -17,6 +17,7 @@ import { GeographyHub } from "./GeographyHub";
 import { isLessonUnlocked, subjectProgress, subjectRankFor } from "../utils/content";
 import { isLiveSubject } from "../config/liveSubjects";
 import { Button } from "../components/ui/Button";
+import { PlayCosmicShell } from "../components/layout/PlayCosmicShell";
 
 export default function Subject() {
   const { subjectId } = useParams();
@@ -54,14 +55,7 @@ export default function Subject() {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <button
-        onClick={() => navigate("/home")}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Home
-      </button>
-
+    <PlayCosmicShell className="pb-4">
       <motion.section
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -138,20 +132,13 @@ export default function Subject() {
           navigate={navigate}
         />
       )}
-    </div>
+    </PlayCosmicShell>
   );
 }
 
 function ComingSoonSubject({ subject, onBack }) {
   return (
-    <div className="flex flex-col gap-4 py-6 text-center">
-      <button
-        type="button"
-        onClick={onBack}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Home
-      </button>
+    <PlayCosmicShell className="py-6 text-center">
       <div className="chunky-card p-8">
         <p className="text-4xl" aria-hidden>
           🚧
@@ -165,7 +152,7 @@ function ComingSoonSubject({ subject, onBack }) {
           Back to Home
         </Button>
       </div>
-    </div>
+    </PlayCosmicShell>
   );
 }
 

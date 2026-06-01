@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ChevronLeft, Sparkles, Trophy } from "lucide-react";
+import { Sparkles, Trophy } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { useScienceStore } from "../store/useScienceStore";
@@ -16,6 +16,7 @@ import { subjectProgress } from "../utils/content";
 import { xpToNextLevel } from "../utils/scoring";
 import { ProgressRing } from "../components/ui/ProgressRing";
 import { BADGE_BY_ID } from "../data/badges";
+import { HubPageLayout } from "../components/layout/HubPageLayout";
 
 export default function MyJourney() {
   const navigate = useNavigate();
@@ -58,45 +59,54 @@ export default function MyJourney() {
       emoji: "🌍",
       title: "Geography",
       pct: geoStats.masteryPct,
-      detail: `${geoMastered} countries in deck · ${geoStats.mastered}/${geoStats.total} lessons`,
+      detail: `${geoMastered}/${COUNTRIES.length} countries mastered`,
       path: "/subject/geography",
-      color: "var(--geography)",
-    },
-    {
-      id: "math",
-      emoji: "🔢",
-      title: "Math",
-      pct: mathMastered / mathTotal,
-      detail: `${mathMastered}/${mathTotal} mastery levels · ${mulLegendary}/20 legendary tables`,
-      path: "/math",
-      color: "var(--math)",
+      color: "#2EC4B6",
     },
     {
       id: "solar",
       emoji: "🪐",
       title: "Solar System",
       pct: solarStats.masteryPct,
-      detail: `${solarStats.mastered}/${solarStats.total} lessons · ${solarStats.stars}⭐`,
+      detail: `${solarStats.mastered}/${solarStats.total} lessons mastered`,
       path: "/subject/solar-system",
-      color: "var(--solar-system)",
+      color: "#7B68EE",
     },
     {
       id: "science",
       emoji: "🧪",
-      title: "Science",
+      title: "Science Lab",
       pct: scienceDone / Math.max(1, SCIENCE_TOPICS.length),
-      detail: `${scienceDone}/${SCIENCE_TOPICS.length} topics explored`,
+      detail: `${scienceDone}/${SCIENCE_TOPICS.length} topics done`,
       path: "/science",
       color: "#9B5DE5",
     },
     {
       id: "trivia",
       emoji: "⭐",
-      title: "Trivia",
+      title: "Trivia Galaxy",
       pct: triviaDone / Math.max(1, TRIVIA_CATEGORIES.length),
-      detail: `${triviaDone}/${TRIVIA_CATEGORIES.length} categories · 1000s of facts`,
+      detail: `${triviaDone}/${TRIVIA_CATEGORIES.length} categories done`,
       path: "/trivia",
-      color: "var(--trivia)",
+      color: "#FF6B6B",
+    },
+    {
+      id: "math",
+      emoji: "🎯",
+      title: "Math Master",
+      pct: mathMastered / mathTotal,
+      detail: `${mathMastered}/${mathTotal} levels mastered`,
+      path: "/math-master",
+      color: "#3A86FF",
+    },
+    {
+      id: "mul",
+      emoji: "⚡",
+      title: "Multiplication",
+      pct: mulLegendary / 20,
+      detail: `${mulLegendary}/20 legendary tables`,
+      path: "/multiplication",
+      color: "#FFD700",
     },
     {
       id: "curiosity",
@@ -110,25 +120,12 @@ export default function MyJourney() {
   ];
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
-      <button
-        type="button"
-        onClick={() => navigate("/home")}
-        className="self-start flex items-center gap-1 font-display font-extrabold text-ink/70 focus-ring rounded-pill px-2 py-1"
-      >
-        <ChevronLeft size={20} /> Home
-      </button>
-
-      <header className="rounded-chunky border-[3px] border-primary/30 bg-gradient-to-br from-[#1a1060] via-[#2d1b8e] to-[#4a2cc7] p-5 text-center text-white">
-        <Sparkles className="mx-auto text-[#ffd700]" size={32} />
-        <h1 className="mt-2 font-display text-2xl font-extrabold">
-          Look what you discovered, {kidName || "Explorer"}!
-        </h1>
-        <p className="mt-1 text-sm font-bold text-white/70">
-          Level {level.level} {level.emoji} · {currentStreak}-day streak · {COUNTRIES.length} countries to explore
-        </p>
-      </header>
-
+    <HubPageLayout
+      title={`Look what you discovered, ${kidName || "Explorer"}!`}
+      subtitle={`Level ${level.level} ${level.emoji} · ${currentStreak}-day streak · ${COUNTRIES.length} countries to explore`}
+      icon={<Sparkles className="mx-auto text-[#ffd700]" size={32} aria-hidden />}
+      headerClassName="border-primary/30"
+    >
       <ul className="flex flex-col gap-3">
         {cards.map((card, i) => (
           <motion.li
@@ -140,15 +137,17 @@ export default function MyJourney() {
             <button
               type="button"
               onClick={() => navigate(card.path)}
-              className="w-full text-left rounded-3xl p-4 flex items-center gap-3 focus-ring ring-1 ring-ink/[0.08] shadow-sm bg-white hover:shadow-md"
+              className="hub-topic-card"
             >
-              <span className="text-3xl">{card.emoji}</span>
+              <span className="text-3xl shrink-0">{card.emoji}</span>
               <div className="flex-1 min-w-0">
-                <p className="font-display font-extrabold text-base">{card.title}</p>
-                <p className="text-xs font-medium text-ink/55 mt-0.5">{card.detail}</p>
+                <p className="font-display font-extrabold text-base text-white">{card.title}</p>
+                <p className="text-xs font-medium text-white/55 mt-0.5">{card.detail}</p>
               </div>
               <ProgressRing value={card.pct} size={48} stroke={6} color={card.color}>
-                <span className="text-[10px] font-extrabold">{Math.round(card.pct * 100)}%</span>
+                <span className="text-[10px] font-extrabold text-white">
+                  {Math.round(card.pct * 100)}%
+                </span>
               </ProgressRing>
             </button>
           </motion.li>
@@ -156,16 +155,16 @@ export default function MyJourney() {
       </ul>
 
       {recentBadges.length > 0 && (
-        <section className="chunky-card p-4">
+        <section className="hub-glass-panel p-4">
           <div className="flex items-center gap-2 mb-3">
-            <Trophy size={18} className="text-primary" />
-            <h2 className="font-display font-extrabold">Recent badges</h2>
+            <Trophy size={18} className="text-[#ffd700]" aria-hidden />
+            <h2 className="font-display font-extrabold text-white">Recent badges</h2>
           </div>
           <ul className="flex flex-wrap gap-2">
             {recentBadges.map((b) => (
               <li
                 key={b.id}
-                className="flex items-center gap-2 bg-bg rounded-2xl px-3 py-2 text-sm font-bold"
+                className="flex items-center gap-2 rounded-2xl bg-white/10 px-3 py-2 text-sm font-bold text-white"
               >
                 <span>{b.emoji}</span> {b.name}
               </li>
@@ -174,9 +173,9 @@ export default function MyJourney() {
         </section>
       )}
 
-      <p className="text-[11px] font-medium text-ink/45 text-center">
+      <p className="text-[11px] font-medium text-white/45 text-center">
         Keep exploring — every quest makes your brain stronger!
       </p>
-    </div>
+    </HubPageLayout>
   );
 }

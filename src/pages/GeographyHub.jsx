@@ -17,16 +17,16 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-3xl bg-gradient-to-br from-[#E1F5EE] via-white to-[#B5E8E1]/40 p-4 ring-1 ring-geography/20">
+      <div className="hub-glass-header text-left border-geography/30 !p-4">
         <div className="flex items-start gap-3">
           <div className="w-12 h-12 rounded-2xl bg-geography/15 grid place-items-center text-2xl shrink-0">
             🌍
           </div>
           <div>
-            <h2 className="font-display text-lg font-extrabold text-geography leading-tight">
+            <h2 className="font-display text-lg font-extrabold text-[#38efc3] leading-tight">
               Know the world — for adventure, not for a test.
             </h2>
-            <p className="text-sm font-medium text-ink/60 mt-1 leading-relaxed">
+            <p className="text-sm font-medium text-white/60 mt-1 leading-relaxed">
               Five tracks · 194 countries · map, flags, capitals & more.
             </p>
           </div>
@@ -48,7 +48,7 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
         </button>
       </div>
 
-      <p className="text-[11px] font-bold uppercase tracking-wide text-ink/45 px-1">
+      <p className="text-[11px] font-bold uppercase tracking-wide text-white/45 px-1">
         5 tracks to master
       </p>
 
@@ -77,10 +77,8 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
                 type="button"
                 disabled={!unlocked}
                 onClick={() => unlocked && navigate(`/lesson/${lesson.id}`)}
-                className={`w-full text-left rounded-3xl p-4 flex items-center gap-3 focus-ring transition ${
-                  unlocked
-                    ? "hover:shadow-md ring-1 ring-ink/[0.08] shadow-sm"
-                    : "opacity-55 cursor-not-allowed ring-1 ring-ink/[0.06]"
+                className={`hub-topic-card transition ${
+                  !unlocked && "opacity-55 cursor-not-allowed"
                 }`}
                 style={{ background: track.accent }}
               >
@@ -97,10 +95,10 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
                   >
                     {track.title}
                   </p>
-                  <p className="text-xs font-medium text-ink/55 mt-0.5 line-clamp-2">
+                  <p className="text-xs font-medium text-white/55 mt-0.5 line-clamp-2">
                     {track.blurb}
                   </p>
-                  <p className="text-[10px] font-bold text-ink/45 mt-1">
+                  <p className="text-[10px] font-bold text-white/45 mt-1">
                     {Math.max(lesson.questions.length, minimumQuestions)}+ questions
                     {p?.mastered ? " · Mastered" : unlocked ? "" : " · Locked"}
                   </p>
@@ -131,8 +129,8 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
         })}
       </ul>
 
-      <p className="text-[11px] font-medium text-ink/45 text-center px-2">
-        Lesson ids use format <code className="text-ink/60">geo-track-age</code>.
+      <p className="text-[11px] font-medium text-white/45 text-center px-2">
+        Lesson ids use format <code className="text-white/60">geo-track-age</code>.
         Old geography progress may reset after updates — see Settings.
       </p>
     </div>
