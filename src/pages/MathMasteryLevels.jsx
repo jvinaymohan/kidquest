@@ -44,7 +44,7 @@ export default function MathMasteryLevels() {
       >
         <span className="text-4xl">{operation.emoji}</span>
         <h1 className="mt-2 font-display text-2xl font-extrabold">{operation.name}</h1>
-        <p className="text-sm font-bold text-ink/60">Master each level — {STREAK_TARGET} correct in a row</p>
+        <p className="text-sm font-bold text-ink/60">Master each level — {STREAK_TARGET} correct in a row wins!</p>
       </header>
 
       <ul className="flex flex-col gap-3">
@@ -92,7 +92,7 @@ export default function MathMasteryLevels() {
                   </span>
                   <div>
                     <p className="font-display font-extrabold">Level {lvl}</p>
-                    <p className="text-xs font-bold text-ink/50">Complete level {lvl - 1} first</p>
+                    <p className="text-xs font-bold text-ink/50">Beat level {lvl - 1} to unlock!</p>
                   </div>
                 </div>
               )}

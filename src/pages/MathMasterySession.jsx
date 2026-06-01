@@ -10,6 +10,8 @@ import { MasteryModal } from "../components/mathMastery/MasteryModal";
 import { NumberLineHint } from "../components/mathMastery/NumberLineHint";
 import { TIMED_SECONDS, getOperation } from "../utils/mathMastery/constants";
 import { checkAnswer, generateQuestion } from "../utils/mathMastery/questionGenerator";
+import { downgradeCopy, sessionNeedsDowngrade } from "../utils/placement";
+import { DowngradePrompt } from "../components/placement/PlacementPrompt";
 
 export default function MathMasterySession() {
   const { operationId, level: levelStr } = useParams();
@@ -20,9 +22,13 @@ export default function MathMasterySession() {
   const timedMode = useMathMasteryStore((s) => s.timedMode);
   const showHints = useMathMasteryStore((s) => s.showHints);
   const recordAttempt = useMathMasteryStore((s) => s.recordAttempt);
+  const stepDownLevel = useMathMasteryStore((s) => s.stepDownLevel);
   const grantXP = useAppStore((s) => s.grantXP);
 
   const [streak, setStreak] = useState(0);
+  const [sessionCorrect, setSessionCorrect] = useState(0);
+  const [sessionTotal, setSessionTotal] = useState(0);
+  const [showDowngrade, setShowDowngrade] = useState(false);
   const [input, setInput] = useState("");
   const [feedback, setFeedback] = useState(null);
   const [locked, setLocked] = useState(false);
@@ -55,6 +61,14 @@ export default function MathMasterySession() {
 
       setFeedback({ correct, answer: question.answer });
       setStreak(newStreak);
+      setSessionCorrect((c) => c + (correct ? 1 : 0));
+      setSessionTotal((t) => {
+        const next = t + 1;
+        if (level > 1 && sessionNeedsDowngrade(correct ? sessionCorrect + 1 : sessionCorrect, next)) {
+          setShowDowngrade(true);
+        }
+        return next;
+      });
 
       const result = recordAttempt(operationId, level, { correct, streak: newStreak });
       if (correct) grantXP(5);
@@ -73,7 +87,7 @@ export default function MathMasterySession() {
         }
       }, correct ? 900 : 2500);
     },
-    [question, locked, input, streak, operationId, level, recordAttempt, grantXP, nextQuestion, operation]
+    [question, locked, input, streak, sessionCorrect, sessionTotal, operationId, level, recordAttempt, grantXP, nextQuestion, operation]
   );
 
   submitRef.current = handleSubmit;
@@ -170,6 +184,17 @@ export default function MathMasterySession() {
           setModal(null);
           navigate(`/math-master/${operationId}`);
         }}
+      />
+
+      <DowngradePrompt
+        open={showDowngrade && level > 1}
+        copy={downgradeCopy({ subject: "math", fromLevel: level })}
+        onAccept={() => {
+          const target = stepDownLevel(operationId, level);
+          setShowDowngrade(false);
+          navigate(`/math-master/${operationId}/level/${target}`, { replace: true });
+        }}
+        onDismiss={() => setShowDowngrade(false)}
       />
     </div>
   );

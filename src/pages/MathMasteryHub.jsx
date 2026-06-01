@@ -1,23 +1,40 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, RotateCcw } from "lucide-react";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
+import { useAppStore } from "../store/useAppStore";
 import { LEVELS, OPERATIONS, STREAK_TARGET } from "../utils/mathMastery/constants";
+import { isFreshMathProgress, placementCopy, suggestedMathLevel } from "../utils/placement";
+import { PlacementPrompt } from "../components/placement/PlacementPrompt";
 import { Button } from "../components/ui/Button";
 
 export default function MathMasteryHub() {
   const navigate = useNavigate();
+  const ageGroup = useAppStore((s) => s.ageGroup);
   const progress = useMathMasteryStore((s) => s.progress);
+  const placementApplied = useMathMasteryStore((s) => s.placementApplied);
+  const applyAgePlacement = useMathMasteryStore((s) => s.applyAgePlacement);
   const timedMode = useMathMasteryStore((s) => s.timedMode);
   const showHints = useMathMasteryStore((s) => s.showHints);
   const setTimedMode = useMathMasteryStore((s) => s.setTimedMode);
   const setShowHints = useMathMasteryStore((s) => s.setShowHints);
   const resetProgress = useMathMasteryStore((s) => s.resetProgress);
+  const [showPlacement, setShowPlacement] = useState(false);
 
   const totalMastered = OPERATIONS.reduce(
     (sum, op) => sum + LEVELS.filter((l) => progress[op.id]?.[l]?.mastered).length,
     0
   );
+  const suggested = suggestedMathLevel(ageGroup);
+
+  useEffect(() => {
+    if (!placementApplied && isFreshMathProgress(progress) && suggested > 1) {
+      setShowPlacement(true);
+    }
+  }, [placementApplied, progress, suggested]);
+
+  const copy = placementCopy(ageGroup, "math");
 
   return (
     <div className="flex flex-col gap-5 pb-8">
@@ -44,11 +61,17 @@ export default function MathMasteryHub() {
         <p className="mt-2 font-display text-sm font-extrabold text-primary">
           {totalMastered}/{OPERATIONS.length * LEVELS.length} levels mastered ⭐
         </p>
+        {placementApplied && suggested > 1 && (
+          <p className="mt-2 text-xs font-bold text-ink/50">
+            Starting around Level {suggested} for your age — we'll adjust if it's too hard!
+          </p>
+        )}
       </motion.header>
 
       <div className="grid gap-3">
         {OPERATIONS.map((op, i) => {
           const mastered = LEVELS.filter((l) => progress[op.id]?.[l]?.mastered).length;
+          const nextLevel = LEVELS.find((l) => progress[op.id]?.[l]?.unlocked && !progress[op.id]?.[l]?.mastered) ?? 1;
           return (
             <motion.div
               key={op.id}
@@ -70,7 +93,7 @@ export default function MathMasteryHub() {
                 <div className="flex-1 min-w-0">
                   <p className="font-display text-lg font-extrabold">{op.name}</p>
                   <p className="text-sm font-bold text-ink/55">
-                    {mastered}/{LEVELS.length} ⭐ mastered
+                    {mastered}/{LEVELS.length} ⭐ · next: Level {nextLevel}
                   </p>
                 </div>
                 <span className="font-display font-extrabold" style={{ color: op.accent }}>
@@ -82,7 +105,6 @@ export default function MathMasteryHub() {
         })}
       </div>
 
-      {/* Progress grid overview */}
       <section className="chunky-card p-4">
         <p className="mb-3 font-display text-sm font-extrabold text-ink">Your progress map</p>
         <div className="overflow-x-auto">
@@ -149,6 +171,23 @@ export default function MathMasteryHub() {
           Reset progress
         </Button>
       </section>
+
+      <PlacementPrompt
+        open={showPlacement}
+        copy={copy}
+        onJump={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: true });
+          setShowPlacement(false);
+        }}
+        onEasy={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: false });
+          setShowPlacement(false);
+        }}
+        onDismiss={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: false });
+          setShowPlacement(false);
+        }}
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, Trophy } from "lucide-react";
@@ -15,8 +15,14 @@ import {
   countLegendaryTables,
   countTablesAtPhase3Plus,
 } from "../utils/multiplicationProgress";
+import { isFreshMulProgress, placementCopy, suggestedMulTable } from "../utils/placement";
+import { PlacementPrompt } from "../components/placement/PlacementPrompt";
 
 export default function MultiplicationHub() {
+  const ageGroup = useAppStore((s) => s.ageGroup);
+  const tables = useMultiplicationStore((s) => s.tables);
+  const placementApplied = useMultiplicationStore((s) => s.placementApplied);
+  const applyAgePlacement = useMultiplicationStore((s) => s.applyAgePlacement);
   const dueCount = useMultiplicationStore((s) => countDueReviews(s));
   const phase3Count = useMultiplicationStore((s) => countTablesAtPhase3Plus(s.tables, s.unlockAllTables));
   const speedRuns = useMultiplicationStore((s) => s.speedRuns);
@@ -25,12 +31,21 @@ export default function MultiplicationHub() {
   const tableOfDay = useMultiplicationStore((s) => s.tableOfTheDay);
   const legendary = useMultiplicationStore((s) => countLegendaryTables(s.tables));
   const grantBadge = useAppStore((s) => s.grantBadge);
+  const [showPlacement, setShowPlacement] = useState(false);
+  const suggested = suggestedMulTable(ageGroup);
 
   useEffect(() => {
     if (legendary >= 20) grantBadge("mul_grand_multiplier");
   }, [legendary, grantBadge]);
 
+  useEffect(() => {
+    if (!placementApplied && isFreshMulProgress(tables) && suggested > 2) {
+      setShowPlacement(true);
+    }
+  }, [placementApplied, tables, suggested]);
+
   const canSpeedRun = phase3Count >= 5;
+  const copy = placementCopy(ageGroup, "multiplication");
 
   return (
     <div className="flex flex-col gap-5 pb-8">
@@ -42,10 +57,15 @@ export default function MultiplicationHub() {
         <div className="flex items-start gap-3">
           <Zap className="text-mul-gold shrink-0" size={32} />
           <div>
-            <h1 className="font-display text-2xl font-extrabold">Multiplication Training Camp</h1>
+            <h1 className="font-display text-2xl font-extrabold">Times Table Training Camp!</h1>
             <p className="text-sm font-bold text-white/85 mt-1">
-              Master tables 1–20. Own every fact. Win the 50-question speed run.
+              Learn, drill, beat the boss — become a multiplication legend!
             </p>
+            {placementApplied && suggested > 2 && (
+              <p className="mt-2 text-xs font-bold text-mul-gold/90">
+                Starting around {suggested}× for your age — we'll help if it's too tough!
+              </p>
+            )}
           </div>
         </div>
         {legendary === 20 && (
@@ -102,6 +122,23 @@ export default function MultiplicationHub() {
           </p>
         )}
       </section>
+
+      <PlacementPrompt
+        open={showPlacement}
+        copy={copy}
+        onJump={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: true });
+          setShowPlacement(false);
+        }}
+        onEasy={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: false });
+          setShowPlacement(false);
+        }}
+        onDismiss={() => {
+          applyAgePlacement(ageGroup, { jumpAhead: false });
+          setShowPlacement(false);
+        }}
+      />
     </div>
   );
 }

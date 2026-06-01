@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Play, Settings, Sparkles } from "lucide-react";
+import { Play, Settings, Sparkles, Zap, Target, Trophy, Brain } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { isAdminUser } from "../lib/adminAccess";
@@ -12,8 +12,11 @@ import { countDueReviews } from "../utils/multiplicationProgress";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { countGeoDueReviews } from "../utils/geographyProgress";
 import { useGeographyStore } from "../store/useGeographyStore";
+import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { getDailyChallenge } from "../utils/dailyChallenge";
 import { xpToNextLevel } from "../utils/scoring";
+import { LEVELS, OPERATIONS } from "../utils/mathMastery/constants";
+import { BADGE_BY_ID } from "../data/badges";
 import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
 import { SpaceBackground } from "../components/home/SpaceBackground";
@@ -25,6 +28,7 @@ const WORLD = {
     to: "#27ae60",
     shadow: "0 10px 30px rgba(39,174,96,0.4)",
     xp: 50,
+    tag: "Explore countries!",
   },
   math: {
     emoji: "🔢",
@@ -32,6 +36,7 @@ const WORLD = {
     to: "#2980b9",
     shadow: "0 10px 30px rgba(41,128,185,0.4)",
     xp: 40,
+    tag: "Numbers & tables",
   },
   "solar-system": {
     emoji: "🪐",
@@ -39,12 +44,21 @@ const WORLD = {
     to: "#e74c3c",
     shadow: "0 10px 30px rgba(231,76,60,0.4)",
     xp: 60,
+    tag: "Blast off!",
   },
-  history: { emoji: "📜", from: "#8e6b14", to: "#d4a017", shadow: undefined, xp: 0 },
-  music: { emoji: "🎵", from: "#6b3fa0", to: "#9b5de5", shadow: undefined, xp: 0 },
-  "general-knowledge": { emoji: "💡", from: "#b45309", to: "#fb8500", shadow: undefined, xp: 0 },
-  trivia: { emoji: "⭐", from: "#c1121f", to: "#e63946", shadow: undefined, xp: 0 },
+  history: { emoji: "📜", from: "#8e6b14", to: "#d4a017", shadow: undefined, xp: 0, tag: "Soon" },
+  music: { emoji: "🎵", from: "#6b3fa0", to: "#9b5de5", shadow: undefined, xp: 0, tag: "Soon" },
+  "general-knowledge": { emoji: "💡", from: "#b45309", to: "#fb8500", shadow: undefined, xp: 0, tag: "Soon" },
+  trivia: { emoji: "⭐", from: "#c1121f", to: "#e63946", shadow: undefined, xp: 0, tag: "Soon" },
 };
+
+const MASCOT_TIPS = [
+  "Tap a world below to start your next adventure!",
+  "Finish today's goal to keep your streak glowing!",
+  "Math Master loves 25-in-a-row streaks — can you do it?",
+  "Legendary tables = super speed-run powers!",
+  "Daily bonus XP is waiting — grab it before bed!",
+];
 
 function todayKey() {
   const d = new Date();
@@ -70,9 +84,14 @@ export default function Home() {
     currentStreak,
     totalXP,
     totalPoints,
+    badges,
+    ageGroup,
   } = useAppStore();
 
   const mulDue = useMultiplicationStore((s) => countDueReviews(s));
+  const mulRank = useMultiplicationStore((s) => s.getRank());
+  const mulLegendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const mathProgress = useMathMasteryStore((s) => s.progress);
   const geoDue = useGeographyStore((s) => countGeoDueReviews(s.countries));
   const theme = getMonthlyTheme();
   const daily = useMemo(() => getDailyChallenge(), []);
@@ -81,12 +100,24 @@ export default function Home() {
   const lessonsDone = lessonsToday?.date === todayKey() ? lessonsToday.count : 0;
   const goalPct = Math.min(100, Math.round((lessonsDone / Math.max(1, dailyGoal)) * 100));
   const reviewsDue = mulDue + geoDue;
+  const tip = useMemo(() => MASCOT_TIPS[Math.floor(Date.now() / 86400000) % MASCOT_TIPS.length], []);
+
+  const mathMastered = useMemo(
+    () =>
+      OPERATIONS.reduce(
+        (sum, op) => sum + LEVELS.filter((l) => mathProgress[op.id]?.[l]?.mastered).length,
+        0
+      ),
+    [mathProgress]
+  );
+  const mathTotal = OPERATIONS.length * LEVELS.length;
+  const recentBadge = useMemo(() => {
+    const last = badges?.[badges.length - 1];
+    return last ? BADGE_BY_ID[last] : null;
+  }, [badges]);
 
   const liveSubjects = SUBJECTS.filter((s) => isLiveSubject(s.id));
   const soonSubjects = SUBJECTS.filter((s) => !isLiveSubject(s.id));
-
-  const playPath = pathForSubject("math") ?? "/math";
-  const playTitle = "Math Zone";
 
   function openSubject(subject) {
     const path = pathForSubject(subject.id);
@@ -98,7 +129,7 @@ export default function Home() {
     <div className="home-v2 home-v2-scroll relative">
       <SpaceBackground reduceMotion={reduce} />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-col px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
+      <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col px-4 pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
         {/* HUD */}
         <header className="flex shrink-0 items-center gap-1.5">
           <Link to="/profile" className="home-v2-hud-profile focus-ring">
@@ -113,7 +144,9 @@ export default function Home() {
               <span className="block truncate font-display text-xs font-extrabold text-white">
                 {kidName || "Explorer"}
               </span>
-              <span className="block text-[9px] font-bold text-white/50">Lvl {level.level}</span>
+              <span className="block text-[9px] font-bold text-white/50">
+                {level.emoji} {level.title}
+              </span>
             </span>
           </Link>
 
@@ -132,91 +165,137 @@ export default function Home() {
           </Link>
         </header>
 
-        {/* Hero */}
-        <section className="mt-4 flex flex-col items-center text-center">
-          <p className="home-v2-badge">
-            {theme.emoji} {theme.name}
-          </p>
-
-          <div className="relative mt-4">
+        {/* Hero row — mascot + greeting + goal */}
+        <section className="mt-4 grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
+          <div className="relative mx-auto sm:mx-0">
             <div className={reduce ? "" : "home-v2-logo-ring grid place-items-center"}>
               <div
-                className={`home-v2-logo-inner grid place-items-center ${reduce ? "h-[5.5rem] w-[5.5rem] rounded-full bg-[#1a1060]" : ""}`}
+                className={`home-v2-logo-inner grid place-items-center ${reduce ? "h-[4.5rem] w-[4.5rem] rounded-full bg-[#1a1060]" : ""}`}
               >
-                <Mascot kind="rocket" size={48} animate={!reduce} />
+                <Mascot kind="rocket" size={40} animate={!reduce} />
               </div>
             </div>
-            {!reduce && (
-              <>
-                <span className="absolute -right-2 -top-1 text-lg" aria-hidden>
-                  ⭐
-                </span>
-                <span className="absolute -left-3 bottom-0 text-sm" aria-hidden>
-                  ✨
-                </span>
-                <span className="absolute -left-4 top-5 text-xs" aria-hidden>
-                  💫
-                </span>
-              </>
-            )}
           </div>
 
-          <h1 className="mt-4 font-display text-[2.35rem] font-extrabold leading-none tracking-tight">
-            <span className="text-white">Hi {kidName || "friend"}!</span>
-            <span className="mt-1 block text-[1.65rem]">
-              <span className="text-white">Pick a </span>
-              <span className="home-v2-title-quest">quest</span>
-            </span>
-          </h1>
-
-          <div className="home-v2-goal mt-4 w-full max-w-xs">
-            <div
-              className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full"
-              style={{
-                background: `conic-gradient(#FFD700 ${goalPct}%, rgba(255,255,255,0.12) ${goalPct}%)`,
-              }}
-            >
-              <span className="grid h-8 w-8 place-items-center rounded-full bg-[#1a1060] text-[10px] font-extrabold text-white">
-                {goalPct}%
-              </span>
-            </div>
-            <p className="text-left text-xs font-bold text-white/70">
-              <span className="font-display font-extrabold text-white">Today&apos;s goal</span>
-              <br />
-              {lessonsDone}/{dailyGoal} lessons
-            </p>
+          <div className="min-w-0 text-center sm:text-left">
+            <p className="home-v2-badge inline-flex">{theme.emoji} {theme.name}</p>
+            <h1 className="mt-2 font-display text-2xl font-extrabold leading-tight text-white sm:text-[1.75rem]">
+              Hey {kidName || "friend"}!{" "}
+              <span className="home-v2-title-quest">Ready to quest?</span>
+            </h1>
+            <p className="home-v2-mascot-tip mt-2">{tip}</p>
           </div>
-
-          <motion.button
-            type="button"
-            onClick={() => navigate(playPath)}
-            className="home-v2-play mt-4 focus-ring"
-            whileTap={{ scale: 0.98 }}
-          >
-            <span className="flex items-center justify-center gap-2">
-              <Play size={20} fill="currentColor" />
-              Play now
-            </span>
-            <span className="mt-0.5 block text-xs font-bold text-white/90">{playTitle}</span>
-          </motion.button>
         </section>
 
+        {/* Stats + goal row */}
+        <section className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <StatTile emoji="🎯" label="Today's goal" value={`${lessonsDone}/${dailyGoal}`} sub={`${goalPct}% done`} />
+          <StatTile emoji="🧮" label="Math Master" value={`${mathMastered}/${mathTotal}`} sub="levels ⭐" />
+          <StatTile emoji="✖️" label="Tables" value={`${mulLegendary}/20`} sub="legendary" />
+          <StatTile emoji={level.emoji} label="Rank" value={`Lvl ${level.level}`} sub={level.isMax ? "Max!" : `${level.current}/${level.needed} XP`} />
+        </section>
+
+        {/* XP progress bar */}
+        {!level.isMax && (
+          <div className="home-v2-xp-bar mt-3">
+            <div className="flex justify-between text-[10px] font-extrabold text-white/60">
+              <span>{level.title}</span>
+              <span>Next level</span>
+            </div>
+            <div className="mt-1 h-2 overflow-hidden rounded-full bg-white/10">
+              <motion.div
+                className="h-full rounded-full bg-gradient-to-r from-[#ffd700] to-[#ff6b6b]"
+                initial={false}
+                animate={{ width: `${Math.round(level.pct * 100)}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Quick actions */}
+        <section className="mt-5">
+          <h2 className="mb-2 text-center text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/45">
+            Quick launch
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            <QuickAction
+              icon={<Play size={18} fill="currentColor" />}
+              title="Play now"
+              sub="Math Zone"
+              accent="from-[#ff6b6b] to-[#ffd700]"
+              onClick={() => navigate("/math")}
+              reduce={reduce}
+            />
+            <QuickAction
+              icon={<Target size={18} />}
+              title="Math Master"
+              sub={`${mathMastered} levels done`}
+              accent="from-[#2980b9] to-[#54a0ff]"
+              onClick={() => navigate("/math-master")}
+              reduce={reduce}
+            />
+            <QuickAction
+              icon={<Zap size={18} />}
+              title="Times Tables"
+              sub={mulRank?.label ?? "Training camp"}
+              accent="from-[#9b5de5] to-[#5f27cd]"
+              onClick={() => navigate("/multiplication")}
+              reduce={reduce}
+            />
+            <QuickAction
+              icon={<Brain size={18} />}
+              title={reviewsDue > 0 ? "Reviews!" : "Daily bonus"}
+              sub={reviewsDue > 0 ? `${reviewsDue} ready` : dailyDone ? "Done ✅" : daily.title}
+              accent="from-[#2ecc71] to-[#27ae60]"
+              onClick={() => (reviewsDue > 0 ? navigate("/review") : navigate(daily.path))}
+              reduce={reduce}
+              pulse={reviewsDue > 0}
+            />
+          </div>
+        </section>
+
+        {/* Streak / badge celebration */}
+        {(currentStreak >= 3 || recentBadge) && (
+          <motion.div
+            initial={reduce ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="home-v2-celebrate mt-4 flex items-center gap-3 px-3 py-2.5"
+          >
+            <span className="text-2xl" aria-hidden>
+              {currentStreak >= 7 ? "💎" : currentStreak >= 3 ? "🔥" : recentBadge?.emoji ?? "🏆"}
+            </span>
+            <p className="text-left text-xs font-bold text-white/85">
+              {currentStreak >= 3 ? (
+                <>
+                  <span className="font-display font-extrabold text-[#ffd700]">{currentStreak}-day streak!</span>
+                  {" "}You're on fire — keep it going!
+                </>
+              ) : (
+                <>
+                  New badge: <span className="font-display font-extrabold text-[#ffd700]">{recentBadge?.name}</span>
+                </>
+              )}
+            </p>
+          </motion.div>
+        )}
+
         {/* Live worlds */}
-        <section className="mt-8">
-          <div className="mb-4 flex items-center justify-center gap-2">
+        <section className="mt-6">
+          <div className="mb-3 flex items-center justify-center gap-2">
             <span className="home-v2-live-dot" aria-hidden />
             <h2 className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/50">
-              Live now
+              Pick your world
             </h2>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {liveSubjects.map((s, i) => {
               const w = WORLD[s.id] ?? WORLD.trivia;
               return (
                 <SubjectCard
                   key={s.id}
                   name={s.name}
+                  tag={w.tag}
                   emoji={w.emoji}
                   from={w.from}
                   to={w.to}
@@ -230,8 +309,8 @@ export default function Home() {
             })}
           </div>
 
-          <p className="mt-6 text-center text-[11px] font-bold uppercase tracking-widest text-white/40">
-            Coming soon
+          <p className="mt-5 text-center text-[11px] font-bold uppercase tracking-widest text-white/35">
+            More worlds coming soon
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             {soonSubjects.map((s) => {
@@ -241,7 +320,7 @@ export default function Home() {
                   key={s.id}
                   type="button"
                   onClick={() => setComingSoonName(s.name)}
-                  className="home-v2-subject-compact w-[4.5rem] focus-ring"
+                  className="home-v2-subject-compact w-[4.25rem] focus-ring"
                   style={{
                     background: `linear-gradient(145deg, ${w.from}, ${w.to})`,
                   }}
@@ -249,10 +328,10 @@ export default function Home() {
                   <span className="absolute -right-0.5 -top-0.5 z-10 rounded-full bg-[#0d0b2e] px-1.5 py-0.5 text-[7px] font-extrabold uppercase text-white">
                     Soon
                   </span>
-                  <span className="text-xl" aria-hidden>
+                  <span className="text-lg" aria-hidden>
                     {w.emoji}
                   </span>
-                  <span className="mt-0.5 text-center font-display text-[9px] font-extrabold leading-tight text-white">
+                  <span className="mt-0.5 text-center font-display text-[8px] font-extrabold leading-tight text-white">
                     {s.name}
                   </span>
                 </button>
@@ -262,17 +341,7 @@ export default function Home() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-6 flex flex-col gap-2">
-          {reviewsDue > 0 && (
-            <button
-              type="button"
-              onClick={() => navigate("/review")}
-              className="w-full rounded-2xl bg-violet-500/90 px-3 py-2.5 font-display text-xs font-extrabold text-white shadow-lg focus-ring"
-            >
-              🧠 {reviewsDue} reviews ready
-            </button>
-          )}
-
+        <footer className="mt-5 flex flex-col gap-2">
           <Link
             to={daily.path}
             onClick={() => {
@@ -288,18 +357,31 @@ export default function Home() {
             </span>
             <div className="min-w-0 flex-1 text-left">
               <p className="truncate font-display text-sm font-extrabold text-white">
-                {dailyDone ? "Daily bonus done" : daily.title}
+                {dailyDone ? "Daily bonus collected!" : `Daily quest: ${daily.title}`}
               </p>
               <p className="text-[11px] font-bold text-white/50">
-                {dailyDone ? "See you tomorrow" : `+${daily.xpBonus} XP & pts`}
+                {dailyDone ? "See you tomorrow, space cadet!" : `+${daily.xpBonus} XP if you finish`}
               </p>
             </div>
             {!dailyDone && (
               <span className="shrink-0 rounded-full bg-gradient-to-r from-[#ff6b6b] to-[#ffd700] px-2.5 py-1 text-[10px] font-extrabold text-white">
-                Go
+                Go!
               </span>
             )}
           </Link>
+
+          {ageGroup === "champion" && (
+            <Link
+              to="/compete"
+              className="home-v2-daily focus-ring border-[#ffd700]/30"
+            >
+              <Trophy size={22} className="text-[#ffd700]" />
+              <div className="min-w-0 flex-1 text-left">
+                <p className="font-display text-sm font-extrabold text-white">Compete hub</p>
+                <p className="text-[11px] font-bold text-white/50">Duels & leaderboards</p>
+              </div>
+            </Link>
+          )}
 
           {showAdmin && (
             <Link
@@ -333,7 +415,33 @@ function HudPill({ emoji, value, label }) {
   );
 }
 
-function SubjectCard({ name, emoji, from, to, shadow, xp, delay, reduce, onClick }) {
+function StatTile({ emoji, label, value, sub }) {
+  return (
+    <div className="home-v2-stat-tile">
+      <span className="text-lg" aria-hidden>{emoji}</span>
+      <p className="text-[9px] font-extrabold uppercase tracking-wide text-white/45">{label}</p>
+      <p className="font-display text-sm font-extrabold tabular-nums text-white">{value}</p>
+      <p className="text-[9px] font-bold text-white/50">{sub}</p>
+    </div>
+  );
+}
+
+function QuickAction({ icon, title, sub, accent, onClick, reduce, pulse }) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      whileTap={{ scale: 0.97 }}
+      className={`home-v2-quick-action bg-gradient-to-br ${accent} focus-ring ${pulse ? "home-v2-pulse" : ""}`}
+    >
+      <span className="opacity-90">{icon}</span>
+      <span className="font-display text-sm font-extrabold text-white">{title}</span>
+      <span className="text-[10px] font-bold text-white/85">{sub}</span>
+    </motion.button>
+  );
+}
+
+function SubjectCard({ name, tag, emoji, from, to, shadow, xp, delay, reduce, onClick }) {
   return (
     <motion.button
       type="button"
@@ -342,7 +450,7 @@ function SubjectCard({ name, emoji, from, to, shadow, xp, delay, reduce, onClick
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay, duration: 0.3 }}
       whileTap={{ scale: 0.96 }}
-      className="home-v2-subject-card focus-ring"
+      className="home-v2-subject-card home-v2-subject-card-dense focus-ring"
       style={{
         background: `linear-gradient(145deg, ${from}, ${to})`,
         boxShadow: shadow,
@@ -351,7 +459,8 @@ function SubjectCard({ name, emoji, from, to, shadow, xp, delay, reduce, onClick
       <span className="home-v2-card-emoji" aria-hidden>
         {emoji}
       </span>
-      <span className="home-v2-card-name">{name}</span>
+      <span className="home-v2-card-name text-sm">{name}</span>
+      <span className="text-[9px] font-bold text-white/75">{tag}</span>
       {xp > 0 && <span className="home-v2-card-xp">+{xp} XP</span>}
     </motion.button>
   );
@@ -369,16 +478,16 @@ function ComingSoonToast({ name, onClose }) {
         <p className="text-3xl" aria-hidden>
           🚧
         </p>
-        <p className="mt-2 font-display text-lg font-extrabold text-white">{name} is coming soon!</p>
+        <p className="mt-2 font-display text-lg font-extrabold text-white">{name} is blasting off soon!</p>
         <p className="mt-1 text-sm font-semibold text-white/60">
-          Try Geography, Math, or Solar System for now.
+          For now, try Geography, Math, or Solar System!
         </p>
         <button
           type="button"
           onClick={onClose}
           className="mt-4 w-full rounded-2xl bg-gradient-to-r from-[#ff6b6b] to-[#ffd700] py-3 font-display font-extrabold text-white focus-ring"
         >
-          Got it
+          Got it!
         </button>
       </motion.div>
     </div>

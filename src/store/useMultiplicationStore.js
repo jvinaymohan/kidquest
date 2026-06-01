@@ -5,6 +5,7 @@ import { calculateNextReview, qualityFromResponse } from "../lib/sm2";
 import { rankForLegendaryCount, medalForRun } from "../utils/multiplicationScoring";
 import { TABLE_BADGES } from "../data/multiplication/badges";
 import { queueMulFactUpsert, queueMulTableUpsert } from "../lib/cloud/progress";
+import { suggestedMulTable } from "../utils/placement";
 
 function defaultFact() {
   return {
@@ -305,6 +306,7 @@ export const useMultiplicationStore = create(
           bestSpeedRun: null,
           practiceStreakDays: 0,
           lastPracticeDate: null,
+          placementApplied: false,
         }),
     }),
     {

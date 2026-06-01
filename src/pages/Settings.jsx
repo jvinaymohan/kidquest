@@ -38,6 +38,8 @@ import { usePreferencesStore } from "../store/usePreferencesStore";
 import { downloadExportJson } from "../lib/exportData";
 import { LOCALES, setLocale } from "../lib/i18n";
 import { useGeographyStore } from "../store/useGeographyStore";
+import { useMathMasteryStore } from "../store/useMathMasteryStore";
+import { suggestedMathLevel, suggestedMulTable } from "../utils/placement";
 import { DEFAULT_PARENT_PIN, isDefaultParentPin } from "../constants/parentPin";
 import { isAdminUser } from "../lib/adminAccess";
 
@@ -67,6 +69,8 @@ export default function Settings() {
   const [assignmentDue, setAssignmentDue] = useState("");
   const [assignmentSubject, setAssignmentSubject] = useState("math");
   const multiplicationTables = useMultiplicationStore((s) => s.tables);
+  const applyMulPlacement = useMultiplicationStore((s) => s.applyAgePlacement);
+  const applyMathPlacement = useMathMasteryStore((s) => s.applyAgePlacement);
   const locale = usePreferencesStore((s) => s.locale);
   const setLocalePref = usePreferencesStore((s) => s.setLocale);
   const dyslexiaFont = usePreferencesStore((s) => s.dyslexiaFont);
@@ -384,6 +388,38 @@ export default function Settings() {
               <div className="text-xs text-ink/70">{g.description}</div>
             </button>
           ))}
+        </div>
+      </section>
+
+      <section className="chunky-card p-4 border-[3px] border-primary/15">
+        <h2 className="font-display font-extrabold text-lg mb-1">Level placement</h2>
+        <p className="text-xs font-bold text-ink/60 mb-3">
+          Match Math Master & times tables to {kidName || "your kid"}&apos;s age. We&apos;ll suggest easier levels if things get too hard.
+        </p>
+        <p className="text-sm font-bold text-ink/70 mb-3">
+          For <span className="text-primary">{AGE_GROUPS.find((g) => g.id === ageGroup)?.label ?? ageGroup}</span>:
+          Math Level {suggestedMathLevel(ageGroup)}, Table {suggestedMulTable(ageGroup)}×
+        </p>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            className="flex-1"
+            onClick={() => {
+              applyMathPlacement(ageGroup, { jumpAhead: true });
+              applyMulPlacement(ageGroup, { jumpAhead: true });
+            }}
+          >
+            Jump ahead 🚀
+          </Button>
+          <Button
+            variant="ghost"
+            className="flex-1"
+            onClick={() => {
+              applyMathPlacement(ageGroup, { jumpAhead: false });
+              applyMulPlacement(ageGroup, { jumpAhead: false });
+            }}
+          >
+            Start easy
+          </Button>
         </div>
       </section>
 

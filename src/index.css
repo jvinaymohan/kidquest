@@ -403,6 +403,44 @@ button {
     color: transparent;
   }
 
+  .home-v2-mascot-tip {
+    @apply rounded-xl px-3 py-2 text-xs font-bold text-white/75;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .home-v2-stat-tile {
+    @apply flex flex-col items-center gap-0.5 rounded-2xl px-2 py-2.5 text-center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(8px);
+  }
+
+  .home-v2-xp-bar {
+    @apply rounded-2xl px-3 py-2;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .home-v2-quick-action {
+    @apply flex flex-col items-start gap-0.5 rounded-2xl px-3 py-3 text-left shadow-lg;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .home-v2-pulse {
+    animation: home-live-pulse 2s infinite;
+  }
+
+  .home-v2-celebrate {
+    @apply rounded-2xl;
+    background: linear-gradient(90deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 107, 0.12));
+    border: 1px solid rgba(255, 215, 0, 0.35);
+  }
+
+  .home-v2-subject-card-dense {
+    @apply w-full py-4;
+  }
+
   /* Marketing / pre-login pages */
   .marketing-page {
     background: linear-gradient(165deg, #e8f4ff 0%, #fff8f0 40%, #fef3ff 75%, #fff9f3 100%);

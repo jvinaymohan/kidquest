@@ -7,6 +7,7 @@ import { getFactsForTable, ALL_FACTS, MOTIVATIONAL } from "../data/multiplicatio
 import { shuffle } from "../utils/multiplicationScoring";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
 import { useAppStore } from "../store/useAppStore";
+import { bossNeedsDowngrade, downgradeCopy } from "../utils/placement";
 import { ConfettiBlast } from "../components/rewards/ConfettiBlast";
 import { TABLE_BADGES } from "../data/multiplication/badges";
 import { confirmExit, useExitGuard } from "../hooks/useExitGuard";
@@ -28,6 +29,7 @@ export default function MultiplicationBoss() {
   const tableNumber = Number(tn);
   const questions = useMemo(() => buildBossQuestions(tableNumber), [tableNumber]);
   const recordBoss = useMultiplicationStore((s) => s.recordBoss);
+  const stepDownTable = useMultiplicationStore((s) => s.stepDownTable);
   const grantXP = useAppStore((s) => s.grantXP);
   const grantBadge = useAppStore((s) => s.grantBadge);
   const navigate = useNavigate();
@@ -122,7 +124,11 @@ export default function MultiplicationBoss() {
           {passed ? MOTIVATIONAL.phase4Pass(tableNumber) : `Almost! ${finalScore}/20`}
         </motion.h2>
         {!passed && (
-          <p className="text-sm font-bold text-white/70">Need 18/20 to unlock Legend path. Try again!</p>
+          <p className="text-sm font-bold text-white/70">
+            Need 18/20 to pass. {bossNeedsDowngrade(finalScore) && tableNumber > 1
+              ? "This table might be a bit hard — try an easier one!"
+              : "Try again — you've got this!"}
+          </p>
         )}
         {showLearn && (
           <p className="text-sm font-bold text-white/60">
@@ -133,6 +139,17 @@ export default function MultiplicationBoss() {
           onRetry={() => navigate(`/multiplication/table/${tableNumber}/boss`)}
           onBack={() => navigate(`/multiplication/table/${tableNumber}`)}
           onLearn={() => navigate(learnPath)}
+          onEasier={
+            !passed && bossNeedsDowngrade(finalScore) && tableNumber > 1
+              ? () => {
+                  const easier = stepDownTable(tableNumber);
+                  navigate(`/multiplication/table/${easier}`);
+                }
+              : null
+          }
+          easierLabel={
+            downgradeCopy({ subject: "multiplication", fromTable: tableNumber })?.actionLabel
+          }
           passed={passed}
           showLearn={showLearn}
         />
@@ -172,7 +189,7 @@ export default function MultiplicationBoss() {
   );
 }
 
-function ButtonRow({ onRetry, onBack, onLearn, passed, showLearn }) {
+function ButtonRow({ onRetry, onBack, onLearn, onEasier, easierLabel, passed, showLearn }) {
   return (
     <div className="flex flex-col sm:flex-row gap-2 mt-4">
       {!passed && (
@@ -182,6 +199,15 @@ function ButtonRow({ onRetry, onBack, onLearn, passed, showLearn }) {
           className="px-4 py-2 rounded-chunky bg-mul-electric text-mul-dark font-display font-extrabold"
         >
           Try Again
+        </button>
+      )}
+      {onEasier && easierLabel && (
+        <button
+          type="button"
+          onClick={onEasier}
+          className="px-4 py-2 rounded-chunky bg-mul-gold text-mul-dark font-display font-extrabold"
+        >
+          {easierLabel}
         </button>
       )}
       {showLearn && (

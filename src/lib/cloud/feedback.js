@@ -1,4 +1,5 @@
 import { isSupabaseEnabled, supabase } from "../supabaseClient";
+import { saveLocalFeedback } from "../localFeedback";
 
 export const FEEDBACK_CATEGORIES = [
   { id: "general", label: "General", emoji: "💬" },
@@ -20,7 +21,17 @@ export async function submitFeedback({
   rating,
 }) {
   if (!isSupabaseEnabled) {
-    return { ok: false, reason: "Cloud is off — feedback saved locally only in this build." };
+    saveLocalFeedback({
+      userId,
+      contactEmail,
+      contactName,
+      userRole,
+      pagePath,
+      category,
+      message,
+      rating,
+    });
+    return { ok: true, id: null, local: true };
   }
   const trimmedMessage = message.trim();
   const { data, error } = await supabase.rpc("submit_app_feedback", {
@@ -35,23 +46,25 @@ export async function submitFeedback({
   if (!error) {
     return { ok: true, id: data ?? null };
   }
-  if (!/submit_app_feedback|schema cache|PGRST202/i.test(error.message)) {
-    return { ok: false, reason: error.message };
-  }
-  const row = {
-    user_id: userId ?? null,
-    contact_email: contactEmail?.trim()?.toLowerCase() || null,
-    contact_name: contactName?.trim() || null,
-    user_role: userRole ?? null,
-    page_path: pagePath ?? null,
-    category: category ?? "general",
+  // Never fall back to direct table insert — RLS blocks it in production.
+  saveLocalFeedback({
+    userId,
+    contactEmail,
+    contactName,
+    userRole,
+    pagePath,
+    category,
     message: trimmedMessage,
-    rating: rating ?? null,
-    status: "new",
+    rating,
+    rpcError: error.message,
+  });
+  return {
+    ok: false,
+    reason:
+      error.message.includes("row-level security") || error.message.includes("submit_app_feedback")
+        ? "Feedback couldn't reach the server right now. We saved it on this device — try again later or email support."
+        : error.message,
   };
-  const { error: insertError } = await supabase.from("app_feedback").insert(row);
-  if (insertError) return { ok: false, reason: insertError.message };
-  return { ok: true, id: null };
 }
 
 export async function fetchFeedbackForAdmin({ status, category, limit = 100 } = {}) {

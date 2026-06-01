@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { LEVELS, OPERATIONS, STREAK_TARGET } from "../utils/mathMastery/constants";
+import { suggestedMathLevel } from "../utils/placement";
 
 function defaultLevelRow(level) {
   return {
@@ -42,6 +43,7 @@ export const useMathMasteryStore = create(
       progress: defaultProgress(),
       timedMode: false,
       showHints: true,
+      placementApplied: false,
 
       setTimedMode: (v) => set({ timedMode: v }),
       setShowHints: (v) => set({ showHints: v }),
@@ -87,11 +89,54 @@ export const useMathMasteryStore = create(
         return { mastered: justMastered, operationComplete: allMastered };
       },
 
+      applyAgePlacement: (ageGroup, { jumpAhead = true } = {}) => {
+        const startLevel = jumpAhead ? suggestedMathLevel(ageGroup) : 1;
+        set((s) => {
+          const progress = defaultProgress();
+          for (const op of OPERATIONS) {
+            for (const lvl of LEVELS) {
+              if (lvl < startLevel) {
+                progress[op.id][lvl] = {
+                  ...defaultLevelRow(lvl),
+                  unlocked: true,
+                };
+              } else if (lvl === startLevel) {
+                progress[op.id][lvl] = {
+                  ...defaultLevelRow(lvl),
+                  unlocked: true,
+                };
+              }
+            }
+          }
+          return { progress, placementApplied: true };
+        });
+        return startLevel;
+      },
+
+      stepDownLevel: (operation, fromLevel) => {
+        const target = Math.max(1, fromLevel - 1);
+        if (target >= fromLevel) return target;
+        set((s) => {
+          const op = { ...(s.progress[operation] ?? {}) };
+          for (const lvl of LEVELS) {
+            if (lvl >= fromLevel) {
+              op[lvl] = { ...defaultLevelRow(lvl), unlocked: false, mastered: false };
+            }
+          }
+          op[target] = { ...defaultLevelRow(target), unlocked: true };
+          return {
+            progress: { ...s.progress, [operation]: op },
+          };
+        });
+        return target;
+      },
+
       resetProgress: () =>
         set({
           progress: defaultProgress(),
           timedMode: false,
           showHints: true,
+          placementApplied: false,
         }),
     }),
     {
