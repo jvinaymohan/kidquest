@@ -83,8 +83,42 @@ export const useMultiplicationStore = create(
       lastPracticeDate: null,
       tableOfTheDay: new Date().getDate() % 20 || 20,
       unlockAllTables: false,
+      placementApplied: false,
 
       setUnlockAll: (v) => set({ unlockAllTables: v }),
+
+      applyAgePlacement: (ageGroup, { jumpAhead = true } = {}) => {
+        const startTable = jumpAhead ? suggestedMulTable(ageGroup) : 2;
+        set((s) => {
+          const tables = defaultTables();
+          for (let n = 1; n <= 20; n++) {
+            if (n < startTable) {
+              tables[n] = {
+                ...defaultTableRow(n),
+                unlocked: true,
+                learnComplete: true,
+                bossPassed: true,
+                currentPhase: 4,
+              };
+            } else if (n === startTable) {
+              tables[n] = { ...defaultTableRow(n), unlocked: true };
+            }
+          }
+          return { tables, placementApplied: true };
+        });
+        return startTable;
+      },
+
+      stepDownTable: (fromTable) => {
+        const target = Math.max(1, fromTable - 1);
+        if (target >= fromTable) return target;
+        set((s) => {
+          const tables = { ...s.tables };
+          tables[target] = { ...(tables[target] ?? defaultTableRow(target)), unlocked: true };
+          return { tables };
+        });
+        return target;
+      },
 
       completeLearn: (tableNumber) => {
         set((s) => {
