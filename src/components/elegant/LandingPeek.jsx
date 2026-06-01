@@ -1,88 +1,75 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
 import {
   BeyondSchoolGrid,
   CuriosityTeaser,
+  LandingBottomCta,
   LifeSkillsStrip,
-  StatsRow,
   WonderQuote,
   WorldsShowcase,
 } from "./ElegantSections";
-import { LANDING_MINI_WORLDS, LANDING_PEEK_CARDS } from "./elegantContent";
 
-export function CuriosityPeekStrip() {
+/** Full marketing story — visible on scroll (not behind a toggle). */
+export function LandingMarketingSections() {
   return (
-    <section className="landing-peek" aria-label="Why KidQuest">
-      <div className="landing-peek-row">
-        {LANDING_PEEK_CARDS.map((card) => (
-          <Link key={card.title} to={card.to} className="landing-peek-card focus-ring">
-            <span className="landing-peek-icon" aria-hidden>
-              {card.icon}
-            </span>
-            <span className="landing-peek-title">{card.title}</span>
-            <span className="landing-peek-desc">{card.desc}</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
+    <div className="landing-marketing" aria-label="Why families choose KidQuest">
+      <section id="why-kidquest" className="landing-marketing-section">
+        <CuriosityTeaser />
+        <BeyondSchoolGrid />
+      </section>
 
-export function WorldsMiniRow() {
-  return (
-    <section className="landing-worlds-mini" aria-label="Live worlds preview">
-      <p className="landing-section-label landing-worlds-mini-label">Live worlds</p>
-      <div className="landing-worlds-row">
-        {LANDING_MINI_WORLDS.map((world) => (
-          <div
-            key={world.id}
-            className={`landing-world-chip ${world.gradient}`}
-            title={world.name}
-          >
-            <span className="landing-world-chip-emoji" aria-hidden>
-              {world.emoji}
-            </span>
-            <span className="landing-world-chip-name">{world.name}</span>
-          </div>
-        ))}
-      </div>
-      <p className="landing-worlds-tease">
-        <Link to="/register" className="focus-ring rounded">
-          Sign in to explore
-        </Link>
-      </p>
-    </section>
-  );
-}
+      <section id="life-skills" className="landing-marketing-section">
+        <LifeSkillsStrip />
+        <WonderQuote />
+      </section>
 
-export function LandingLearnMore({ expanded, onToggle }) {
-  return (
-    <div className="landing-learn-more">
-      <button
-        type="button"
-        className="landing-learn-more-btn focus-ring"
-        onClick={onToggle}
-        aria-expanded={expanded}
-      >
-        {expanded ? "Show less" : "Learn more"}
-        <ChevronDown
-          className={`landing-learn-more-chevron ${expanded ? "landing-learn-more-chevron-open" : ""}`}
-          size={16}
-          aria-hidden
-        />
-      </button>
-      {expanded && (
-        <div className="landing-learn-more-panel">
-          <CuriosityTeaser compact />
-          <BeyondSchoolGrid />
-          <LifeSkillsStrip />
-          <WonderQuote />
-          <StatsRow />
-          <div className="elegant-landing-wrap px-1">
-            <WorldsShowcase interactive={false} />
-          </div>
+      <section id="worlds" className="landing-marketing-section">
+        <div className="elegant-landing-wrap px-1">
+          <WorldsShowcase interactive={false} />
         </div>
-      )}
+      </section>
+
+      <LandingBottomCta />
     </div>
+  );
+}
+
+/** Appears after scrolling past the hero. */
+export function LandingStickyBar() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 320);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="landing-sticky-bar" role="navigation" aria-label="Sign in">
+      <span className="landing-sticky-brand">
+        <span className="text-white">Kid</span>
+        <span className="elegant-title-grad">Quest</span>
+      </span>
+      <div className="landing-sticky-actions">
+        <Link to="/login" className="landing-sticky-link focus-ring">
+          Sign in
+        </Link>
+        <Link to="/register" className="landing-sticky-cta focus-ring">
+          Get started
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export function LandingScrollCue() {
+  return (
+    <p className="landing-scroll-cue" aria-hidden>
+      Scroll to see what&apos;s inside
+      <span className="landing-scroll-cue-arrow">↓</span>
+    </p>
   );
 }

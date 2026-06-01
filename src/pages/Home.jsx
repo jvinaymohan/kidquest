@@ -21,8 +21,9 @@ import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
 import { ElegantBackground } from "../components/elegant/ElegantBackground";
 import { ElegantLogo } from "../components/elegant/ElegantLogo";
-import { CuriosityTeaser, WorldsShowcase } from "../components/elegant/ElegantSections";
+import { WorldsShowcase } from "../components/elegant/ElegantSections";
 import { DiscoverMore } from "../components/home/DiscoverMore";
+import { ParentPeekBanner } from "../components/home/ParentPeekBanner";
 import { useScreenTimeStore, formatScreenMinutes } from "../store/useScreenTimeStore";
 import { DailyTreasure } from "../components/home/DailyTreasure";
 import { StreakCalendar } from "../components/home/StreakCalendar";
@@ -224,9 +225,7 @@ export default function Home() {
               </div>
             </section>
 
-            <div className="home-v2-marketing-block">
-              <CuriosityTeaser compact />
-            </div>
+            <ParentPeekBanner kidName={kidName} />
 
             <section className="home-v2-stat-row">
               <StatTile emoji="🎯" label="Today's goal" value={`${lessonsDone}/${dailyGoal}`} sub={`${goalPct}% done`} />

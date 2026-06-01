@@ -21,7 +21,7 @@ export function DiscoverMore({ kidName, onComingSoon }) {
         className="home-v2-discover-toggle focus-ring w-full flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-sm font-display font-extrabold text-white/80"
         aria-expanded={open}
       >
-        Discover more
+        About KidQuest — for parents
         <ChevronDown
           size={18}
           className={clsx("transition-transform", open && "rotate-180")}

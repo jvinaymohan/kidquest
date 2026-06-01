@@ -110,12 +110,13 @@ export const LANDING_PEEK_CARDS = [
   { icon: "🧠", title: "Beyond school", desc: "Real-life skills", to: "/register" },
 ];
 
-/** Teaser row on landing — muted until sign-in. */
+/** Mini world chips (optional teasers) — matches liveSubjects.js */
 export const LANDING_MINI_WORLDS = [
   { id: "geography", emoji: "🌍", gradient: "wc-geo", name: "Geo" },
   { id: "math", emoji: "🔢", gradient: "wc-math", name: "Math" },
-  { id: "science", emoji: "🔬", gradient: "wc-sci", name: "Science" },
   { id: "trivia", emoji: "⭐", gradient: "wc-trivia", name: "Trivia" },
+  { id: "curiosity", emoji: "🔭", gradient: "wc-sci", name: "Curiosity" },
+  { id: "science", emoji: "🔬", gradient: "wc-sci", name: "Science" },
   { id: "solar-system", emoji: "🪐", gradient: "wc-space", name: "Space" },
 ];
 

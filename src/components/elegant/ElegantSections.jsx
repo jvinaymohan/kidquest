@@ -208,6 +208,12 @@ export function LandingBottomCta() {
             ✨ Request an invite
           </Link>
         </div>
+        <p className="elegant-signin">
+          Already have an account?{" "}
+          <Link to="/login" className="focus-ring">
+            Sign in
+          </Link>
+        </p>
         <p className="elegant-footer-note">100% free · Safe for ages 6–14 · No ads, ever</p>
       </div>
     </section>
