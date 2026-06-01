@@ -190,8 +190,8 @@ export function WorldsShowcase({ onWorldClick, onComingSoon, interactive = true 
   );
 }
 
-/** Pre-login bottom CTA with invite buttons. */
-export function LandingBottomCta() {
+/** Pre-login bottom CTA — opens getting-started modal when handler provided. */
+export function LandingBottomCta({ onGetStarted }) {
   return (
     <section className="elegant-cta-bottom">
       <div className="elegant-cta-card">
@@ -200,20 +200,30 @@ export function LandingBottomCta() {
           Join curious kids exploring worlds, earning XP, and learning things they&apos;ll actually
           use in life — for free.
         </p>
-        <div className="elegant-cta-btns">
-          <Link to="/register" className="elegant-btn-primary focus-ring">
-            🚀 I have an invite code
-          </Link>
-          <Link to="/invite-request" className="elegant-btn-secondary focus-ring">
-            ✨ Request an invite
-          </Link>
-        </div>
-        <p className="elegant-signin">
-          Already have an account?{" "}
-          <Link to="/login" className="focus-ring">
-            Sign in
-          </Link>
-        </p>
+        {onGetStarted ? (
+          <div className="elegant-cta-btns">
+            <button type="button" className="elegant-btn-primary focus-ring" onClick={onGetStarted}>
+              🚀 Let&apos;s get started
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="elegant-cta-btns">
+              <Link to="/register" className="elegant-btn-primary focus-ring">
+                🚀 I have an invite code
+              </Link>
+              <Link to="/invite-request" className="elegant-btn-secondary focus-ring">
+                ✨ Request an invite
+              </Link>
+            </div>
+            <p className="elegant-signin">
+              Already have an account?{" "}
+              <Link to="/login" className="focus-ring">
+                Sign in
+              </Link>
+            </p>
+          </>
+        )}
         <p className="elegant-footer-note">100% free · Safe for ages 6–14 · No ads, ever</p>
       </div>
     </section>
