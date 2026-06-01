@@ -33,6 +33,9 @@ export default function MyJourney() {
   const triviaDone = useTriviaStore((s) => s.completedCount());
   const mathProgress = useMathMasteryStore((s) => s.progress);
   const mulLegendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const curiosityCompleted = useCuriosityStore((s) => s.completedCardIds?.length ?? 0);
+  const curiositySaved = useCuriosityStore((s) => (s.savedIds ?? []).length);
+  const curiosityStreak = useCuriosityStore((s) => s.gentleStreak ?? 0);
 
   const geoStats = subjectProgress("geography", ageGroup, lessonProgress);
   const solarStats = subjectProgress("solar-system", ageGroup, lessonProgress);

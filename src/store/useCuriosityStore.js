@@ -43,20 +43,26 @@ export const useCuriosityStore = create(
       },
 
       toggleSaved: (cardId) =>
-        set((s) => ({
-          savedIds: s.savedIds.includes(cardId)
-            ? s.savedIds.filter((id) => id !== cardId)
-            : [...s.savedIds, cardId],
-        })),
+        set((s) => {
+          const savedIds = s.savedIds ?? [];
+          return {
+            savedIds: savedIds.includes(cardId)
+              ? savedIds.filter((id) => id !== cardId)
+              : [...savedIds, cardId],
+          };
+        }),
 
-      isSaved: (cardId) => get().savedIds.includes(cardId),
+      isSaved: (cardId) => (get().savedIds ?? []).includes(cardId),
 
       markCompleted: (cardId) =>
-        set((s) => ({
-          completedCardIds: s.completedCardIds.includes(cardId)
-            ? s.completedCardIds
-            : [...s.completedCardIds, cardId],
-        })),
+        set((s) => {
+          const completedCardIds = s.completedCardIds ?? [];
+          return {
+            completedCardIds: completedCardIds.includes(cardId)
+              ? completedCardIds
+              : [...completedCardIds, cardId],
+          };
+        }),
 
       recordQuiz: (cardId, { correct, total }) =>
         set((s) => ({
@@ -71,7 +77,7 @@ export const useCuriosityStore = create(
           },
         })),
 
-      savedCount: () => get().savedIds.length,
+      savedCount: () => (get().savedIds ?? []).length,
       completedCount: () => get().completedCardIds.length,
     }),
     { name: "kidquest-curiosity-v1", storage: createJSONStorage(() => localStorage) }

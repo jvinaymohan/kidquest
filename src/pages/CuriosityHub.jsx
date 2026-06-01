@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Compass, Sparkles, Calendar, Bookmark } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { useCuriosityStore } from "../store/useCuriosityStore";
-import { useCuriosityPreferencesStore, getCuriosityPrefs } from "../store/useCuriosityPreferencesStore";
+import { useCuriosityPrefs } from "../store/useCuriosityPreferencesStore";
 import { getAllCuriosityCards } from "../data/curiosity";
 import {
   selectDailySpark,
@@ -47,8 +47,8 @@ export default function CuriosityHub() {
   const ageGroup = useAppStore((s) => s.ageGroup);
   const recordOpen = useCuriosityStore((s) => s.recordOpen);
   const gentleStreak = useCuriosityStore((s) => s.gentleStreak);
-  const savedIds = useCuriosityStore((s) => s.savedIds);
-  const prefs = useCuriosityPreferencesStore(getCuriosityPrefs);
+  const savedIds = useCuriosityStore((s) => s.savedIds ?? []);
+  const prefs = useCuriosityPrefs();
   const allCards = useMemo(() => getAllCuriosityCards(), []);
 
   const daily = useMemo(

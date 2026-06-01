@@ -9,7 +9,7 @@ import {
   ageGroupToBand,
   selectMonthlyTheme,
 } from "../utils/curiosity";
-import { useCuriosityPreferencesStore, getCuriosityPrefs } from "../store/useCuriosityPreferencesStore";
+import { useCuriosityPrefs } from "../store/useCuriosityPreferencesStore";
 import { monthKey } from "../utils/curiosity/calendar";
 import {
   CuriositySummary,
@@ -24,7 +24,7 @@ export default function CuriosityDetail({ variant = "spark" }) {
   const ageGroup = useAppStore((s) => s.ageGroup);
   const kidName = useAppStore((s) => s.kidName);
   const band = ageGroupToBand(ageGroup);
-  const prefs = useCuriosityPreferencesStore(getCuriosityPrefs);
+  const prefs = useCuriosityPrefs();
 
   const card = useMemo(() => {
     if (variant === "theme") {
@@ -33,6 +33,7 @@ export default function CuriosityDetail({ variant = "spark" }) {
       const match = monthly.find((c) => {
         const from = c.activeFrom?.slice(0, 7);
         const until = c.activeUntil?.slice(0, 7);
+        if (!from || !until) return false;
         return targetMonth >= from && targetMonth <= until;
       });
       return match ?? selectMonthlyTheme(monthly, prefs, { ageGroup });
@@ -40,7 +41,8 @@ export default function CuriosityDetail({ variant = "spark" }) {
     return getCuriosityCard(id);
   }, [variant, id, month, prefs, ageGroup]);
 
-  const saved = useCuriosityStore((s) => s.savedIds.includes(card?.id));
+  const cardId = card?.id;
+  const saved = useCuriosityStore((s) => cardId != null && (s.savedIds ?? []).includes(cardId));
   const toggleSaved = useCuriosityStore((s) => s.toggleSaved);
   const recordQuiz = useCuriosityStore((s) => s.recordQuiz);
   const markCompleted = useCuriosityStore((s) => s.markCompleted);
@@ -93,7 +95,13 @@ export default function CuriosityDetail({ variant = "spark" }) {
         <p className="mt-2 text-sm font-bold text-white/85">{card.hook}</p>
       </header>
 
-      <CuriositySummary content={content} />
+      {content ? (
+        <CuriositySummary content={content} />
+      ) : (
+        <p className="rounded-2xl bg-white/80 p-4 text-sm font-bold text-ink/70 ring-1 ring-ink/[0.08]">
+          This card is still being prepared for your age band. Check back soon or try another spark!
+        </p>
+      )}
 
       <CuriosityDetailModules
         card={card}

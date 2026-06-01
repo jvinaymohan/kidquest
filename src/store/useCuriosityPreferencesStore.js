@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
+import { useShallow } from "zustand/react/shallow";
 
 const DEFAULT_TOPICS = {
   science: true,
@@ -58,7 +59,7 @@ export const useCuriosityPreferencesStore = create(
   )
 );
 
-/** Shape passed to filter/select utilities */
+/** Shape passed to filter/select utilities (non-hook callers). */
 export function getCuriosityPrefs(getState) {
   const s = getState();
   return {
@@ -71,4 +72,20 @@ export function getCuriosityPrefs(getState) {
     showWeekly: s.showWeekly,
     showMonthly: s.showMonthly,
   };
+}
+
+/** Stable shallow selector — avoids infinite re-renders from new object refs. */
+export function useCuriosityPrefs() {
+  return useCuriosityPreferencesStore(
+    useShallow((s) => ({
+      region: s.region,
+      maxSensitivity: s.maxSensitivity,
+      topics: s.topics,
+      requireTopicApproval: s.requireTopicApproval,
+      approvedTopicIds: s.approvedTopicIds ?? [],
+      showDaily: s.showDaily,
+      showWeekly: s.showWeekly,
+      showMonthly: s.showMonthly,
+    }))
+  );
 }
