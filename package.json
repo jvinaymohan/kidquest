@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test:unit": "node --test src/utils/quizSession.test.js",
+    "test:unit": "node --test src/utils/quizSession.test.js src/utils/multiplicationStages.test.js src/utils/multiplicationPracticeQueue.test.js",
     "lint": "eslint .",
     "preview": "vite preview --port 4173",
     "start": "vite preview --port 4173 --host",

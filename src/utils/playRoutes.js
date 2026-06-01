@@ -6,12 +6,17 @@ const IMMERSIVE_EXACT = new Set([
   "/multiplication/results",
 ]);
 
+const IMMERSIVE_PREFIXES_EXTRA = ["/math/stages/"];
+
 /**
  * Logged-in play surfaces use cosmic background + dark bottom nav.
  * Marketing (/landing, /about) sets cosmic separately on Home only in shell.
  */
 export function isImmersivePlayRoute(pathname) {
   if (IMMERSIVE_EXACT.has(pathname)) return true;
+  if (IMMERSIVE_PREFIXES_EXTRA.some((p) => pathname.startsWith(p) && pathname !== "/math/stages")) {
+    return true;
+  }
   return IMMERSIVE_PREFIXES.some((p) => pathname.startsWith(p));
 }
 

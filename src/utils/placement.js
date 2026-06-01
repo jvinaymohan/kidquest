@@ -1,4 +1,5 @@
 import { LEVELS, OPERATIONS } from "./mathMastery/constants";
+import { MULTIPLICATION_STAGES } from "./multiplicationStages";
 import { AGE_GROUPS } from "../data/subjects";
 
 /** Minimum session attempts before suggesting a level change. */
@@ -20,6 +21,24 @@ export function suggestedMulTable(ageGroup) {
   if (ageGroup === "champion") return 10;
   if (ageGroup === "adventurer") return 6;
   return 2;
+}
+
+/** Suggested multiplication stage id for age placement. */
+export function suggestedMulStage(ageGroup) {
+  if (ageGroup === "champion") return "2x2";
+  if (ageGroup === "adventurer") return "1x2";
+  return "1x1";
+}
+
+export function stagesPlacementCopy(ageGroup) {
+  const meta = ageGroupMeta(ageGroup);
+  const stage = MULTIPLICATION_STAGES.find((s) => s.id === suggestedMulStage(ageGroup));
+  return {
+    title: `Start at ${stage?.title ?? "Stage 1"}?`,
+    body: `You're an ${meta.label} (${meta.ageRange}) — we'll unlock earlier stages as mastered and start you at ${stage?.example ?? "6 × 8"}.`,
+    jumpLabel: `Jump to ${stage?.title ?? "Stage 1"}! 🚀`,
+    easyLabel: "Start at 1-digit × 1-digit",
+  };
 }
 
 export function ageGroupMeta(ageGroup) {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { AnswerOption } from "../components/quiz/AnswerOption";
 import { getFactsForTable, MOTIVATIONAL } from "../data/multiplication/tables";
@@ -31,8 +31,14 @@ export default function MultiplicationPractice() {
   const [idx, setIdx] = useState(0);
   const [feedback, setFeedback] = useState(null);
   const [session, setSession] = useState(initialSession);
-  const fact = queue[idx] ?? facts[0];
+  // Modulo index: queue shrinks as facts hit 2 practiceHits; facts[0] fallback caused
+  // repeat answers on already-mastered facts (session 100% but mastery stuck). See drill.
+  const fact = queue.length > 0 ? queue[idx % queue.length] : null;
   const mastered = facts.every((f) => (factProgress[f.id]?.practiceHits ?? 0) >= 2);
+
+  useEffect(() => {
+    if (queue.length > 0 && idx >= queue.length) setIdx(0);
+  }, [queue.length, idx]);
 
   const options = useMemo(() => {
     if (!fact) return [];
@@ -81,15 +87,14 @@ export default function MultiplicationPractice() {
     setFeedback({ correct, answer: fact.product });
     setTimeout(() => {
       setFeedback(null);
-      if (idx + 1 >= queue.length && correct) {
-        if (facts.every((f) => (useMultiplicationStore.getState().facts[f.id]?.practiceHits ?? 0) >= 2)) {
-          navigate(`/multiplication/table/${tableNumber}`);
-        } else {
-          setIdx(0);
-        }
-      } else {
-        setIdx((i) => (i + 1) % Math.max(queue.length, 1));
+      const allDone = facts.every(
+        (f) => (useMultiplicationStore.getState().facts[f.id]?.practiceHits ?? 0) >= 2
+      );
+      if (allDone) {
+        navigate(`/multiplication/table/${tableNumber}`);
+        return;
       }
+      setIdx((i) => i + 1);
     }, correct ? 600 : 1200);
   }
 

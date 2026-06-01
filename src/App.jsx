@@ -35,6 +35,8 @@ import MultiplicationBoss from "./pages/MultiplicationBoss";
 import MultiplicationSpeedRun from "./pages/MultiplicationSpeedRun";
 import MultiplicationResults from "./pages/MultiplicationResults";
 import MultiplicationReview from "./pages/MultiplicationReview";
+import MultiplicationStagesHub from "./pages/MultiplicationStagesHub";
+import MultiplicationStagesSession from "./pages/MultiplicationStagesSession";
 import ExploreHub from "./pages/ExploreHub";
 import CreateHub from "./pages/CreateHub";
 import CompeteHub from "./pages/CompeteHub";
@@ -184,6 +186,7 @@ export default function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/impact" element={<Impact />} />
           <Route path="/math" element={<MathHub />} />
+          <Route path="/math/stages" element={<MultiplicationStagesHub />} />
           <Route path="/science" element={<ScienceHub />} />
           <Route path="/science/:topicId" element={<ScienceTopic />} />
           <Route path="/trivia" element={<TriviaHub />} />
@@ -218,6 +221,7 @@ export default function App() {
           <Route path="/results/:lessonId" element={<Results />} />
           <Route path="/multiplication/speed-run" element={<MultiplicationSpeedRun />} />
           <Route path="/multiplication/results" element={<MultiplicationResults />} />
+          <Route path="/math/stages/:stageId" element={<MultiplicationStagesSession />} />
         </Route>
 
         <Route path="/" element={<AuthEntryRedirect />} />

@@ -27,6 +27,22 @@ export default function MathHub() {
       </Link>
 
       <Link
+        to="/math/stages"
+        className="hub-topic-card border-[3px] border-mul-electric/35 bg-gradient-to-r from-[#1a1060] to-mul-dark/90 focus-ring"
+      >
+        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-white/15 text-3xl shrink-0">
+          📐
+        </span>
+        <div className="flex-1 text-left min-w-0">
+          <p className="font-display text-xl font-extrabold text-white">Multiplication Stages</p>
+          <p className="text-sm font-bold text-white/80">
+            1-digit through mixed products — accuracy and speed goals
+          </p>
+        </div>
+        <span className="font-display font-extrabold text-mul-electric shrink-0">Go →</span>
+      </Link>
+
+      <Link
         to="/multiplication"
         className="hub-topic-card border-[3px] border-mul-gold/40 bg-gradient-to-r from-mul-dark/90 to-[#1a1060] focus-ring"
       >
