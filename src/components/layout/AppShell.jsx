@@ -1,18 +1,22 @@
 import { useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
+import { Home } from "lucide-react";
 import { TopBar } from "./TopBar";
 import { BottomNav } from "./BottomNav";
 import { OfflineBanner } from "./OfflineBanner";
 import { RouteErrorBoundary } from "./RouteErrorBoundary";
 import { useTeslaMode } from "../../hooks/useTeslaMode";
+import { useRouteScreenTime } from "../../hooks/useRouteScreenTime";
 
 export function AppShell({ hideTop = false, hideBottom = false, flush = false }) {
   useTeslaMode();
+  useRouteScreenTime();
   const location = useLocation();
   const isHome = location.pathname === "/home";
   const isLanding = location.pathname === "/landing";
   const cosmicRoute = isHome || isLanding;
   const viewportLocked = isLanding;
+  const showQuestHome = !isHome && !isLanding;
 
   useEffect(() => {
     document.body.classList.toggle("cosmic-route", cosmicRoute);
@@ -37,6 +41,18 @@ export function AppShell({ hideTop = false, hideBottom = false, flush = false })
         </div>
       </main>
       {!hideBottom && <BottomNav cosmic={isHome} />}
+
+      {showQuestHome && (
+        <Link
+          to="/home"
+          className="fixed right-3 z-40 flex items-center gap-1.5 rounded-full border-2 border-white/25 bg-[#1a1060]/95 px-3 py-2 font-display text-[11px] font-extrabold text-white shadow-lg backdrop-blur-md focus-ring safe-bottom"
+          style={{ bottom: hideBottom ? "calc(0.75rem + env(safe-area-inset-bottom))" : "calc(4.75rem + env(safe-area-inset-bottom))" }}
+          aria-label="Quest Home"
+        >
+          <Home size={16} strokeWidth={2.5} />
+          Quest Home
+        </Link>
+      )}
     </div>
   );
 }

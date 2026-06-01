@@ -21,15 +21,9 @@ import { Mascot } from "../components/mascots/Mascot";
 import { Avatar } from "../components/mascots/Avatar";
 import { ElegantBackground } from "../components/elegant/ElegantBackground";
 import { ElegantLogo } from "../components/elegant/ElegantLogo";
-import {
-  BeyondSchoolGrid,
-  CuriosityTeaser,
-  HomeBottomCta,
-  LifeSkillsStrip,
-  StatsRow,
-  WonderQuote,
-  WorldsShowcase,
-} from "../components/elegant/ElegantSections";
+import { CuriosityTeaser, WorldsShowcase } from "../components/elegant/ElegantSections";
+import { DiscoverMore } from "../components/home/DiscoverMore";
+import { useScreenTimeStore, formatScreenMinutes } from "../store/useScreenTimeStore";
 import { DailyTreasure } from "../components/home/DailyTreasure";
 import { StreakCalendar } from "../components/home/StreakCalendar";
 import { ShareStreakButton } from "../components/home/ShareStreakButton";
@@ -94,6 +88,9 @@ export default function Home() {
     () => MASCOT_MESSAGES[Math.floor(Math.random() * MASCOT_MESSAGES.length)],
     []
   );
+  const todayExploreSeconds = useScreenTimeStore((s) => s.getTodayTotalSeconds());
+  const exploreHint =
+    todayExploreSeconds >= 60 ? formatScreenMinutes(todayExploreSeconds) : null;
 
   const mathMastered = useMemo(
     () =>
@@ -166,14 +163,27 @@ export default function Home() {
             <HudPill emoji="⚡" value={totalXP} label="XP" />
           </div>
 
-          <Link
-            to="/settings"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl text-white/70 home-v2-hud-pill focus-ring"
-            aria-label="Settings"
-          >
-            <Settings size={18} />
-          </Link>
+          <div className="flex shrink-0 flex-col items-end gap-1">
+            {exploreHint && (
+              <p className="hidden max-w-[8rem] truncate text-right text-[9px] font-bold text-white/55 sm:block">
+                You&apos;ve explored {exploreHint} today ✨
+              </p>
+            )}
+            <Link
+              to="/settings"
+              className="grid h-10 w-10 place-items-center rounded-2xl text-white/70 home-v2-hud-pill focus-ring"
+              aria-label="Settings"
+            >
+              <Settings size={18} />
+            </Link>
+          </div>
         </header>
+
+        {exploreHint && (
+          <p className="mt-2 text-center text-[10px] font-bold text-white/50 sm:hidden">
+            You&apos;ve explored {exploreHint} today ✨
+          </p>
+        )}
 
         <div className="home-v2-mobile-strip mt-4">
           <DailyTreasure compact />
@@ -195,9 +205,9 @@ export default function Home() {
 
           <div className="flex min-w-0 flex-col gap-4">
             <section className="grid gap-3 sm:grid-cols-[auto_1fr] sm:items-center">
-              <div className="relative mx-auto sm:mx-0">
+              <Link to="/home" className="relative mx-auto sm:mx-0 focus-ring rounded-2xl" aria-label="Quest Home">
                 <ElegantLogo size={88} reduceMotion={reduce} mascotSize={36} />
-              </div>
+              </Link>
 
               <div className="min-w-0 text-center sm:text-left">
                 <p className="elegant-eyebrow inline-flex text-[10px] tracking-[0.15em]">
@@ -208,7 +218,7 @@ export default function Home() {
                   Hey {kidName || "friend"}!
                 </h1>
                 <p className="elegant-hero-sub mt-1 text-base sm:text-lg">
-                  School teaches answers — we teach you to love questions.
+                  Pick a world and start your quest!
                 </p>
                 <p className="home-v2-mascot-tip mt-2">{mascotMsg}</p>
               </div>
@@ -315,16 +325,10 @@ export default function Home() {
               </motion.div>
             )}
 
-            <div className="home-v2-marketing-block">
-              <BeyondSchoolGrid onComingSoon={setComingSoonName} />
-            </div>
-
-            <LifeSkillsStrip />
-
-            <WonderQuote />
-            <StatsRow />
-
             <div className="home-v2-marketing-block px-1">
+              <h2 className="mb-2 text-[11px] font-extrabold uppercase tracking-[0.2em] text-white/45">
+                Your worlds
+              </h2>
               <WorldsShowcase
                 onWorldClick={(s) => openSubject(s)}
                 onComingSoon={setComingSoonName}
@@ -388,7 +392,7 @@ export default function Home() {
               )}
             </footer>
 
-            <HomeBottomCta kidName={kidName} />
+            <DiscoverMore kidName={kidName} onComingSoon={setComingSoonName} />
           </div>
 
           <aside className="hidden flex-col gap-3 lg:flex">

@@ -45,6 +45,8 @@ import { isAdminUser } from "../lib/adminAccess";
 import { useCuriosityPreferencesStore } from "../store/useCuriosityPreferencesStore";
 import { getAllCuriosityCards } from "../data/curiosity";
 import { filterCards } from "../utils/curiosity";
+import { SignOutButton } from "../components/auth/SignOutButton";
+import { FamilyTimePanel } from "../components/settings/FamilyTimePanel";
 
 export default function Settings() {
   const {
@@ -202,6 +204,10 @@ export default function Settings() {
           </Link>
         </div>
         <p className="text-xs text-ink/50 font-bold mt-4">Designed by Vinay. Built with Cursor.</p>
+
+        <div className="w-full max-w-sm mt-2 pt-4 border-t border-ink/10">
+          <SignOutButton variant="ghost" size="md" fullWidth label="Sign out" />
+        </div>
       </div>
     );
   }
@@ -383,6 +389,26 @@ export default function Settings() {
           </p>
         </section>
       )}
+
+      <FamilyTimePanel />
+
+      <section className="chunky-card p-4">
+        <h2 className="font-display font-extrabold text-lg mb-2">Screen time limits</h2>
+        <p className="text-xs font-bold text-ink/60 mb-2">
+          Optional daily cap (minutes). Kids see a gentle reminder; limits are read-only stats for alpha.
+        </p>
+        <label className="text-sm font-bold block">
+          Max minutes per day
+          <input
+            type="number"
+            min={0}
+            value={screenTimeLimitMinutes ?? ""}
+            onChange={(e) => setScreenTimeLimit(e.target.value ? Number(e.target.value) : null)}
+            placeholder="No limit"
+            className="w-full mt-1 px-3 py-2 rounded-chunky border-2 border-ink/15 font-bold"
+          />
+        </label>
+      </section>
 
       <section className="chunky-card p-4">
         <h2 className="font-display font-extrabold text-lg mb-2">Daily Goal</h2>
@@ -574,17 +600,6 @@ export default function Settings() {
           }}
         />
         <Toggle label="Tesla / kiosk large UI" icon={<ShieldCheck />} on={teslaMode} onChange={setTeslaMode} />
-        <label className="text-sm font-bold">
-          Screen time cap (minutes/day, optional)
-          <input
-            type="number"
-            min={0}
-            value={screenTimeLimitMinutes ?? ""}
-            onChange={(e) => setScreenTimeLimit(e.target.value ? Number(e.target.value) : null)}
-            placeholder="No limit"
-            className="w-full mt-1 px-3 py-2 rounded-chunky border-2 border-ink/15 font-bold"
-          />
-        </label>
         <Button variant="ghost" fullWidth onClick={downloadExportJson}>
           Download my data (JSON export)
         </Button>
@@ -780,6 +795,12 @@ export default function Settings() {
         <Link to="/impact" className="block">
           <Button variant="ghost" fullWidth leftIcon={<Heart size={18} />}>Mission</Button>
         </Link>
+      </section>
+
+      <section className="chunky-card p-4 flex flex-col gap-2">
+        <h2 className="font-display font-extrabold text-lg">Sign out</h2>
+        <p className="text-xs font-bold text-ink/60">End this child&apos;s session on this device.</p>
+        <SignOutButton variant="secondary" fullWidth label="Sign out" />
       </section>
 
       <footer className="text-center text-xs font-bold text-ink/50 py-2">

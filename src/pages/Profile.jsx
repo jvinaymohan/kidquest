@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { LogOut, Cloud, CloudOff } from "lucide-react";
+import { Cloud, CloudOff } from "lucide-react";
+import { SignOutButton } from "../components/auth/SignOutButton";
 import { useAppStore } from "../store/useAppStore";
 import { useAuthStore } from "../store/useAuthStore";
 import { Avatar, AVATAR_OPTIONS } from "../components/mascots/Avatar";
@@ -24,9 +25,7 @@ export default function Profile() {
     badges, ageGroup, lessonProgress, role,
   } = useAppStore();
   const updateProfile = useAuthStore((s) => s.updateProfile);
-  const signOut = useAuthStore((s) => s.signOut);
   const session = useAuthStore((s) => s.session);
-  const navigate = useNavigate();
 
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(kidName);
@@ -41,12 +40,6 @@ export default function Profile() {
     setAvatar(config);
     updateProfile({ kid_name: finalName, display_name: finalName, avatar_config: config }).catch(() => {});
     setEditing(false);
-  }
-
-  async function onSignOut() {
-    if (!confirm("Sign out of KidQuest?")) return;
-    await signOut();
-    navigate("/landing", { replace: true });
   }
 
   const earnedSet = new Set(badges);
@@ -100,12 +93,14 @@ export default function Profile() {
               : "Cloud disabled — local progress only."
             : "Configure Supabase to enable cloud sync."}
         </div>
-        {session && (
-          <Button variant="ghost" size="sm" onClick={onSignOut} leftIcon={<LogOut size={16} />}>
-            Sign out
-          </Button>
-        )}
+        <SignOutButton />
       </div>
+
+      <section className="chunky-card p-4 flex flex-col gap-2 border-[3px] border-ink/10">
+        <p className="font-display font-extrabold">Done for today?</p>
+        <p className="text-xs font-bold text-ink/60">Sign out safely — we&apos;ll save your progress.</p>
+        <SignOutButton variant="secondary" size="md" fullWidth label="Sign out" />
+      </section>
 
       <section>
         <h3 className="font-display text-xl font-extrabold mb-2">Subject Mastery</h3>

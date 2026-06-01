@@ -23,6 +23,7 @@ import { useAppStore } from "./useAppStore";
 import { mergeTables, useMultiplicationStore } from "./useMultiplicationStore";
 import { fetchLifeExplorerItems } from "../lib/cloud/lifeExplorer";
 import { useLifeExplorerStore } from "./useLifeExplorerStore";
+import { useScreenTimeStore } from "./useScreenTimeStore";
 
 export const useAuthStore = create((set, get) => ({
   initialized: false,
@@ -192,11 +193,13 @@ export const useAuthStore = create((set, get) => ({
     try {
       useAppStore.persist?.clearStorage?.();
       useMultiplicationStore.persist?.clearStorage?.();
+      useScreenTimeStore.persist?.clearStorage?.();
     } catch {
       // ignore storage clear errors
     }
     useAppStore.getState().resetAll?.();
     useMultiplicationStore.getState().resetProgress?.();
+    useScreenTimeStore.setState({ byDate: {} });
     set({ session: null, user: null, profile: null, cloudReady: false });
   },
 
