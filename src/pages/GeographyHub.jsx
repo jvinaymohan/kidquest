@@ -39,6 +39,13 @@ export function GeographyHub({ ageGroup, lessonProgress }) {
           <Map size={16} />
           Open Learn — browse countries & map
         </button>
+        <button
+          type="button"
+          onClick={() => navigate("/geography/mastery")}
+          className="mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl bg-white text-geography font-display font-extrabold text-sm ring-2 ring-geography/30 focus-ring"
+        >
+          🏆 Geography Mastery — continents & levels
+        </button>
       </div>
 
       <p className="text-[11px] font-bold uppercase tracking-wide text-ink/45 px-1">

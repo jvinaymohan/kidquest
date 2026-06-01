@@ -74,6 +74,17 @@ export const SUBJECTS = [
     learnSurface: true,
   },
   {
+    id: "science",
+    name: "Science",
+    tagline: "Everyday curiosity — sky, plants, body & more",
+    color: "#9B5DE5",
+    accent: "#F0EBFF",
+    mascotKey: "cat",
+    mascotName: "Curious Cat",
+    icon: "FlaskConical",
+    learnSurface: false,
+  },
+  {
     id: "solar-system",
     name: "Solar System",
     tagline: "Blast off into space!",

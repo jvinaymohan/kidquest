@@ -21,10 +21,13 @@ export function SessionComplete({
   async function handleShare() {
     if (!shareText) return;
     const result = await shareAchievement({ text: shareText, title: shareTitle });
+    if (result.method === "cancel") return;
     if (result.ok) {
-      setShareFeedback(result.method === "copy" ? "Copied!" : "Shared!");
-      setTimeout(() => setShareFeedback(null), 2500);
+      setShareFeedback(result.method === "copy" ? "Link copied!" : "Shared!");
+    } else {
+      setShareFeedback("Copy failed — try again");
     }
+    setTimeout(() => setShareFeedback(null), 2500);
   }
 
   return (

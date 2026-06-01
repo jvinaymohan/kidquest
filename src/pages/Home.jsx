@@ -51,10 +51,25 @@ const WORLD = {
     xp: 60,
     tag: "Blast off!",
   },
+  science: {
+    emoji: "🧪",
+    from: "#6b3fa0",
+    to: "#9b5de5",
+    shadow: "0 10px 30px rgba(155,93,229,0.4)",
+    xp: 45,
+    tag: "Everyday science",
+  },
   history: { emoji: "📜", from: "#8e6b14", to: "#d4a017", shadow: undefined, xp: 0, tag: "Soon" },
   music: { emoji: "🎵", from: "#6b3fa0", to: "#9b5de5", shadow: undefined, xp: 0, tag: "Soon" },
   "general-knowledge": { emoji: "💡", from: "#b45309", to: "#fb8500", shadow: undefined, xp: 0, tag: "Soon" },
-  trivia: { emoji: "⭐", from: "#c1121f", to: "#e63946", shadow: undefined, xp: 0, tag: "Soon" },
+  trivia: {
+    emoji: "⭐",
+    from: "#c1121f",
+    to: "#e63946",
+    shadow: "0 10px 30px rgba(230,57,70,0.4)",
+    xp: 35,
+    tag: "1000s of facts",
+  },
 };
 
 const MASCOT_MESSAGES = [
@@ -416,6 +431,14 @@ export default function Home() {
                     Go!
                   </span>
                 )}
+              </Link>
+
+              <Link to="/journey" className="home-v2-daily focus-ring border-white/20">
+                <Sparkles size={22} className="text-[#ffd700]" />
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="font-display text-sm font-extrabold text-white">My journey</p>
+                  <p className="text-[11px] font-bold text-white/50">Look what you discovered!</p>
+                </div>
               </Link>
 
               {ageGroup === "champion" && (

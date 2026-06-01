@@ -39,6 +39,13 @@ import ExploreHub from "./pages/ExploreHub";
 import CreateHub from "./pages/CreateHub";
 import CompeteHub from "./pages/CompeteHub";
 import GeographySprint from "./pages/GeographySprint";
+import GeographyMastery from "./pages/GeographyMastery";
+import GeographyMasterySession from "./pages/GeographyMasterySession";
+import ScienceHub from "./pages/ScienceHub";
+import ScienceTopic from "./pages/ScienceTopic";
+import TriviaHub from "./pages/TriviaHub";
+import TriviaCategory from "./pages/TriviaCategory";
+import MyJourney from "./pages/MyJourney";
 import DailyDuel from "./pages/DailyDuel";
 import Friends from "./pages/Friends";
 import LifeExplorer from "./pages/LifeExplorer";
@@ -156,6 +163,7 @@ export default function App() {
         >
           <Route path="/" element={<Navigate to="/home" replace />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/journey" element={<MyJourney />} />
           <Route path="/review" element={<ReviewHub />} />
           <Route path="/review/geography" element={<GeographyReview />} />
           <Route path="/explore" element={<ExploreHub />} />
@@ -174,6 +182,13 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/impact" element={<Impact />} />
           <Route path="/math" element={<MathHub />} />
+          <Route path="/science" element={<ScienceHub />} />
+          <Route path="/science/:topicId" element={<ScienceTopic />} />
+          <Route path="/trivia" element={<TriviaHub />} />
+          <Route path="/trivia/:categoryId" element={<TriviaCategory />} />
+          <Route path="/geography/mastery" element={<GeographyMastery />} />
+          <Route path="/geography/mastery/:tierId" element={<GeographyMastery />} />
+          <Route path="/geography/mastery/:tierId/session" element={<GeographyMasterySession />} />
           <Route path="/math-master" element={<MathMasteryHub />} />
           <Route path="/math-master/:operationId" element={<MathMasteryLevels />} />
           <Route path="/math-master/:operationId/level/:level" element={<MathMasterySession />} />

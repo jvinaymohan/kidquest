@@ -114,6 +114,7 @@ export default function Lesson() {
 }
 
 function countryCodeFromQuestion(q) {
+  if (q?.countryCode) return q.countryCode;
   if (!q?.answer || typeof q.answer !== "string") return null;
   if (q.type === "map-locate" || q.type === "flag-choice" || q.type === "flag-grid") {
     return q.answer.length === 2 ? q.answer : null;

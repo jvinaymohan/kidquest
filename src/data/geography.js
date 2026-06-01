@@ -1,15 +1,9 @@
-// Geography lessons are *generated* from the 194-country dataset so we always
-// have age-appropriate, randomly-seeded quizzes drawn from real data instead
-// of a tiny hand-written list. Same shape as the old geography.json so all
-// existing lesson/quiz/results plumbing keeps working unchanged.
-
-import {
-  COUNTRIES,
-  CONTINENTS,
-  rngFromString,
-  sampleN,
-} from "./geography/countries";
+import { COUNTRIES, rngFromString, sampleN } from "./geography/countries";
 import { poolForAgeGroup } from "./geography/difficulty";
+import {
+  poolForTier,
+  questionCountForTier,
+} from "./geography/mastery";
 
 const MIN_TRACK_QUESTIONS = 10;
 const AGE_QUESTION_COUNTS = {
@@ -110,27 +104,34 @@ function shuffle(arr, rng) {
   return sampleN(arr, arr.length, rng);
 }
 
-// ----- Track generators -----
+function withCountryCode(q, country) {
+  return { ...q, countryCode: country.code, countryName: country.name };
+}
 
-function genContinentsQuestions(ageGroup, rng, pool) {
-  const count = AGE_QUESTION_COUNTS[ageGroup];
+export function genContinentsQuestions(ageGroup, rng, pool, countOverride) {
+  const count = countOverride ?? AGE_QUESTION_COUNTS[ageGroup];
   const targets = sampleN(pool, count, rng);
   return targets.map((country) => {
-    const distractors = CONTINENTS.filter((c) => c !== country.continent);
+    const distractors = ["Africa", "Americas", "Asia", "Europe", "Oceania"].filter(
+      (c) => c !== country.continent
+    );
     const optionsCount = ageGroup === "explorer" ? 3 : 4;
     const wrong = sampleN(distractors, optionsCount - 1, rng);
     const options = shuffle([...wrong, country.continent], rng);
-    return {
-      type: "choice",
-      prompt: `Which continent is ${country.name} in?`,
-      options,
-      answer: country.continent,
-    };
+    return withCountryCode(
+      {
+        type: "choice",
+        prompt: `Which continent is ${country.name} in?`,
+        options,
+        answer: country.continent,
+      },
+      country
+    );
   });
 }
 
-function genFlagQuestions(ageGroup, rng, pool) {
-  const count = AGE_QUESTION_COUNTS[ageGroup];
+export function genFlagQuestions(ageGroup, rng, pool, countOverride) {
+  const count = countOverride ?? AGE_QUESTION_COUNTS[ageGroup];
   const targets = sampleN(pool, count, rng);
   return targets.map((country, idx) => {
     const optsCount = ageGroup === "explorer" ? 3 : ageGroup === "adventurer" ? 4 : 4;
@@ -142,31 +143,37 @@ function genFlagQuestions(ageGroup, rng, pool) {
     const wrong = sampleN(distractorPool, optsCount - 1, rng);
     const allCodes = shuffle([...wrong.map((c) => c.code), country.code], rng);
     if (idx % 2 === 0) {
-      return {
-        type: "flag-grid",
-        prompt: `Tap the flag of ${country.name}.`,
-        options: allCodes,
-        answer: country.code,
-      };
+      return withCountryCode(
+        {
+          type: "flag-grid",
+          prompt: `Tap the flag of ${country.name}.`,
+          options: allCodes,
+          answer: country.code,
+        },
+        country
+      );
     }
-    return {
-      type: "flag-choice",
-      prompt: `Whose flag is this?`,
-      flagCode: country.code,
-      options: shuffle(
-        [
-          ...wrong.map((c) => ({ code: c.code, label: c.name })),
-          { code: country.code, label: country.name },
-        ],
-        rng
-      ),
-      answer: country.code,
-    };
+    return withCountryCode(
+      {
+        type: "flag-choice",
+        prompt: `Whose flag is this?`,
+        flagCode: country.code,
+        options: shuffle(
+          [
+            ...wrong.map((c) => ({ code: c.code, label: c.name })),
+            { code: country.code, label: country.name },
+          ],
+          rng
+        ),
+        answer: country.code,
+      },
+      country
+    );
   });
 }
 
-function genCapitalsQuestions(ageGroup, rng, pool) {
-  const count = AGE_QUESTION_COUNTS[ageGroup];
+export function genCapitalsQuestions(ageGroup, rng, pool, countOverride) {
+  const count = countOverride ?? AGE_QUESTION_COUNTS[ageGroup];
   const targets = sampleN(pool.filter((c) => c.capital), count, rng);
   return targets.map((country, idx) => {
     const distractors = pool.filter((c) => c.code !== country.code && c.capital);
@@ -182,25 +189,31 @@ function genCapitalsQuestions(ageGroup, rng, pool) {
         rng
       ).map((c) => c.name);
       const options = shuffle([...reverseDistractors, country.name], rng);
-      return {
-        type: "choice",
-        prompt: `${country.capital} is the capital of which country?`,
-        options,
-        answer: country.name,
-      };
+      return withCountryCode(
+        {
+          type: "choice",
+          prompt: `${country.capital} is the capital of which country?`,
+          options,
+          answer: country.name,
+        },
+        country
+      );
     }
     const options = shuffle([...wrong, country.capital], rng);
-    return {
-      type: "choice",
-      prompt: `What is the capital of ${country.name}?`,
-      options,
-      answer: country.capital,
-    };
+    return withCountryCode(
+      {
+        type: "choice",
+        prompt: `What is the capital of ${country.name}?`,
+        options,
+        answer: country.capital,
+      },
+      country
+    );
   });
 }
 
-function genCurrenciesQuestions(ageGroup, rng, pool) {
-  const count = AGE_QUESTION_COUNTS[ageGroup];
+export function genCurrenciesQuestions(ageGroup, rng, pool, countOverride) {
+  const count = countOverride ?? AGE_QUESTION_COUNTS[ageGroup];
   const withCurrency = pool.filter((c) => c.currency && c.currency.name);
   const targets = sampleN(withCurrency, count, rng);
   return targets.map((country, idx) => {
@@ -212,12 +225,15 @@ function genCurrenciesQuestions(ageGroup, rng, pool) {
     if (idx % 2 === 0 || ageGroup !== "champion") {
       const wrong = sampleN(uniqueDistractors, optsCount - 1, rng);
       const options = shuffle([...wrong, country.currency.name], rng);
-      return {
-        type: "choice",
-        prompt: `What currency does ${country.name} use?`,
-        options,
-        answer: country.currency.name,
-      };
+      return withCountryCode(
+        {
+          type: "choice",
+          prompt: `What currency does ${country.name} use?`,
+          options,
+          answer: country.currency.name,
+        },
+        country
+      );
     }
     const codeDistractors = [
       ...new Set(
@@ -228,31 +244,34 @@ function genCurrenciesQuestions(ageGroup, rng, pool) {
     ];
     const wrong = sampleN(codeDistractors, optsCount - 1, rng);
     const options = shuffle([...wrong, country.currency.code], rng);
-    return {
-      type: "choice",
-      prompt: `Which currency code does ${country.name} use?`,
-      options,
-      answer: country.currency.code,
-    };
+    return withCountryCode(
+      {
+        type: "choice",
+        prompt: `Which currency code does ${country.name} use?`,
+        options,
+        answer: country.currency.code,
+      },
+      country
+    );
   });
 }
 
-function genMapQuestions(ageGroup, rng, pool) {
-  const count = AGE_QUESTION_COUNTS[ageGroup] ?? MIN_TRACK_QUESTIONS;
+export function genMapQuestions(ageGroup, rng, pool, countOverride) {
+  const count = countOverride ?? AGE_QUESTION_COUNTS[ageGroup] ?? MIN_TRACK_QUESTIONS;
   const targets = sampleN(pool, count, rng);
   return targets.map((country) => {
     const zoomTo = ageGroup === "champion" ? "world" : country.continent;
-    return {
-      type: "map-locate",
-      prompt: `Tap ${country.name} on the map!`,
-      answer: country.code,
-      zoomTo,
-      countryName: country.name,
-    };
+    return withCountryCode(
+      {
+        type: "map-locate",
+        prompt: `Tap ${country.name} on the map!`,
+        answer: country.code,
+        zoomTo,
+      },
+      country
+    );
   });
 }
-
-// ----- Lesson builders -----
 
 const TRACKS = [
   { id: "continents", title: "Continents Quest", gen: genContinentsQuestions },
@@ -261,6 +280,29 @@ const TRACKS = [
   { id: "map", title: "Map Locator", gen: genMapQuestions },
   { id: "currencies", title: "World Currencies", gen: genCurrenciesQuestions },
 ];
+
+const GENERATORS = {
+  continents: genContinentsQuestions,
+  flags: genFlagQuestions,
+  capitals: genCapitalsQuestions,
+  map: genMapQuestions,
+  currencies: genCurrenciesQuestions,
+};
+
+/** Build questions for mastery sessions (tier + optional continent + track). */
+export function buildMasteryQuestions({
+  tierId,
+  trackId,
+  continent,
+  ageGroup,
+  seed,
+}) {
+  const pool = poolForTier(tierId, { continent, allCountries: COUNTRIES });
+  const count = questionCountForTier(tierId);
+  const rng = rngFromString(seed ?? `${tierId}-${trackId}-${continent ?? "all"}-${ageGroup}`);
+  const gen = GENERATORS[trackId] ?? genFlagQuestions;
+  return gen(ageGroup, rng, pool, count);
+}
 
 function buildLessonsFor(ageGroup) {
   const pool = poolForAgeGroup(ageGroup, COUNTRIES);

@@ -4,6 +4,7 @@ import { Check, X, ArrowUp, ArrowDown } from "lucide-react";
 import { AnswerOption } from "./AnswerOption";
 import { Flag } from "./Flag";
 import { WorldMap } from "../geography/WorldMap";
+import { CountryWrongAnswerPanel } from "../geography/CountryWrongAnswerPanel";
 import { getCountry } from "../../data/geography/countries";
 import { Button } from "../ui/Button";
 
@@ -37,7 +38,7 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
   function commit(correct, wrongDelayMs) {
     setIsCorrect(correct);
     setRevealed(true);
-    const delay = correct ? 900 : wrongDelayMs ?? 1600;
+    const delay = correct ? 900 : wrongDelayMs ?? (question.countryCode ? 4000 : 1600);
     advanceTimer.current = setTimeout(() => onAnswered(correct), delay);
   }
 
@@ -206,14 +207,10 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
               }}
             />
             {revealed && !isCorrect && country && (
-              <div className="rounded-2xl bg-error/10 px-4 py-3 text-center ring-2 ring-error/30">
-                <p className="font-display text-lg font-extrabold text-error">
-                  Not quite — it&apos;s {country.name} {country.flag ?? "🌍"}
-                </p>
-                <p className="mt-1 text-sm font-bold text-ink/60">
-                  See it highlighted on the map above.
-                </p>
-              </div>
+              <CountryWrongAnswerPanel
+                countryCode={country.code}
+                correctAnswer={country.name}
+              />
             )}
             {revealed && isCorrect && country && (
               <div className="rounded-2xl bg-success/10 px-4 py-3 text-center ring-2 ring-success/30">
@@ -282,8 +279,17 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
               Check answer
             </Button>
             {revealed && !isCorrect && (
-              <div className="text-center font-display font-bold text-error">
-                Correct answer: <span className="underline">{question.answer}</span>
+              <div className="flex flex-col gap-2">
+                {question.countryCode ? (
+                  <CountryWrongAnswerPanel
+                    countryCode={question.countryCode}
+                    correctAnswer={question.answer}
+                  />
+                ) : (
+                  <div className="text-center font-display font-bold text-error">
+                    Correct answer: <span className="underline">{question.answer}</span>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -348,6 +354,17 @@ export function QuestionCard({ question, onAnswered, ageGroup }) {
       </motion.div>
 
       {content}
+
+      {revealed && !isCorrect && question.countryCode && !["map-locate", "fill"].includes(question.type) && (
+        <CountryWrongAnswerPanel
+          countryCode={question.countryCode}
+          correctAnswer={
+            question.type === "flag-choice" || question.type === "flag-grid"
+              ? getCountry(question.answer)?.name ?? question.answer
+              : question.answer
+          }
+        />
+      )}
 
       <AnimatePresence>
         {revealed && (

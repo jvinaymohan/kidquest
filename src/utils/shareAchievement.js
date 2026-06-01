@@ -18,28 +18,62 @@ export function buildSessionShareText({ kidName, title, detail }) {
   return parts.join(" ");
 }
 
-/** Web Share API with clipboard fallback. Returns { ok, method }. */
+async function copyToClipboard(text) {
+  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      /* fall through to textarea fallback */
+    }
+  }
+
+  if (typeof document === "undefined") return false;
+
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    ta.style.top = "0";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+/** Web Share API with clipboard fallback. Returns { ok, method, error? }. */
 export async function shareAchievement({ text, title = "KidQuest", url }) {
   const shareUrl = url ?? buildInviteUrl();
   const payload = text.includes(shareUrl) ? text : `${text}\n${shareUrl}`;
 
   if (typeof navigator !== "undefined" && navigator.share) {
     try {
-      await navigator.share({ title, text: payload, url: shareUrl });
-      return { ok: true, method: "share" };
+      const candidates = [
+        { title, text: payload },
+        { title, url: shareUrl },
+        { title, text: payload.split("\n")[0], url: shareUrl },
+      ];
+
+      for (const data of candidates) {
+        if (navigator.canShare && !navigator.canShare(data)) continue;
+        await navigator.share(data);
+        return { ok: true, method: "share" };
+      }
     } catch (err) {
       if (err?.name === "AbortError") return { ok: false, method: "cancel" };
     }
   }
 
-  if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(payload);
-      return { ok: true, method: "copy" };
-    } catch {
-      /* fall through */
-    }
+  if (await copyToClipboard(payload)) {
+    return { ok: true, method: "copy" };
   }
 
-  return { ok: false, method: "none" };
+  return { ok: false, method: "none", error: "Could not share or copy link" };
 }

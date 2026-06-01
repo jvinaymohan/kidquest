@@ -14,10 +14,13 @@ export function ShareStreakButton({ className = "" }) {
       text: buildStreakShareText({ kidName, streak }),
       title: "KidQuest Streak",
     });
+    if (result.method === "cancel") return;
     if (result.ok) {
       setFeedback(result.method === "copy" ? "Link copied!" : "Shared!");
-      setTimeout(() => setFeedback(null), 2500);
+    } else {
+      setFeedback("Tap to try again");
     }
+    setTimeout(() => setFeedback(null), 2500);
   }
 
   return (

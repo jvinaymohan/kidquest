@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Home, Sparkles, TrendingUp, Zap, Trophy } from "lucide-react";
+import { Home, Sparkles, TrendingUp, Zap, Trophy, Share2 } from "lucide-react";
 import { useAppStore } from "../store/useAppStore";
 import { getLessonById, getSubject, getLessonsFor } from "../data/subjects";
 import { StarRating } from "../components/ui/StarRating";
@@ -11,11 +11,13 @@ import { LevelUpModal } from "../components/rewards/LevelUpModal";
 import { Mascot } from "../components/mascots/Mascot";
 import { BADGE_BY_ID } from "../data/badges";
 import { xpToNextLevel, ageMultiplier } from "../utils/scoring";
+import { buildSessionShareText, shareAchievement } from "../utils/shareAchievement";
 
 export default function Results() {
   const { lessonId } = useParams();
   const navigate = useNavigate();
   const clearCelebration = useAppStore((s) => s.clearCelebration);
+  const kidName = useAppStore((s) => s.kidName);
   const ageGroup = useAppStore((s) => s.ageGroup);
   const lessonProgress = useAppStore((s) => s.lessonProgress);
   const totalXP = useAppStore((s) => s.totalXP);
@@ -24,6 +26,7 @@ export default function Results() {
   const [animatedPoints, setAnimatedPoints] = useState(0);
   const [animatedXP, setAnimatedXP] = useState(0);
   const [levelUpOpen, setLevelUpOpen] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState(null);
   const [result, setResult] = useState(() => {
     const p = useAppStore.getState().pendingCelebration;
     return p && p.lessonId === lessonId ? p : null;
@@ -205,6 +208,31 @@ export default function Results() {
           </Button>
         )}
       </div>
+
+      <Button
+        variant="secondary"
+        fullWidth
+        onClick={async () => {
+          const res = await shareAchievement({
+            text: buildSessionShareText({
+              kidName,
+              title: `finished ${lesson.title}`,
+              detail: `${correct}/${total} correct on ${subject.name}`,
+            }),
+            title: "KidQuest",
+          });
+          if (res.method === "cancel") return;
+          setShareFeedback(res.ok ? (res.method === "copy" ? "Link copied!" : "Shared!") : "Try again");
+          setTimeout(() => setShareFeedback(null), 2500);
+        }}
+      >
+        <Share2 size={18} aria-hidden />
+        {shareFeedback ?? "Challenge a friend"}
+      </Button>
+
+      <Button variant="ghost" fullWidth onClick={() => navigate("/journey")}>
+        Look what you discovered →
+      </Button>
 
       <div className="grid grid-cols-2 gap-3">
         <Button variant="ghost" fullWidth onClick={() => navigate(`/subject/${found.subjectId}`)}

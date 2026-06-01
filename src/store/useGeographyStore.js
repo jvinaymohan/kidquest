@@ -6,6 +6,29 @@ export const useGeographyStore = create(
   persist(
     (set, get) => ({
       countries: {},
+      mastery: {},
+
+      recordMasterySession: (tierId, { continent, trackId, correct, total }) => {
+        const key = continent ? `${tierId}-${continent}-${trackId}` : `${tierId}-${trackId}`;
+        const prev = get().mastery[key] ?? { sessions: 0, bestPct: 0 };
+        const pct = total > 0 ? correct / total : 0;
+        set({
+          mastery: {
+            ...get().mastery,
+            [key]: {
+              sessions: prev.sessions + 1,
+              bestPct: Math.max(prev.bestPct, pct),
+              lastPlayed: new Date().toISOString().slice(0, 10),
+            },
+            [tierId]: {
+              sessions: (get().mastery[tierId]?.sessions ?? 0) + 1,
+            },
+          },
+        });
+      },
+
+      masteredCountryCount: () =>
+        Object.values(get().countries).filter((c) => c.mastered || c.phase >= 4).length,
 
       recordPractice: (countryCode, correct) => {
         const prev = get().countries[countryCode] ?? {
