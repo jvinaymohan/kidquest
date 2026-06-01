@@ -93,6 +93,32 @@ export const HERO_PILLS = [
   { icon: "🌍", label: "Real world skills" },
 ];
 
+export const LANDING_HOOK =
+  "School teaches answers — we teach you to love questions.";
+
+export const GETTING_STARTED_ITEMS = [
+  { icon: "🚀", label: "I have a code", sub: "Enter invite", to: "/register" },
+  { icon: "✨", label: "Request invite", sub: "Join waitlist", to: "/invite-request" },
+  { icon: "🔑", label: "Sign in", sub: "Welcome back", to: "/login" },
+];
+
+/** Above-the-fold value peek — links tease register. */
+export const LANDING_PEEK_CARDS = [
+  { icon: "⚡", title: "Daily Spark", desc: "New wonder daily", to: "/register" },
+  { icon: "🌍", title: "6 worlds live", desc: "50+ unlocking", to: "/register" },
+  { icon: "🛡️", title: "Always safe", desc: "Ages 6–14 · no ads", to: "/register" },
+  { icon: "🧠", title: "Beyond school", desc: "Real-life skills", to: "/register" },
+];
+
+/** Teaser row on landing — muted until sign-in. */
+export const LANDING_MINI_WORLDS = [
+  { id: "geography", emoji: "🌍", gradient: "wc-geo", name: "Geo" },
+  { id: "math", emoji: "🔢", gradient: "wc-math", name: "Math" },
+  { id: "science", emoji: "🔬", gradient: "wc-sci", name: "Science" },
+  { id: "trivia", emoji: "⭐", gradient: "wc-trivia", name: "Trivia" },
+  { id: "solar-system", emoji: "🪐", gradient: "wc-space", name: "Space" },
+];
+
 /** World card visuals — live vs coming soon handled by caller. */
 export const WORLD_STYLES = {
   geography: { emoji: "🌍", gradient: "wc-geo", xp: 50, displayName: "Geography" },
