@@ -4,10 +4,11 @@ import { isGoogleOAuthEnabled } from "../../lib/featureFlags";
 import { isSupabaseEnabled } from "../../lib/supabaseClient";
 
 export function GoogleSignInButton({ className = "", label = "Continue with Google" }) {
-  if (!isGoogleOAuthEnabled) return null;
   const signInWithGoogle = useAuthStore((s) => s.signInWithGoogle);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(null);
+
+  if (!isGoogleOAuthEnabled) return null;
 
   async function onClick() {
     setError(null);

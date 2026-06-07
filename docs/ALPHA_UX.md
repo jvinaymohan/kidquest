@@ -1,6 +1,7 @@
 # KidQuest Alpha UX Guide
 
-Production: https://kidquest-indol.vercel.app
+Production: https://kidquest-indol.vercel.app  
+**Launch doc:** [ALPHA_LAUNCH.md](./ALPHA_LAUNCH.md) · **Tester quick start:** [../ALPHA_TESTERS.md](../ALPHA_TESTERS.md)
 
 ## Routes: logged out vs logged in
 
@@ -69,9 +70,11 @@ Default parent PIN is `1234` — change it on first unlock.
 - Screen time is **per device** (localStorage), not synced to Supabase.
 - Daily cap is stored but **not enforced** (monitor-only).
 - Per-section caps not implemented.
-- Some subjects still “coming soon” on worlds grid.
+- Some subjects still “coming soon” on worlds grid (History, Music, Art, General Knowledge).
+- **Multiplication Hub**, **Settings**, and **Profile** still use chunky-card layout; subject hubs use cosmic `HubPageLayout`.
 - Lesson/results routes use minimal chrome; use **Quest Home** float to exit.
 - Weekly chart is simple bars, not exportable.
+- Google sign-in only appears when `VITE_ENABLE_GOOGLE_OAUTH=true` and OAuth is configured.
 
 ---
 
