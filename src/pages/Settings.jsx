@@ -39,7 +39,8 @@ import { downloadExportJson } from "../lib/exportData";
 import { LOCALES, setLocale } from "../lib/i18n";
 import { useGeographyStore } from "../store/useGeographyStore";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
-import { suggestedMathLevel, suggestedMulTable } from "../utils/placement";
+import { useGradeMathStore } from "../store/useGradeMathStore";
+import { suggestedGrade, suggestedMathLevel, suggestedMulTable } from "../utils/placement";
 import { DEFAULT_PARENT_PIN, isDefaultParentPin } from "../constants/parentPin";
 import { isAdminUser } from "../lib/adminAccess";
 import { useCuriosityPreferencesStore } from "../store/useCuriosityPreferencesStore";
@@ -76,6 +77,7 @@ export default function Settings() {
   const multiplicationTables = useMultiplicationStore((s) => s.tables);
   const applyMulPlacement = useMultiplicationStore((s) => s.applyAgePlacement);
   const applyMathPlacement = useMathMasteryStore((s) => s.applyAgePlacement);
+  const applyGradePlacement = useGradeMathStore((s) => s.applyAgePlacement);
   const locale = usePreferencesStore((s) => s.locale);
   const setLocalePref = usePreferencesStore((s) => s.setLocale);
   const dyslexiaFont = usePreferencesStore((s) => s.dyslexiaFont);
@@ -533,17 +535,18 @@ export default function Settings() {
       <section className="chunky-card p-4 border-[3px] border-primary/15">
         <h2 className="font-display font-extrabold text-lg mb-1">Level placement</h2>
         <p className="text-xs font-bold text-ink/60 mb-3">
-          Match Math Master & times tables to {kidName || "your kid"}&apos;s age. We&apos;ll suggest easier levels if things get too hard.
+          Match Math Master, Grade Path & times tables to {kidName || "your kid"}&apos;s age. We&apos;ll suggest easier levels if things get too hard.
         </p>
         <p className="text-sm font-bold text-ink/70 mb-3">
           For <span className="text-primary">{AGE_GROUPS.find((g) => g.id === ageGroup)?.label ?? ageGroup}</span>:
-          Math Level {suggestedMathLevel(ageGroup)}, Table {suggestedMulTable(ageGroup)}×
+          Math Level {suggestedMathLevel(ageGroup)}, Grade {suggestedGrade(ageGroup)}, Table {suggestedMulTable(ageGroup)}×
         </p>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             className="flex-1"
             onClick={() => {
               applyMathPlacement(ageGroup, { jumpAhead: true });
+              applyGradePlacement(ageGroup, { jumpAhead: true });
               applyMulPlacement(ageGroup, { jumpAhead: true });
             }}
           >
@@ -554,6 +557,7 @@ export default function Settings() {
             className="flex-1"
             onClick={() => {
               applyMathPlacement(ageGroup, { jumpAhead: false });
+              applyGradePlacement(ageGroup, { jumpAhead: false });
               applyMulPlacement(ageGroup, { jumpAhead: false });
             }}
           >

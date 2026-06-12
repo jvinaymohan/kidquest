@@ -3,6 +3,7 @@ export const SCREEN_SECTIONS = {
   geography: { label: "Geography", emoji: "🌍", color: "var(--geography)" },
   math: { label: "Math", emoji: "🧮", color: "var(--math)" },
   "math-mastery": { label: "Math Master", emoji: "🎯", color: "var(--math)" },
+  "grade-path": { label: "Grade Path", emoji: "🎓", color: "var(--math)" },
   multiplication: { label: "Multiplication", emoji: "✖️", color: "var(--math)" },
   "solar-system": { label: "Solar System", emoji: "🪐", color: "var(--solar-system)" },
   science: { label: "Science", emoji: "🔬", color: "#9B5DE5" },
@@ -24,6 +25,7 @@ export function todayKey() {
 export function sectionFromPathname(pathname = "") {
   if (!pathname || pathname === "/home") return null;
   if (pathname.startsWith("/geography") || pathname.includes("/subject/geography")) return "geography";
+  if (pathname.startsWith("/math/grades")) return "grade-path";
   if (pathname.startsWith("/math-master")) return "math-mastery";
   if (pathname.startsWith("/multiplication")) return "multiplication";
   if (pathname.startsWith("/math")) return "math";
@@ -46,7 +48,7 @@ export function sectionFromPathname(pathname = "") {
 
 /** Map screen section → legacy subject id in useAppStore.timePerSubject */
 export function subjectIdForSection(sectionId) {
-  if (sectionId === "math-mastery" || sectionId === "multiplication") return "math";
+  if (sectionId === "math-mastery" || sectionId === "multiplication" || sectionId === "grade-path") return "math";
   if (sectionId === "other") return null;
   return sectionId;
 }

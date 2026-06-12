@@ -17,6 +17,24 @@ export function suggestedMathLevel(ageGroup) {
   return 1;
 }
 
+/** Suggested Grade Path starting grade from age band (US school-ish). */
+export function suggestedGrade(ageGroup) {
+  if (ageGroup === "champion") return 5;
+  if (ageGroup === "adventurer") return 3;
+  return 1;
+}
+
+export function gradePlacementCopy(ageGroup) {
+  const meta = ageGroupMeta(ageGroup);
+  const grade = suggestedGrade(ageGroup);
+  return {
+    title: `Start at Grade ${grade}?`,
+    body: `You're an ${meta.label} (${meta.ageRange}) — Grade ${grade} is a great starting spot. Jump ahead or begin at Grade 1.`,
+    jumpLabel: `Jump to Grade ${grade}! 🚀`,
+    easyLabel: "Start at Grade 1",
+  };
+}
+
 export function suggestedMulTable(ageGroup) {
   if (ageGroup === "champion") return 10;
   if (ageGroup === "adventurer") return 6;

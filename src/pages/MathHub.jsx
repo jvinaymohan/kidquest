@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Calculator, Zap } from "lucide-react";
+import { Calculator, GraduationCap, Zap } from "lucide-react";
 import { HubPageLayout } from "../components/layout/HubPageLayout";
 
 export default function MathHub() {
@@ -10,6 +10,22 @@ export default function MathHub() {
       icon={<Calculator className="mx-auto text-[#93c5fd]" size={36} aria-hidden />}
       headerClassName="border-math/35"
     >
+      <Link
+        to="/math/grades"
+        className="hub-topic-card border-[3px] border-[#ffd700]/45 bg-gradient-to-r from-[#1a1060] via-primary/20 to-[#1a1060] focus-ring ring-2 ring-primary/25"
+      >
+        <span className="grid h-14 w-14 place-items-center rounded-2xl bg-primary/25 text-3xl shrink-0">
+          🎓
+        </span>
+        <div className="flex-1 text-left min-w-0">
+          <p className="font-display text-xl font-extrabold text-white">Grade Path</p>
+          <p className="text-sm font-bold text-white/75">
+            Grades 1–10 — practice, check yourself, and pass tests to level up
+          </p>
+        </div>
+        <GraduationCap className="text-[#ffd700] shrink-0" size={28} aria-hidden />
+      </Link>
+
       <Link
         to="/math-master"
         className="hub-topic-card border-[3px] border-primary/30 bg-gradient-to-r from-white/15 to-white/5 focus-ring"

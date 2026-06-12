@@ -16,7 +16,8 @@
 | **Marketing & auth** | `/landing`, `/register`, `/login`, `/invite-request`, `/forgot-password`, `/reset-password`, `/about`, `/privacy`, `/terms` |
 | **Onboarding** | `/onboarding` — kid name, avatar, age band |
 | **Home & nav** | `/home` — play CTA, live worlds, journey link; bottom nav (Home, Explore, Play, Win, Me); Quest Home FAB on immersive routes |
-| **Math** | `/math` → Math Master, Multiplication Stages, Multiplication Camp |
+| **Math** | `/math` → **Grade Path** (primary), Math Master, Multiplication Stages, Multiplication Camp |
+| | `/math/grades`, `/math/grades/:grade`, `/math/grades/:grade/:mode` — practice, check, grade test (80% to unlock next) |
 | | `/math-master`, `/math-master/:op/level/:level` |
 | | `/multiplication` — table grid, learn → practice → drill → boss, review, speed run |
 | | `/math/stages`, `/math/stages/:stageId` — accuracy + speed mastery |
@@ -68,6 +69,7 @@ Run on **iPhone Safari** and **Chrome Android** (plus one desktop browser).
 
 - [ ] `/landing` — Einstein quote at top, getting started top-right, About us in footer
 - [ ] Bottom nav: all 5 tabs load without crash
+- [ ] `/math` → Grade Path hub loads; grade test unlock flow works
 - [ ] `/math` → Math Master level loads
 - [ ] `/subject/geography` → one track opens
 - [ ] `/curiosity` — hub loads (no infinite spinner)
@@ -127,7 +129,7 @@ where routine_schema = 'public'
 | `npm install` | Install dependencies |
 | `npm run dev` | Local dev at http://localhost:5173 |
 | `npm run build` | Production build (must pass before deploy) |
-| `npm run test:unit` | Unit tests (quiz session, multiplication stages) |
+| `npm run test:unit` | Unit tests (quiz session, multiplication stages, grade path unlock + generators) |
 | `npm run lint` | ESLint (fix critical errors in touched files) |
 
 **Deploy:** Push to `main` → Vercel auto-deploys production. Confirm https://kidquest-indol.vercel.app/landing loads.

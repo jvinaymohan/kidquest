@@ -8,6 +8,7 @@ import { useTriviaStore } from "../store/useTriviaStore";
 import { useCuriosityStore } from "../store/useCuriosityStore";
 import { useMathMasteryStore } from "../store/useMathMasteryStore";
 import { useMultiplicationStore } from "../store/useMultiplicationStore";
+import { useGradeMathStore } from "../store/useGradeMathStore";
 import { SCIENCE_TOPICS } from "../data/science/topics";
 import { TRIVIA_CATEGORIES } from "../data/trivia/categories";
 import { COUNTRIES } from "../data/geography/countries";
@@ -34,6 +35,8 @@ export default function MyJourney() {
   const triviaDone = useTriviaStore((s) => s.completedCount());
   const mathProgress = useMathMasteryStore((s) => s.progress);
   const mulLegendary = useMultiplicationStore((s) => s.getLegendaryCount());
+  const currentGrade = useGradeMathStore((s) => s.currentGrade);
+  const completedGrades = useGradeMathStore((s) => s.completedGrades);
   const curiosityCompleted = useCuriosityStore((s) => s.completedCardIds?.length ?? 0);
   const curiositySaved = useCuriosityStore((s) => (s.savedIds ?? []).length);
   const curiosityStreak = useCuriosityStore((s) => s.gentleStreak ?? 0);
@@ -46,6 +49,7 @@ export default function MyJourney() {
     0
   );
   const mathTotal = OPERATIONS.length * LEVELS.length;
+  const gradeCompleted = completedGrades();
   const level = xpToNextLevel(totalXP);
 
   const recentBadges = (badges ?? [])
@@ -89,6 +93,15 @@ export default function MyJourney() {
       detail: `${triviaDone}/${TRIVIA_CATEGORIES.length} categories done`,
       path: "/trivia",
       color: "#FF6B6B",
+    },
+    {
+      id: "grade-path",
+      emoji: "🎓",
+      title: "Grade Path",
+      pct: gradeCompleted.length / 10,
+      detail: `Grade ${currentGrade} · ${gradeCompleted.length}/10 grades passed`,
+      path: "/math/grades",
+      color: "#ffd700",
     },
     {
       id: "math",
