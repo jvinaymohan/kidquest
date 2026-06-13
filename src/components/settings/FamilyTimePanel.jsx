@@ -1,13 +1,24 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { useScreenTimeStore, formatScreenMinutes } from "../../store/useScreenTimeStore";
-import { SCREEN_SECTIONS } from "../../utils/screenTimeSections";
+import { lastNDaysKeys, SCREEN_SECTIONS, todayKey } from "../../utils/screenTimeSections";
 import { usePreferencesStore } from "../../store/usePreferencesStore";
 
 export function FamilyTimePanel() {
-  const todayTotal = useScreenTimeStore((s) => s.getTodayTotalSeconds());
-  const todaySections = useScreenTimeStore((s) => s.getDay());
-  const week = useScreenTimeStore((s) => s.getWeekSummary());
+  const byDate = useScreenTimeStore((s) => s.byDate);
   const limitMinutes = usePreferencesStore((s) => s.screenTimeLimitMinutes);
+
+  const { todayTotal, todaySections, week } = useMemo(() => {
+    const date = todayKey();
+    const todaySections = byDate[date] ?? {};
+    const todayTotal = Object.values(todaySections).reduce((a, b) => a + b, 0);
+    const week = lastNDaysKeys(7).map((day) => {
+      const sections = byDate[day] ?? {};
+      const total = Object.values(sections).reduce((a, b) => a + b, 0);
+      return { date: day, total, sections };
+    });
+    return { todayTotal, todaySections, week };
+  }, [byDate]);
 
   const breakdown = Object.entries(todaySections)
     .filter(([, sec]) => sec > 0)
